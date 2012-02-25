@@ -1,0 +1,7 @@
+﻿
+struct XMSetting
+%{
+  STRING key;
+  STRING valye;
+%}
+
