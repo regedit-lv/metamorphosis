@@ -1,7 +1,33 @@
-﻿
-struct XMSetting
+﻿OutputLanguage C++
+
+Namespace xmq
+
+enum TE
 %{
-  STRING key;
-  STRING valye;
+    AA,
+    BB = 3,
+    CC
 %}
 
+struct SubStruct
+%{
+    TE te = TE.AA;
+    Array int32 sub_ai;
+    uint32 ui;
+    int32 i;
+%}
+
+struct BaseStruct
+%{
+    String bs;
+    int32 bi;
+%}
+
+struct TestStruct : BaseStruct base { bs = "bs_value", bi = 3 }
+%{    
+    SubStruct ss;
+    uint32 ui;
+    Array Array int32 aai;
+    Array String as;
+    String s;
+%}

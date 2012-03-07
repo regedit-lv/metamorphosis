@@ -11,23 +11,15 @@ enum TE
 
 struct SubStruct
 %{
-    TE te = TE.AA;
-    Array int32 sub_ai;
-    uint32 ui;
-    int32 i;
+    int32 subI;
+    String subString;
 %}
 
-struct BaseStruct
-%{
-    String bs;
-    int32 bi;
-%}
-
-struct TestStruct : BaseStruct base { bs = "bs_value", bi = 3 }
+struct TestStruct
 %{    
-    SubStruct ss;
+    SubStruct sub;
     uint32 ui;
-    Array Array int32 aai;
-    Array String as;
+    Array int32 ai;
     String s;
+    Array Array String ass;
 %}

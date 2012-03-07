@@ -114,8 +114,36 @@ namespace Metamorphosis
 
         }
 
+
+        string RemoveComment(string text)
+        {
+            while (true)
+            {
+                int i = text.IndexOf(@"##");
+                if (i == -1)
+                {
+                    break;
+                }
+                int end = text.IndexOf(Environment.NewLine, i);
+
+                if (end == -1)
+                {
+                    // delete till end of string
+                    text = text.Substring(0, i);
+                }
+                else
+                {
+                    end += Environment.NewLine.Length;
+                    text = text.Remove(i, end - i);
+                }
+            }
+
+            return text;
+        }
+
         public Parser(string text, ParserMode mode = ParserMode.Normal)
         {
+            text = RemoveComment(text);
             Mode = mode;
             currentToken = 0;
 

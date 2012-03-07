@@ -53,7 +53,8 @@ namespace Metamorphosis
                     }
                 }
 
-                string value = Larvae.ReplaceSystemFields(v.Value, part).Replace("%type%", l.GetTypeDefinition()).Replace("%field%", part.Name);
+                string value = v.Value.Replace("%type%", l.GetTypeDefinition()).Replace("%field%", part.Name);
+                value = Larvae.ReplaceSystemFields(value, part);
 
                 // replace sub types
                 if (l.SubLarvae != null)
@@ -95,14 +96,22 @@ namespace Metamorphosis
 
                     foreach (Part p in bl.Parts)
                     {
-                        fields += ReplacePart(p) + Environment.NewLine;
+                        string sp = ReplacePart(p);
+                        if (sp != "")
+                        {
+                            fields += sp + Environment.NewLine;
+                        }
                     }
                 }
 
                 // replace with larva fields
                 foreach (Part p in larva.Parts)
                 {
-                    fields += ReplacePart(p) + Environment.NewLine;
+                    string sp = ReplacePart(p);
+                    if (sp != "")
+                    {
+                        fields += sp + Environment.NewLine;
+                    }
                 }
 
                 return Larvae.ReplaceField(text, "%%", fields);
@@ -115,6 +124,7 @@ namespace Metamorphosis
                     string name = "%" + v.Name + "%";
                     string value = v.Value;
                     value = v.Variables.ReplaceAll(value, larva);
+                    value = Larvae.ReplaceExpression(value, larva);
                     text =  Larvae.ReplaceField(text, name, value);
                 }
             }
