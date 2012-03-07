@@ -1,6 +1,7 @@
  
 #include <vector>
 #include <string>
+#include "tinyXML\tinyxml.h"
 
 namespace xmq
 {
@@ -19,42 +20,30 @@ namespace TE
 
 struct SubStruct 
 {
-    enum TE::Type te ;
-    std::vector<int> sub_ai ;
-    unsigned int ui ;
-    int i ;
+    int subI ;
+    std::string subString ;
     
     SubStruct() ;
     size_t size(void) ;
     size_t write(void **data) ;
-    void read(const void *data) ; 
+    void read(const void *data) ;
+    std::string toXml(TiXmlElement *parentNode) ; 
 };
 
 
-struct BaseStruct 
+struct TestStruct 
 {
-    std::string bs ;
-    int bi ;
-    
-    BaseStruct() ;
-    size_t size(void) ;
-    size_t write(void **data) ;
-    void read(const void *data) ; 
-};
-
-
-struct TestStruct : public BaseStruct
-{
-    struct SubStruct ss ;
+    struct SubStruct sub ;
     unsigned int ui ;
-    std::vector<std::vector<int>> aai ;
-    std::vector<std::string> as ;
+    std::vector<int> ai ;
     std::string s ;
+    std::vector<std::vector<std::string>> ass ;
     
     TestStruct() ;
     size_t size(void) ;
     size_t write(void **data) ;
-    void read(const void *data) ; 
+    void read(const void *data) ;
+    std::string toXml(TiXmlElement *parentNode) ; 
 };
 
 

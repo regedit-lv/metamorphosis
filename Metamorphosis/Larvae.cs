@@ -98,12 +98,35 @@ namespace Metamorphosis
             return text;
         }
 
+        public static string ReplaceExpression(string text, object obj)
+        {
+            while (true)
+            {
+                // check for expression
+                Match match = Regex.Match(text, @"%![^%]+%", RegexOptions.IgnoreCase);
+
+                // Here we check the Match instance.
+                if (match.Success)
+                {
+                    string v = match.Captures[0].Value;
+                    string n = v.Substring(2, v.Length - 3);
+                    n = ObjectHelper.GetValue(obj, n);
+                    text = text.Replace(v, n);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return text;
+        }
+
         public static string ReplaceSystemFields(string text, Part part)
         {
             while (true)
             {
                 // check for auto_id names
-                Match match = Regex.Match(text, @"%_[^%]+%", RegexOptions.IgnoreCase);
+                Match match = Regex.Match(text, @"%_[_0-9a-zA-Z]+%", RegexOptions.IgnoreCase);
 
                 // Here we check the Match instance.
                 if (match.Success)
@@ -118,24 +141,7 @@ namespace Metamorphosis
                 }
             }
 
-            while (true)
-            {
-                // check for expression
-                Match match = Regex.Match(text, @"%![^%]+%", RegexOptions.IgnoreCase);
-
-                // Here we check the Match instance.
-                if (match.Success)
-                {
-                    string v = match.Captures[0].Value;
-                    string n = v.Substring(2, v.Length - 3);
-                    n = ObjectHelper.GetValue(part, n);
-                    text = text.Replace(v, n);
-                }
-                else
-                {
-                    break;
-                }
-            }
+            text = ReplaceExpression(text, part);
 
             while (true)
             {
