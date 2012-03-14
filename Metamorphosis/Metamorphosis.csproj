@@ -48,7 +48,7 @@
     <Compile Include="Larva.cs" />
     <Compile Include="Larvae.cs" />
     <Compile Include="Method.cs" />
-    <Compile Include="Methods.cs" />
+    <Compile Include="MethodFactory.cs" />
     <Compile Include="ObjectHelper.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />

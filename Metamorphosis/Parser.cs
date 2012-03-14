@@ -211,6 +211,17 @@ namespace Metamorphosis
             }
         }
 
+        bool IsNextToken(string token, int step = 0)
+        {
+            int i = currentToken + step;
+            if (i >= tokens.Count)
+            {
+                return false;
+            }
+
+            return tokens[i] == token;
+        }
+
         string GetNextToken()
         {
             if (tokens.Count == currentToken)
@@ -425,6 +436,21 @@ namespace Metamorphosis
 
                     GetNextToken(); // read %}
 
+                    // check for methods name that we will need to generate
+                    if (IsNextToken(":"))
+                    {
+                        token = GetNextToken(); // read :
+                        while (true)
+                        {
+                            token = GetNextToken();
+                            if (token == ";")
+                            {
+                                break;
+                            }
+                            larva.Methods.Add(token);
+                        }
+                    }
+
                     element = larva;
                     return ElementType.Struct;
                 }
@@ -528,7 +554,7 @@ namespace Metamorphosis
                 {
                     string methodName = GetNextToken();
 
-                    Method m = Methods.GetMethod(methodName);
+                    Method m = MethodFactory.GetMethod(methodName);
 
                     VariableList vl = m.Variables;
                     Variable v = null;

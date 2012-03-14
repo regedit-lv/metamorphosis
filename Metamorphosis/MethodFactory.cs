@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Metamorphosis
 {
-    static class Methods
+    static class MethodFactory
     {
         public static List<Method> Items = new List<Method>();
 

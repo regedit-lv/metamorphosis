@@ -30,4 +30,4 @@ struct TestStruct : BaseStruct base { bs = "bs_value", bi = 3 }
     Array Array int32 aai;
     Array String as;
     String s;
-%}
+%} : write size;

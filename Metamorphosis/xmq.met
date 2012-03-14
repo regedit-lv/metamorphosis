@@ -13,7 +13,7 @@ struct SubStruct
 %{
     int32 subI;
     String subString;
-%}
+%} : write size;
 
 struct TestStruct
 %{    
@@ -22,4 +22,4 @@ struct TestStruct
     Array int32 ai;
     String s;
     Array Array String ass;
-%}
+%} : write size;

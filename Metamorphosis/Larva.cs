@@ -48,6 +48,7 @@ namespace Metamorphosis
     {
         public List<string> Definitions = new List<string>();
         public List<string> Declaration = new List<string>();
+        public List<string> Methods = new List<string>();
         public LarvaType Type;
         public List<Larva> SubLarvae;
         public string Name;
@@ -172,9 +173,11 @@ namespace Metamorphosis
             // add constrctor
             string ct = Larvae.GetElement(ElementType.ConstructorDeclaration).Replace("%name%", Name);
             body += Environment.NewLine + ct;
+            
             // add methods
-            foreach (Method m in Methods.Items)
+            foreach (string name in Methods)
             {
+                Method m = MethodFactory.GetMethod(name);
                 body += Environment.NewLine + m.GetDeclaration(this);
             }
 

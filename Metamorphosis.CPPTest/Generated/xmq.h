@@ -24,10 +24,8 @@ struct SubStruct
     std::string subString ;
     
     SubStruct() ;
-    size_t size(void) ;
     size_t write(void **data) ;
-    void read(const void *data) ;
-    std::string toXml(TiXmlElement *parentNode) ; 
+    size_t size(void) ; 
 };
 
 
@@ -40,10 +38,8 @@ struct TestStruct
     std::vector<std::vector<std::string>> ass ;
     
     TestStruct() ;
-    size_t size(void) ;
     size_t write(void **data) ;
-    void read(const void *data) ;
-    std::string toXml(TiXmlElement *parentNode) ; 
+    size_t size(void) ; 
 };
 
 
