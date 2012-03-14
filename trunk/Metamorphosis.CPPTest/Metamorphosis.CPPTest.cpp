@@ -29,9 +29,9 @@ int _tmain(int argc, _TCHAR* argv[])
     ts.sub.subI = 3;
     ts.sub.subString = "sub string value";
 
-    std::string xml = ts.toXml(nullptr);
+    //std::string xml = ts.toXml(nullptr);
 
-    std::cout << xml << std::endl;
+    //std::cout << xml << std::endl;
 
     TiXmlDocument doc;
     TiXmlDeclaration * decl = new TiXmlDeclaration("1.0", "", "");

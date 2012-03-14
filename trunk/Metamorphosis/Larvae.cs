@@ -280,9 +280,11 @@ namespace Metamorphosis
 
             larva.Declaration.Add(larvaDeclaration);
             larva.Definitions.Add(larva.GetConstructorDefinition());
-            
-            foreach (Method m in Methods.Items)
+
+            // generate method definition
+            foreach (string name in larva.Methods)
             {
+                Method m = MethodFactory.GetMethod(name);
                 larva.Definitions.Add(m.GetDefinition(larva));
             }
         }

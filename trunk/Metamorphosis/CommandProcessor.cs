@@ -18,7 +18,7 @@ namespace Metamorphosis
                 {
                     return "";
                 }
-                VariableList vl = Methods.GetMethod(v[1]).Variables;
+                VariableList vl = MethodFactory.GetMethod(v[1]).Variables;
                 //Variable variable = vl.GetVariable(v[2]);
 
                 for (int i = 2; i < v.Length; i++ )
