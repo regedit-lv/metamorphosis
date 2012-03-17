@@ -38,6 +38,7 @@ namespace Metamorphosis
         Namespace,
 
         ConstructorDeclaration,
+        ConstructorWithBaseDeclaration,
         ConstructorDefinition,
         ConstructorWithBaseDefinition,
 
@@ -667,10 +668,6 @@ namespace Metamorphosis
                         if (Mode == ParserMode.Normal)
                         {
                             Larvae.SetElement(t, GetElement() as string);
-                            if (t == ElementType.OutputLanguage)
-                            {
-                                Larvae.ParseLanguageDefinition();
-                            }
                         }
                         break;
                 }

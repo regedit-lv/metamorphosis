@@ -1,0 +1,256 @@
+﻿IncludeDeclarationTop 
+!{ 
+using System;
+using System.Collections.Generic;
+using Helpers;
+!}
+
+ImportInclude %{ %}
+
+StructDeclaration %{%}
+
+StructDefinition 
+!{
+public class %name% 
+{
+    %body% 
+}
+!}
+
+StructDefinitionWithBase
+!{
+public class %name% : %base%
+{
+    %body% 
+};
+!}
+
+StructFieldDeclaration %{ public %type% %field%; %}
+
+MethodDeclaration !{ 
+public %returnType% %method%(%param%)
+{
+    %body%
+}
+!}
+
+ConstructorDeclaration !{ 
+public %name%()
+{
+    %body%
+}
+!}
+
+ConstructorWithBaseDeclaration !{ 
+public %name%() :base()
+{
+    %body%
+}
+!}
+
+FieldInitialisation %{ %field% = %value%; %}
+
+EnumFieldDeclaration %{ %field% , %}
+EnumFieldWithValueDeclaration %{ %field% = %value% , %}
+EnumValueDeclaration %{ %name%.%value% %}
+
+EnumDeclaration !{
+enum %name% : int
+{
+    %body%
+}
+!}
+
+type 1 default int32 = int
+type 1 default uint32 = uint
+type 1 string String = string
+type 2 array Array = List<%type0%>
+type 1 struct struct = %name%
+type 1 default enum = %name%
+
+method size param = !{!}
+method size returnType = int
+method size body = 
+!{
+%body%
+
+return %return%;
+!}
+
+method size body return = !{0 %%!}
+
+method size body return default = !{ + sizeof(%type%)!}
+method size body return string = !{ + (2 + %field%.Length)!}
+method size body return struct = !{ + %field%.size()!}
+method size body return array = !{ + s_%field%!}
+method size body return array default = !{ + (sizeof(int) + sizeof(%type0%) * %field%.Count)!}
+method size body body array default = !{ !}
+
+method size body body = !{%%!}
+
+method size body body array = !{
+int s_%field% = sizeof(int);
+{
+    for (int %_i% = 0; %_i% < %field%.Count; %_i%++)
+    {
+        %!Larva.SubLarvae[0].GetTypeDefinition()% %_e_name% = %field%[%_i%];
+        
+        %#method size body body#%_e_name%#%!Larva.SubLarvae[0].Name%#%
+        
+        s_%field% += 0 %#method size body return#%_e_name%#%!Larva.SubLarvae[0].Name%#%;
+    }
+}
+!}
+
+method size body return arrayMethod = !{totalSize_%field_id%!}
+
+method write param = !{ByteWriter byteWriter = null!}
+method write returnType = byte[]
+
+method write body =
+!{
+ByteWriter writer = byteWriter == null ? new ByteWriter() : byteWriter;
+
+%% 
+
+return writer.GetBuffer();
+!}
+
+method write body default = !{writer.Write(%field%);!}
+method write body string = !{writer.WriteString(%field%);!}
+
+method write body struct = !{ 
+%field%.write(writer);
+!}
+
+method write body array = !{ 
+// write array %field%
+writer.Write(%field%.Count);
+
+for (int %_i% = 0; %_i% < %field%.Count; %_i%++)
+{
+    %#method write body#%field%[%_i%]#%!Larva.SubLarvae[0].Name%#%
+}
+!}
+
+method read param = !{const void *data!}
+method read returnType = void
+
+method read body =
+!{
+ByteReader reader(data);
+
+%%
+!}
+
+method read body default = !{%field% = reader.read<%type%>();!}
+method read body string = !{%field% = reader.readString();!}
+
+method read body struct = !{ 
+%field%.read(reader.getPosition());
+reader.skipBytes(%field%.size()); 
+!}
+
+method read body array default = !{ 
+// read array %field%
+size_t s_%field% = reader.read<size_t>();
+%field%.resize(s_%field%);
+reader.readBytes((char*)%field%.data(), sizeof(%type0%) * s_%field%);
+!}
+
+method read body array = !{ 
+// read array %field%
+size_t s_%field% = reader.read<size_t>();
+%field%.resize(s_%field%);
+
+for (size_t i = 0; i < s_%field%; i++)
+{
+    %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_name% = %field%[i];
+        
+    %#method read body#%_e_name%#%!Larva.SubLarvae[0].Name%#%
+}
+!}
+
+## toXml
+
+method toXml param = !{TiXmlElement *parentNode!}
+method toXml returnType = std::string
+
+method toXml body =
+!{
+TiXmlElement *parent;
+if (parentNode == nullptr)
+{
+    parent = new TiXmlElement("%!Name%");
+}
+else
+{
+    parent = parentNode;
+}
+
+%% 
+
+if (parentNode == nullptr)
+{
+    TiXmlDocument doc;
+    doc.LinkEndChild(parent);
+
+    TiXmlPrinter printer;
+    printer.SetIndent("    ");
+    doc.Accept(&printer);
+    return printer.CStr();
+}
+else
+{
+    return "";
+}
+!}
+
+method toXml body default = !{
+{ // %field%
+    std::stringstream oss;
+    oss << %field%;
+    TiXmlElement * element = new TiXmlElement("%field%");
+    TiXmlText * text = new TiXmlText(oss.str().c_str());
+    element->LinkEndChild(text);
+    parent->LinkEndChild(element);
+}
+!}
+
+method toXml body string = !{
+{ // %field%
+    std::stringstream oss;
+    oss << %field%;
+    TiXmlElement * element = new TiXmlElement("%field%");
+    TiXmlText * text = new TiXmlText(oss.str().c_str());
+    element->LinkEndChild(text);
+    parent->LinkEndChild(element);
+}
+!}
+
+method toXml body struct = !{ 
+{ // %field%
+    TiXmlElement * element = new TiXmlElement("%field%");
+    std::string xml = %field%.toXml(element);
+    parent->LinkEndChild(element);
+}
+!}
+
+method toXml body array = !{ 
+// write array %field%
+TiXmlElement * %field%_element = new TiXmlElement("%field%");
+parent->LinkEndChild(%field%_element);
+%field%_element->SetAttribute("size", %field%.size());
+
+TiXmlElement * parent_%field% = parent;
+parent = %field%_element;
+
+for (size_t i = 0; i < %field%.size(); i++)
+{
+    %!Larva.SubLarvae[0].GetTypeDefinition()% &%field%_sub = %field%[i];
+
+    %#method toXml body#%field%_sub#%!Larva.SubLarvae[0].Name%#%
+}
+
+parent = parent_%field%;
+!}

@@ -154,7 +154,21 @@ namespace Metamorphosis
 
             string body = GetConstructorBody();
 
-            cd = Larvae.ReplaceField(cd, "%body%", body);
+            Larvae.ReplaceField(ref cd, "%body%", body);
+
+            return cd;
+        }
+
+        public string GetConstructorDeclaration()
+        {
+            string cd = BaseName == null ?
+                Larvae.GetElement(ElementType.ConstructorDeclaration) :
+                Larvae.GetElement(ElementType.ConstructorWithBaseDeclaration).Replace("%base%", BaseName);
+            cd = cd.Replace("%name%", Name);
+
+            string body = GetConstructorBody();
+
+            Larvae.ReplaceField(ref cd, "%body%", body);
 
             return cd;
         }
@@ -171,7 +185,7 @@ namespace Metamorphosis
             }
 
             // add constrctor
-            string ct = Larvae.GetElement(ElementType.ConstructorDeclaration).Replace("%name%", Name);
+            string ct = GetConstructorDeclaration();
             body += Environment.NewLine + ct;
             
             // add methods

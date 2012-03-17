@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{35128C8B-B007-418E-89F8-D64D5787C384}</ProjectGuid>
+    <ProjectGuid>{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Metamorphosis</RootNamespace>
-    <AssemblyName>Metamorphosis</AssemblyName>
+    <RootNamespace>Metamorphosis.CSTest</RootNamespace>
+    <AssemblyName>Metamorphosis.CSTest</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -43,33 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandProcessor.cs" />
-    <Compile Include="Generators\CppGenerator.cs" />
-    <Compile Include="Generators\CsGenerator.cs" />
-    <Compile Include="Larva.cs" />
-    <Compile Include="Larvae.cs" />
-    <Compile Include="Method.cs" />
-    <Compile Include="MethodFactory.cs" />
-    <Compile Include="ObjectHelper.cs" />
-    <Compile Include="Parser.cs" />
+    <Compile Include="Generated\xmq.cs" />
+    <Compile Include="Helpers\ByteReader.cs" />
+    <Compile Include="Helpers\ByteWriter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TypeDefinitions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="cpp.def">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="cs.def">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="def.met" />
-    <None Include="xmq.met">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

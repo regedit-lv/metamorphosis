@@ -1,6 +1,4 @@
-﻿OutputLanguage C++
-
-Namespace xmq
+﻿Namespace xmq
 
 enum TE
 %{
