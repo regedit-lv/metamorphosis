@@ -28,7 +28,7 @@ namespace Metamorphosis
 
         public static string GetElement(ElementType elementType)
         {
-            return Elements.ContainsKey(elementType) ? Larvae.Elements[elementType] : null;
+            return Elements.ContainsKey(elementType) ? Larvae.Elements[elementType] : "";
         }
 
         public static void SetElement(ElementType elementType, string value)
@@ -71,6 +71,10 @@ namespace Metamorphosis
             {
                 case "C++":
                     fn = "cpp.def";
+                    break;
+
+                case "C#":
+                    fn = "cs.def";
                     break;
             }
 
@@ -154,7 +158,7 @@ namespace Metamorphosis
                     string v = match.Captures[0].Value;
                     string n = v.Substring(2, v.Length - 3);
                     n = CommandProcessor.Process(n);
-                    text = Larvae.ReplaceField(text, v, n);
+                    Larvae.ReplaceField(ref text, v, n);
                 }
                 else
                 {
@@ -165,7 +169,7 @@ namespace Metamorphosis
             return text;
         }
 
-        public static string ReplaceField(string text, string field, string value)
+        public static string ReplaceField(ref string text, string field, string value)
         {
             // replace indention symbols inside value
             value = value.Replace("%n%", Environment.NewLine).Replace("%t%", GetIndent(1));
@@ -176,7 +180,8 @@ namespace Metamorphosis
                 text = RemoveIndentForField(text, field);
                 value = AddIndent(value, indent);
             }
-            return text.Replace(field, value);
+            text = text.Replace(field, value);
+            return text;
         }
 
         public static string GetIndentForField(string text, string field, out bool emptyIndention)
@@ -276,7 +281,7 @@ namespace Metamorphosis
             string larvaDeclaration = templateLarvaDeclaration.Replace("%name%", larva.Name).Replace("%base%", larva.BaseName);
 
             string body = larva.GetStructBody();
-            larvaDeclaration = Larvae.ReplaceField(larvaDeclaration, "%body%", body);
+            Larvae.ReplaceField(ref larvaDeclaration, "%body%", body);
 
             larva.Declaration.Add(larvaDeclaration);
             larva.Definitions.Add(larva.GetConstructorDefinition());
@@ -292,12 +297,11 @@ namespace Metamorphosis
         static void GenerateEnum(Larva larva)
         {
             string enumBody = larva.GetEnumBody();
-            enumBody = AddIndent(enumBody, 2);
+            string enumDeclaration = GetElement(ElementType.EnumDeclaration);
+            
+            enumDeclaration = enumDeclaration.Replace("%name%", larva.Name);
+            Larvae.ReplaceField(ref enumDeclaration, "%body%", enumBody);
 
-            string enumDeclaration = RemoveIndentForField(GetElement(ElementType.EnumDeclaration), "%body%");
-            
-            enumDeclaration = enumDeclaration.Replace("%body%", enumBody).Replace("%name%", larva.Name);
-            
             larva.Declaration.Add(enumDeclaration);
         }
 
@@ -329,38 +333,72 @@ namespace Metamorphosis
             switch (Elements[ElementType.OutputLanguage].ToUpper())
             {
                 case "C++":
-                    string ns = GetElement(ElementType.Namespace);
-                    
-                    CppGenerator g = new CppGenerator(outputFile);
-
-                    g.AddDeclarationText(GetElement(ElementType.IncludeDeclarationTop));
-
-                    foreach (string importName in Imports)
                     {
-                        string n = Program.RemoveExtension(importName);
-                        g.AddDeclarationText(GetElement(ElementType.ImportInclude).Replace("%name%", n));
+                        string ns = GetElement(ElementType.Namespace);
+
+                        CppGenerator g = new CppGenerator(outputFile);
+
+                        g.AddDeclarationText(GetElement(ElementType.IncludeDeclarationTop));
+
+                        foreach (string importName in Imports)
+                        {
+                            string n = Program.RemoveExtension(importName);
+                            g.AddDeclarationText(GetElement(ElementType.ImportInclude).Replace("%name%", n));
+                        }
+
+                        g.AddDeclarationText(GetElement(ElementType.UserIncludeDeclarationTop));
+
+                        g.AddDefinitionText(GetElement(ElementType.IncludeDefinitionTop).Replace("%output_name%", GetElement(ElementType.OutputName)));
+
+                        if (ns != null)
+                        {
+                            g.AddDeclarationText("namespace " + ns + Environment.NewLine + "{");
+                            g.AddDefinitionText("namespace " + ns + Environment.NewLine + "{");
+                        }
+
+                        g.WriteLarvae(Items);
+
+                        if (ns != null)
+                        {
+                            g.AddDeclarationText(Environment.NewLine + "}");
+                            g.AddDefinitionText(Environment.NewLine + "}");
+                        }
+
+                        g.SaveToFile();
+                        break;
                     }
 
-                    g.AddDeclarationText(GetElement(ElementType.UserIncludeDeclarationTop));
-
-                    g.AddDefinitionText(GetElement(ElementType.IncludeDefinitionTop).Replace("%output_name%", GetElement(ElementType.OutputName)));
-
-                    if (ns != null)
+                case "C#":
                     {
-                        g.AddDeclarationText("namespace " + ns + Environment.NewLine + "{");
-                        g.AddDefinitionText("namespace " + ns + Environment.NewLine + "{");
-                    }                    
+                        string ns = GetElement(ElementType.Namespace);
 
-                    g.WriteLarvae(Items);
+                        CsGenerator g = new CsGenerator(outputFile);
 
-                    if (ns != null)
-                    {
-                        g.AddDeclarationText(Environment.NewLine + "}");
-                        g.AddDefinitionText(Environment.NewLine + "}");
+                        g.AddDeclarationText(GetElement(ElementType.IncludeDeclarationTop));
+
+                        foreach (string importName in Imports)
+                        {
+                            string n = Program.RemoveExtension(importName);
+                            g.AddDeclarationText(GetElement(ElementType.ImportInclude).Replace("%name%", n));
+                        }
+
+                        g.AddDeclarationText(GetElement(ElementType.UserIncludeDeclarationTop));
+
+                        if (ns != null)
+                        {
+                            g.AddDeclarationText("namespace " + ns + Environment.NewLine + "{");
+                        }
+
+                        g.WriteLarvae(Items);
+
+                        if (ns != null)
+                        {
+                            g.AddDeclarationText(Environment.NewLine + "}");
+                        }
+
+                        g.SaveToFile();
+                        break;
                     }
-
-                    g.SaveToFile();
-                    break;
             }
         }
     }

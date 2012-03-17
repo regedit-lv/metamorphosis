@@ -26,15 +26,39 @@ namespace Metamorphosis
         static void Main(string[] args)
         {
             string a = AppDomain.CurrentDomain.FriendlyName;
-            if (args.Length == 0 || args.Length > 2)
+            if (args.Length == 0)
             {
-                Console.WriteLine("Usage: " + a + " metafile [output_path_prefix]" + Environment.NewLine + "example: " + a + @" data.met Generated");
+                Console.WriteLine("Usage: " + a + " metafile [-op output_path_prefix] -ol language" + Environment.NewLine + "example: " + a + @" data.met -op Generated -ol C#");
                 return;
             }
 
             string fileName = args[0];
-            string path = args.Length == 2 ? args[1] : @"Generated";
-            
+            string path = @"Generated";
+
+            for (int i = 1; i < args.Length; i++)
+            {
+                string next = (i + 1) < args.Length ?  args[i + 1] : "";
+                switch (args[i])
+                {
+                    case "-op":
+                        path = next;
+                        i++;
+                        break;
+
+                    case "-ol":
+                        Larvae.SetElement(ElementType.OutputLanguage, next);
+                        Larvae.ParseLanguageDefinition();
+                        i++;
+                        break;
+                }
+            }
+
+            if (Larvae.GetElement(ElementType.OutputLanguage) == null)
+            {
+                Console.WriteLine("Error: output language is not set. Use -ol to set it. Example: -ol C++");
+                return;
+            }
+
             Directory.CreateDirectory(path);
             
             path += @"\";

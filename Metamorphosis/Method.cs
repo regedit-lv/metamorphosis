@@ -114,7 +114,7 @@ namespace Metamorphosis
                     }
                 }
 
-                return Larvae.ReplaceField(text, "%%", fields);
+                return Larvae.ReplaceField(ref text, "%%", fields);
             }
             else
             {
@@ -124,8 +124,8 @@ namespace Metamorphosis
                     string name = "%" + v.Name + "%";
                     string value = v.Value;
                     value = v.Variables.ReplaceAll(value, larva);
-                    value = Larvae.ReplaceExpression(value, larva);
-                    text =  Larvae.ReplaceField(text, name, value);
+                    Larvae.ReplaceExpression(value, larva);
+                    Larvae.ReplaceField(ref text, name, value);
                 }
             }
             return text;

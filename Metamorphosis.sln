@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metamorphosis", "Metamorpho
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Metamorphosis.CPPTest", "Metamorphosis.CPPTest\Metamorphosis.CPPTest.vcxproj", "{E615F25C-9B90-4CCE-9A8F-44B7B1AAE55F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metamorphosis.CSTest", "Metamorphosis.CSTest\Metamorphosis.CSTest.csproj", "{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -35,6 +37,16 @@ Global
 		{E615F25C-9B90-4CCE-9A8F-44B7B1AAE55F}.Release|Win32.ActiveCfg = Release|Win32
 		{E615F25C-9B90-4CCE-9A8F-44B7B1AAE55F}.Release|Win32.Build.0 = Release|Win32
 		{E615F25C-9B90-4CCE-9A8F-44B7B1AAE55F}.Release|x86.ActiveCfg = Release|Win32
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Debug|Win32.ActiveCfg = Debug|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Debug|x86.ActiveCfg = Debug|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Debug|x86.Build.0 = Debug|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Release|Mixed Platforms.Build.0 = Release|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Release|Win32.ActiveCfg = Release|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Release|x86.ActiveCfg = Release|x86
+		{415B9256-31A2-4E25-8CA3-D2E35B0CA18D}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
