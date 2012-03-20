@@ -12,7 +12,7 @@ namespace Metamorphosis
     {
         public static Dictionary<ElementType, string> Elements = new Dictionary<ElementType,string>();
         public static Dictionary<string, Larva> Items = new Dictionary<string,Larva>();
-        static List<string> Imports = new List<string>();
+        public static List<string> Imports = new List<string>();
 
         static uint id = 1;
 
@@ -38,7 +38,7 @@ namespace Metamorphosis
 
         static public Larva GetLarva(string name, bool existingOnly = false)
         {
-            if (Items.ContainsKey(name))
+            if (name != null && Items.ContainsKey(name))
             {
                 return Items[name];
             }
@@ -334,37 +334,8 @@ namespace Metamorphosis
             {
                 case "C++":
                     {
-                        string ns = GetElement(ElementType.Namespace);
-
                         CppGenerator g = new CppGenerator(outputFile);
-
-                        g.AddDeclarationText(GetElement(ElementType.IncludeDeclarationTop));
-
-                        foreach (string importName in Imports)
-                        {
-                            string n = Program.RemoveExtension(importName);
-                            g.AddDeclarationText(GetElement(ElementType.ImportInclude).Replace("%name%", n));
-                        }
-
-                        g.AddDeclarationText(GetElement(ElementType.UserIncludeDeclarationTop));
-
-                        g.AddDefinitionText(GetElement(ElementType.IncludeDefinitionTop).Replace("%output_name%", GetElement(ElementType.OutputName)));
-
-                        if (ns != null)
-                        {
-                            g.AddDeclarationText("namespace " + ns + Environment.NewLine + "{");
-                            g.AddDefinitionText("namespace " + ns + Environment.NewLine + "{");
-                        }
-
-                        g.WriteLarvae(Items);
-
-                        if (ns != null)
-                        {
-                            g.AddDeclarationText(Environment.NewLine + "}");
-                            g.AddDefinitionText(Environment.NewLine + "}");
-                        }
-
-                        g.SaveToFile();
+                        g.Generate();
                         break;
                     }
 

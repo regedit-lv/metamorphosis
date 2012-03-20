@@ -1,4 +1,4 @@
-﻿Namespace xmq
+﻿Namespace xmq.administration
 
 enum TE
 %{
@@ -11,7 +11,7 @@ struct SubStruct
 %{
     int32 subI;
     String subString;
-%} : write size;
+%} : read write size;
 
 struct BaseStruct
 %{
@@ -26,4 +26,4 @@ struct TestStruct : BaseStruct base { bs = "bs_value", bi = 3 }
     Array int32 ai;
     String s;
     Array Array String ass;
-%} : write size;
+%} : read write size;

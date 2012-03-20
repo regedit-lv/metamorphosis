@@ -55,6 +55,7 @@ ConstructorDefinition !{
 }
 !}
 
+ConstructorWithBaseDeclaration %{ %name%(); %}
 ConstructorWithBaseDefinition !{ 
 %name%::%name%() : %base%()
 {

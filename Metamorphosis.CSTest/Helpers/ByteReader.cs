@@ -18,37 +18,37 @@ namespace Helpers
             br = new BinaryReader(stream);
         }
 
-        public void Read(ref int value)
+        public void Read(out int value)
         {
             value = br.ReadInt32();
         }
 
-        public void Read(ref uint value)
+        public void Read(out uint value)
         {
             value = br.ReadUInt32();
         }
 
-        public void Read(ref byte value)
+        public void Read(out byte value)
         {
             value = br.ReadByte();
         }
 
-        public void Read(ref short value)
+        public void Read(out short value)
         {
             value = br.ReadInt16();
         }
 
-        public void Read(ref ushort value)
+        public void Read(out ushort value)
         {
             value = br.ReadUInt16();
         }
 
-        public void Read(ref long value)
+        public void Read(out long value)
         {
             value = br.ReadInt64();
         }
 
-        public void Read(ref ulong value)
+        public void Read(out ulong value)
         {
             value = br.ReadUInt64();
         }
