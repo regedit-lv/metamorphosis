@@ -10,6 +10,16 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    xmq::SM sm, sm2;
+
+    sm.mss["asd"] = "123";
+    sm.mss["zxcv"] = "876";
+
+    void *dd = nullptr;
+    sm.write(&dd);
+    sm2.read(dd);
+    delete dd;
+
     xmq::TestStruct ts;
     ts.s = "ts str";
     ts.ui = 3;

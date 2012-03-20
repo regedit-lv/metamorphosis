@@ -1,4 +1,4 @@
-﻿Namespace xmq.administration
+﻿Namespace xmq
 
 enum TE
 %{
@@ -6,6 +6,11 @@ enum TE
     BB = 3,
     CC
 %}
+
+struct SM
+%{
+    Map String String mss;
+%} : read write size;
 
 struct SubStruct
 %{

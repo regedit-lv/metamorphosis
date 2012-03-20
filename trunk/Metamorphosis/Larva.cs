@@ -83,7 +83,7 @@ namespace Metamorphosis
                 {
                     Larva sl = SubLarvae[i];
                     string t = "%type" + i.ToString() + "%";
-                    typeName = TypeDefinition.Definition.Replace(t, sl.GetTypeDefinition());
+                    typeName = typeName.Replace(t, sl.GetTypeDefinition());
                 }
             }
 
