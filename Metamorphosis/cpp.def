@@ -2,6 +2,7 @@
 !{ 
 #include <vector>
 #include <string>
+#include <map>
 #include "tinyXML\tinyxml.h"
 !}
 
@@ -85,6 +86,8 @@ type 1 string String = std::string
 type 2 array Array = std::vector<%type0%>
 type 1 struct struct = !{struct %name%!}
 type 1 default enum = !{enum %name%::Type!}
+type 3 map Map = !{std::map<%type0%, %type1%>!}
+
 
 method size param = void
 method size returnType = size_t
@@ -103,6 +106,7 @@ method size body return struct = !{ + %field%.size()!}
 method size body return array = !{ + s_%field%!}
 method size body return array default = !{ + (sizeof(size_t) + sizeof(%type0%) * %field%.size())!}
 method size body body array default = !{ !}
+method size body return map = !{ + s_%field%!}
 
 method size body body = !{%%!}
 
@@ -121,6 +125,23 @@ size_t s_%field% = sizeof(size_t);
 !}
 
 method size body return arrayMethod = !{totalSize_%field_id%!}
+
+method size body body map = !{
+size_t s_%field% = sizeof(size_t);
+{
+    for (%!Larva.GetTypeDefinition()%::iterator it = %field%.begin(); it != %field%.end(); ++it)        
+    {
+        const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_key% = it->first;
+        const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_value% = it->second;
+        
+        %#method size body body#%_e_key%#%!Larva.SubLarvae[0].Name%#%
+        %#method size body body#%_e_value%#%!Larva.SubLarvae[1].Name%#%
+        
+        s_%field% += 0 %#method size body return#%_e_key%#%!Larva.SubLarvae[0].Name%#%
+                       %#method size body return#%_e_value%#%!Larva.SubLarvae[1].Name%#%;
+    }
+}
+!}
 
 method write param = !{void **data!}
 method write returnType = size_t
@@ -167,6 +188,27 @@ for (size_t i = 0; i < %field%.size(); i++)
 }
 !}
 
+method write body array default = !{
+// write array %field%
+writer.write<size_t>(%field%.size());
+writer.writeBytes(%field%.data(), sizeof(%type0%) * %field%.size() );
+!}
+
+method write body map = !{ 
+// write map %field%
+writer.write<size_t>(%field%.size());
+{
+    for (%!Larva.GetTypeDefinition()%::iterator it = %field%.begin(); it != %field%.end(); ++it)        
+    {
+        const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_key% = it->first;
+        const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_value% = it->second;
+        
+        %#method write body#%_e_key%#%!Larva.SubLarvae[0].Name%#%
+        %#method write body#%_e_value%#%!Larva.SubLarvae[1].Name%#%
+    }
+}
+!}
+
 method read param = !{const void *data!}
 method read returnType = void
 
@@ -202,6 +244,22 @@ for (size_t i = 0; i < s_%field%; i++)
     %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_name% = %field%[i];
         
     %#method read body#%_e_name%#%!Larva.SubLarvae[0].Name%#%
+}
+!}
+
+method read body map = !{ 
+// read array %field%
+size_t s_%field% = reader.read<size_t>();
+
+for (size_t i = 0; i < s_%field%; i++)
+{
+    %!Larva.SubLarvae[0].GetTypeDefinition()% %_e_key%;
+    %!Larva.SubLarvae[0].GetTypeDefinition()% %_e_value%;
+        
+    %#method read body#%_e_key%#%!Larva.SubLarvae[0].Name%#%
+    %#method read body#%_e_value%#%!Larva.SubLarvae[1].Name%#%
+    
+    %field%[%_e_key%] = %_e_value%;
 }
 !}
 
