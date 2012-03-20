@@ -21,7 +21,7 @@ namespace Helpers
         public byte[] GetBuffer()
         {
             bw.Flush();
-            return stream.GetBuffer();
+            return stream.ToArray();
         }
 
         public void Write(int value)

@@ -77,5 +77,38 @@ namespace Metamorphosis
             }
         }
 
+
+        public void Generate()
+        {
+            string[] namespaces = Larvae.GetElement(ElementType.Namespace).Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+
+            AddDeclarationText(Larvae.GetElement(ElementType.IncludeDeclarationTop));
+
+            foreach (string importName in Larvae.Imports)
+            {
+                string n = Program.RemoveExtension(importName);
+                AddDeclarationText(Larvae.GetElement(ElementType.ImportInclude).Replace("%name%", n));
+            }
+
+            AddDeclarationText(Larvae.GetElement(ElementType.UserIncludeDeclarationTop));
+
+            AddDefinitionText(Larvae.GetElement(ElementType.IncludeDefinitionTop).Replace("%output_name%", Larvae.GetElement(ElementType.OutputName)));
+
+            foreach (string ns in namespaces)
+            {
+                AddDeclarationText("namespace " + ns + Environment.NewLine + "{");
+                AddDefinitionText("namespace " + ns + Environment.NewLine + "{");
+            }
+
+            WriteLarvae(Larvae.Items);
+
+            foreach (string ns in namespaces)
+            {
+                AddDeclarationText(Environment.NewLine + "}");
+                AddDefinitionText(Environment.NewLine + "}");
+            }
+
+            SaveToFile();            
+        }
     }
 }

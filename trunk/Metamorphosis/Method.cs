@@ -141,10 +141,69 @@ namespace Metamorphosis
         {
             string m = Larvae.GetElement(ElementType.MethodDeclaration);
 
+            // check does this method need to be virtual            
+            // check does base class contain the same method
+            bool fromBase = false;
+            Larva b = Larvae.GetLarva(larva.BaseName, true);
+
+            while (b != null)
+            {
+                if (b.Methods.Contains(Name))
+                {
+                    fromBase = true;
+                }
+                b = Larvae.GetLarva(b.BaseName, true);
+            }
+
+            bool toChild = false;
+
+            foreach (KeyValuePair<string, Larva> p in Larvae.Items)
+            {
+                if (p.Value.BaseName == larva.Name && p.Value.Methods.Contains(Name))
+                {
+                    toChild = true;
+                    break;
+                }
+            }
+
+            switch (Larvae.GetElement(ElementType.OutputLanguage).ToUpper())
+            {
+                case "C++":
+                    if (toChild)
+                    {
+                        m = "virtual " + m;
+                    }
+                    break;
+
+                case "C#":
+                    if (fromBase)
+                    {
+                        m = "override " + m;
+                    }
+                    else if (toChild)
+                    {
+                        m = "virtual " + m;
+                    }
+                    
+                    break;
+            }
+
             m = Variables.ReplaceAll(m, larva).Replace("%larva%", larva.Name).Replace("%method%", Name);
 
             return m;
         }
+
+        public static bool tt1(KeyValuePair<string, Larva> x)
+        {
+            return true;
+        }
+
+        public static bool tt2(KeyValuePair<string, Larva> x)
+        {
+            return true;
+        }
+
+        
 
         public string GetDefinition(Larva larva)
         {
