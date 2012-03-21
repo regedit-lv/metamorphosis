@@ -36,23 +36,33 @@ namespace Metamorphosis
             Larvae.Elements[elementType] = value;
         }
 
-        static public Larva GetLarva(string name, bool existingOnly = false)
+        static public Larva GetLarva(string fullName, bool existingOnly = false)
         {
-            if (name != null && Items.ContainsKey(name))
+            if (fullName != null && Items.ContainsKey(fullName))
             {
-                return Items[name];
+                return Items[fullName];
             }
             else
             {
+                // try to add current namespace if name is without . (maybe from local namespace)
+                if (fullName != null && !fullName.Contains('.'))
+                {                    
+                    string realyFullName = GetFullName(fullName);
+                    if (Items.ContainsKey(realyFullName))
+                    {
+                        return Items[realyFullName];
+                    }
+                }
+
                 if (existingOnly)
                 {
                     return null;
                 }
 
                 Larva l = new Larva();
-                l.Name = name;
+                l.Name = l.FullName = fullName;
                 l.Type = LarvaType.Custom;
-                Items[name] = l;
+                Items[fullName] = l;
                 return l;
             }
         }
@@ -330,47 +340,19 @@ namespace Metamorphosis
                 }
             }
 
-            switch (Elements[ElementType.OutputLanguage].ToUpper())
+            Generator.Current.Generate();
+        }
+
+        public static string GetFullName(string larvaName)
+        {
+            string ns = GetElement(ElementType.Namespace);
+
+            if (ns != "")
             {
-                case "C++":
-                    {
-                        CppGenerator g = new CppGenerator(outputFile);
-                        g.Generate();
-                        break;
-                    }
-
-                case "C#":
-                    {
-                        string ns = GetElement(ElementType.Namespace);
-
-                        CsGenerator g = new CsGenerator(outputFile);
-
-                        g.AddDeclarationText(GetElement(ElementType.IncludeDeclarationTop));
-
-                        foreach (string importName in Imports)
-                        {
-                            string n = Program.RemoveExtension(importName);
-                            g.AddDeclarationText(GetElement(ElementType.ImportInclude).Replace("%name%", n));
-                        }
-
-                        g.AddDeclarationText(GetElement(ElementType.UserIncludeDeclarationTop));
-
-                        if (ns != null)
-                        {
-                            g.AddDeclarationText("namespace " + ns + Environment.NewLine + "{");
-                        }
-
-                        g.WriteLarvae(Items);
-
-                        if (ns != null)
-                        {
-                            g.AddDeclarationText(Environment.NewLine + "}");
-                        }
-
-                        g.SaveToFile();
-                        break;
-                    }
+                larvaName = ns + "." + larvaName;
             }
+
+            return larvaName;
         }
     }
 }

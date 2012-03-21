@@ -46,6 +46,7 @@
     <Compile Include="CommandProcessor.cs" />
     <Compile Include="Generators\CppGenerator.cs" />
     <Compile Include="Generators\CsGenerator.cs" />
+    <Compile Include="Generators\Generator.cs" />
     <Compile Include="Larva.cs" />
     <Compile Include="Larvae.cs" />
     <Compile Include="Method.cs" />
@@ -65,7 +66,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="def.met" />
+    <None Include="def.met">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="xmq.met">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

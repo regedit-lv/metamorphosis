@@ -1,34 +1,69 @@
-﻿Namespace xmq
+﻿Namespace xmq.administration
 
-enum TE
+struct Property
 %{
-    AA,
-    BB = 3,
-    CC
+    String key;
+	String value;
+%} : read write size;
+
+enum MessageType
+%{
+    None,
+    Connect,
+    Disconnect,
+    ConnectionInfo
 %}
 
-struct SM
+enum ConnectionType
 %{
-    Map String String mss;
-%} : read write size;
-
-struct SubStruct
-%{
-    int32 subI;
-    String subString;
-%} : read write size;
-
-struct BaseStruct
-%{
-    String bs;
-    int32 bi;
+    Bus,
+    Client,
+    Module,
 %}
 
-struct TestStruct : BaseStruct base { bs = "bs_value", bi = 3 }
-%{    
-    SubStruct sub;
-    uint32 ui;
-    Array int32 ai;
-    String s;
-    Array Array String ass;
+struct BaseMessage
+%{
+    MessageType messageType;
 %} : read write size;
+
+struct ConnectMessage : BaseMessage base { messageType = MessageType.Connect }
+%{
+%} : read write size;
+
+struct DisconnectMessage : BaseMessage base { messageType = MessageType.Disconnect }
+%{
+%} : read write size;
+
+struct ConnectionInfoMessage : BaseMessage base { messageType = MessageType.ConnectionInfo }
+%{
+    ConnectionType type;
+    String name;
+    bool connected;
+    Array Property settingsCollection;
+%} : read write size;
+
+## Namespace xmq
+## 
+## import def.met
+## 
+## struct SubStruct
+## %{
+##     String subString;
+## %} : read write size;
+## 
+## struct BaseStruct
+## %{
+##     String bs;
+##     int32 bi;
+## %} : read write size;
+## 
+## struct TestStruct : BaseStruct
+## %{
+##     Array xmq.def.SubStruct sd;
+##     Array SubStruct sx;
+##     Array String as;
+##     String s;
+##     int32 i;
+## %} : read write size;
+
+

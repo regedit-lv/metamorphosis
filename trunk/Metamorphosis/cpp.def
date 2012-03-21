@@ -80,12 +80,13 @@ namespace %name%
 };
 !}
 
+type 1 default bool = bool
 type 1 default int32 = int
 type 1 default uint32 = !{unsigned int!}
 type 1 string String = std::string
 type 2 array Array = std::vector<%type0%>
-type 1 struct struct = !{struct %name%!}
-type 1 default enum = !{enum %name%::Type!}
+type 1 struct struct = !{struct %namespace%::%name%!}
+type 1 default enum = !{enum %namespace%::%name%::Type!}
 type 3 map Map = !{std::map<%type0%, %type1%>!}
 
 
@@ -117,9 +118,9 @@ size_t s_%field% = sizeof(size_t);
     {
         %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_name% = %field%[i];
         
-        %#method size body body#%_e_name%#%!Larva.SubLarvae[0].Name%#%
+        %#method size body body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
         
-        s_%field% += 0 %#method size body return#%_e_name%#%!Larva.SubLarvae[0].Name%#%;
+        s_%field% += 0 %#method size body return#%_e_name%#%!Larva.SubLarvae[0].FullName%#%;
     }
 }
 !}
@@ -134,11 +135,11 @@ size_t s_%field% = sizeof(size_t);
         const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_key% = it->first;
         const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_value% = it->second;
         
-        %#method size body body#%_e_key%#%!Larva.SubLarvae[0].Name%#%
-        %#method size body body#%_e_value%#%!Larva.SubLarvae[1].Name%#%
+        %#method size body body#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
+        %#method size body body#%_e_value%#%!Larva.SubLarvae[1].FullName%#%
         
-        s_%field% += 0 %#method size body return#%_e_key%#%!Larva.SubLarvae[0].Name%#%
-                       %#method size body return#%_e_value%#%!Larva.SubLarvae[1].Name%#%;
+        s_%field% += 0 %#method size body return#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
+                       %#method size body return#%_e_value%#%!Larva.SubLarvae[1].FullName%#%;
     }
 }
 !}
@@ -184,7 +185,7 @@ for (size_t i = 0; i < %field%.size(); i++)
 {
     %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_name% = %field%[i];
         
-    %#method write body#%_e_name%#%!Larva.SubLarvae[0].Name%#%
+    %#method write body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
 }
 !}
 
@@ -203,8 +204,8 @@ writer.write<size_t>(%field%.size());
         const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_key% = it->first;
         const %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_value% = it->second;
         
-        %#method write body#%_e_key%#%!Larva.SubLarvae[0].Name%#%
-        %#method write body#%_e_value%#%!Larva.SubLarvae[1].Name%#%
+        %#method write body#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
+        %#method write body#%_e_value%#%!Larva.SubLarvae[1].FullName%#%
     }
 }
 !}
@@ -243,7 +244,7 @@ for (size_t i = 0; i < s_%field%; i++)
 {
     %!Larva.SubLarvae[0].GetTypeDefinition()% &%_e_name% = %field%[i];
         
-    %#method read body#%_e_name%#%!Larva.SubLarvae[0].Name%#%
+    %#method read body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
 }
 !}
 
@@ -256,8 +257,8 @@ for (size_t i = 0; i < s_%field%; i++)
     %!Larva.SubLarvae[0].GetTypeDefinition()% %_e_key%;
     %!Larva.SubLarvae[0].GetTypeDefinition()% %_e_value%;
         
-    %#method read body#%_e_key%#%!Larva.SubLarvae[0].Name%#%
-    %#method read body#%_e_value%#%!Larva.SubLarvae[1].Name%#%
+    %#method read body#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
+    %#method read body#%_e_value%#%!Larva.SubLarvae[1].FullName%#%
     
     %field%[%_e_key%] = %_e_value%;
 }
@@ -341,7 +342,7 @@ for (size_t i = 0; i < %field%.size(); i++)
 {
     %!Larva.SubLarvae[0].GetTypeDefinition()% &%field%_sub = %field%[i];
 
-    %#method toXml body#%field%_sub#%!Larva.SubLarvae[0].Name%#%
+    %#method toXml body#%field%_sub#%!Larva.SubLarvae[0].FullName%#%
 }
 
 parent = parent_%field%;

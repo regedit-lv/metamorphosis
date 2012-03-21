@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Metamorphosis
 {
-    class CppGenerator
+    class CppGenerator : Generator
     {
         string OutputFile;
         List<string> declaraion = new List<string>();
@@ -15,14 +15,18 @@ namespace Metamorphosis
         string HeaderFile;
         string CppFile;
 
-        public CppGenerator(string outputFile)
+        public CppGenerator()
+        {
+        }
+
+        public override void SetOutputFile(string outputFile)
         {
             OutputFile = outputFile;
             HeaderFile = OutputFile + ".h";
-            CppFile = OutputFile + ".cpp"; 
+            CppFile = OutputFile + ".cpp";
         }
 
-        public void SaveToFile()
+        void SaveToFile()
         {
             StreamWriter declarationFile = new StreamWriter(HeaderFile);
             StreamWriter definitionFile = new StreamWriter(CppFile);            
@@ -41,7 +45,7 @@ namespace Metamorphosis
             definitionFile.Close();
         }
 
-        public void WriteLarvae(Dictionary<string, Larva> items)
+        void WriteLarvae(Dictionary<string, Larva> items)
         {
             foreach (KeyValuePair<string, Larva> pair in items)
             {
@@ -61,7 +65,7 @@ namespace Metamorphosis
 
         }
 
-        public void AddDeclarationText(string text)
+        void AddDeclarationText(string text)
         {
             if (text != null)
             {
@@ -69,7 +73,7 @@ namespace Metamorphosis
             }
         }
 
-        public void AddDefinitionText(string text)
+        void AddDefinitionText(string text)
         {
             if (text != null)
             {
@@ -77,8 +81,7 @@ namespace Metamorphosis
             }
         }
 
-
-        public void Generate()
+        public override void Generate()
         {
             string[] namespaces = Larvae.GetElement(ElementType.Namespace).Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -109,6 +112,21 @@ namespace Metamorphosis
             }
 
             SaveToFile();            
+        }
+
+        public override string GetVirtualModificator(bool fromBase, bool toChild)
+        {
+            if (toChild)
+            {
+                return "virtual ";
+            }
+
+            return "";
+        }
+
+        public override string GetNamespace(string metaNamespace)
+        {
+            return metaNamespace.Replace(".", "::");
         }
     }
 }

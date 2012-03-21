@@ -166,28 +166,7 @@ namespace Metamorphosis
                 }
             }
 
-            switch (Larvae.GetElement(ElementType.OutputLanguage).ToUpper())
-            {
-                case "C++":
-                    if (toChild)
-                    {
-                        m = "virtual " + m;
-                    }
-                    break;
-
-                case "C#":
-                    if (fromBase)
-                    {
-                        m = "override " + m;
-                    }
-                    else if (toChild)
-                    {
-                        m = "virtual " + m;
-                    }
-                    
-                    break;
-            }
-
+            m = Generator.Current.GetVirtualModificator(fromBase, toChild) + m;
             m = Variables.ReplaceAll(m, larva).Replace("%larva%", larva.Name).Replace("%method%", Name);
 
             return m;
