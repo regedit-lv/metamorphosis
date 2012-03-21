@@ -326,7 +326,12 @@ namespace Metamorphosis
                 case "struct":
                 {
                     // parse struct data
-                    Larva larva = Larvae.GetLarva(GetNextToken());
+                    string larvaName = GetNextToken();
+                    string fullName = Larvae.GetFullName(larvaName);
+                    Larva larva = Larvae.GetLarva(fullName);
+                    larva.Name = larvaName;
+
+                    larva.Namespace = Larvae.GetElement(ElementType.Namespace);
 
                     if (Mode == ParserMode.Import)
                     {
@@ -459,7 +464,21 @@ namespace Metamorphosis
                 case "enum":
                 {
                     // parse struct data
-                    Larva larva = Larvae.GetLarva(GetNextToken());
+                    string larvaName = GetNextToken();
+                    string fullName = Larvae.GetFullName(larvaName);
+                    Larva larva = Larvae.GetLarva(fullName);
+                    larva.Name = larvaName;
+                    larva.Namespace = Larvae.GetElement(ElementType.Namespace);
+
+                    if (Mode == ParserMode.Import)
+                    {
+                        larva.Mode = LarvaMode.Skip;
+                    }
+                    else
+                    {
+                        larva.Mode = LarvaMode.Generate;
+                    }
+
                     larva.Type = LarvaType.Enum;
                     token = GetNextToken();
 
@@ -512,8 +531,12 @@ namespace Metamorphosis
                 {
                     string fileName = GetNextToken();
                     Larvae.AddImport(fileName);
+                    // save current namespace
+                    string ns = Larvae.GetElement(ElementType.Namespace);
                     Parser p = new Parser(Program.ReadAllText(fileName), ParserMode.Import);
                     p.Parse();
+                    // restore namespace
+                    Larvae.SetElement(ElementType.Namespace, ns);
                     return ElementType.Import;
                 }
 
@@ -590,6 +613,11 @@ namespace Metamorphosis
 
             if (td == null)
             {
+                if (!type.Contains('.'))
+                {
+                    type = Larvae.GetFullName(type);
+                }
+
                 l = Larvae.GetLarva(type, true);
                 if (l == null)
                 {
@@ -624,7 +652,7 @@ namespace Metamorphosis
                     for (int i = 1; i < td.Length; i++)
                     {
                         Larva sl = GetLarva();
-                        fullType += "." + sl.Name;
+                        fullType += "." + sl.FullName;
                         subLarvae.Add(sl);
                     }
                 }
@@ -652,8 +680,8 @@ namespace Metamorphosis
                 {
                     case ElementType.Enum:
                     case ElementType.Struct:
-                        Larva l = GetElement() as Larva;
-                        Larvae.Items[l.Name] = l;
+                        //Larva l = GetElement() as Larva;
+                        //Larvae.Items[l.Name] = l;
                         break;
 
                     case ElementType.EOF:
@@ -662,6 +690,10 @@ namespace Metamorphosis
                         return;
 
                     case ElementType.Import:
+                        break;
+
+                    case ElementType.Namespace:
+                        Larvae.SetElement(t, GetElement() as string);
                         break;
 
                     default:

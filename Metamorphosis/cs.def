@@ -61,6 +61,7 @@ public enum %name% : int
 }
 !}
 
+type 1 default bool = bool
 type 1 default int32 = int
 type 1 default uint32 = uint
 type 1 string String = string

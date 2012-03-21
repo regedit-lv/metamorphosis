@@ -52,7 +52,9 @@ namespace Metamorphosis
         public LarvaType Type;
         public List<Larva> SubLarvae;
         public string Name;
+        public string FullName;
         public string BaseName;
+        public string Namespace;
         public List<Part> Parts = new List<Part>();
         public List<Part> BaseParts = new List<Part>();
         public LarvaMode Mode;
@@ -85,6 +87,16 @@ namespace Metamorphosis
                     string t = "%type" + i.ToString() + "%";
                     typeName = typeName.Replace(t, sl.GetTypeDefinition());
                 }
+            }
+
+            if (Namespace != null)
+            {
+                string ns = Generator.Current.GetNamespace(Namespace);
+                typeName = typeName.Replace("%namespace%", ns);
+            }
+            else
+            {
+                typeName = typeName.Replace("%namespace%", "");
             }
 
             return typeName;

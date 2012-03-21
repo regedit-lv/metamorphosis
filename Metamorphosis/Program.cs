@@ -59,6 +59,8 @@ namespace Metamorphosis
                 return;
             }
 
+            Generator.SetGenerator(Larvae.GetElement(ElementType.OutputLanguage));
+
             Directory.CreateDirectory(path);
             
             path += @"\";
@@ -67,6 +69,7 @@ namespace Metamorphosis
 
             path += name;
 
+            Generator.Current.SetOutputFile(path);
             Larvae.SetElement(ElementType.OutputName, name);
 
             string larvaeDefinition = ReadAllText(fileName);

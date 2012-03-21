@@ -6,13 +6,17 @@ using System.IO;
 
 namespace Metamorphosis
 {
-    class CsGenerator
+    class CsGenerator : Generator
     {
         string OutputFile;
         List<string> declaraion = new List<string>();
         string SourceFile;
 
-        public CsGenerator(string outputFile)
+        public CsGenerator()
+        {
+        }
+
+        public override void SetOutputFile(string outputFile)
         {
             OutputFile = outputFile;
             SourceFile = OutputFile + ".cs";
@@ -50,5 +54,55 @@ namespace Metamorphosis
                 declaraion.Add(text.Replace("%n%", Environment.NewLine).Replace("%t%", Larvae.GetIndent(1)));
             }
         }
+
+        public override void Generate()
+        {
+            string ns = Larvae.GetElement(ElementType.Namespace);
+
+            AddDeclarationText(Larvae.GetElement(ElementType.IncludeDeclarationTop));
+
+            foreach (string importName in Larvae.Imports)
+            {
+                string n = Program.RemoveExtension(importName);
+                AddDeclarationText(Larvae.GetElement(ElementType.ImportInclude).Replace("%name%", n));
+            }
+
+            AddDeclarationText(Larvae.GetElement(ElementType.UserIncludeDeclarationTop));
+
+            if (ns != null)
+            {
+                AddDeclarationText("namespace " + ns + Environment.NewLine + "{");
+            }
+
+            WriteLarvae(Larvae.Items);
+
+            if (ns != null)
+            {
+                AddDeclarationText(Environment.NewLine + "}");
+            }
+
+            SaveToFile();
+        }
+
+        public override string GetVirtualModificator(bool fromBase, bool toChild)
+        {
+            if (fromBase)
+            {
+                return "override ";
+            }
+            else if (toChild)
+            {
+                return "virtual ";
+            }
+
+
+            return "";
+        }
+
+        public override string GetNamespace(string metaNamespace)
+        {
+            return metaNamespace;
+        }
+
     }
 }
