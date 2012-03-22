@@ -1,46 +1,46 @@
-﻿Namespace xmq.administration
+﻿Namespace xmq.bus.configuration
 
-struct Property
+struct Module
 %{
-    String key;
-	String value;
-%} : read write size;
-
-enum MessageType
-%{
-    None,
-    Connect,
-    Disconnect,
-    ConnectionInfo
-%}
-
-enum ConnectionType
-%{
-    Bus,
-    Client,
-    Module,
-%}
-
-struct BaseMessage
-%{
-    MessageType messageType;
-%} : read write size;
-
-struct ConnectMessage : BaseMessage base { messageType = MessageType.Connect }
-%{
-%} : read write size;
-
-struct DisconnectMessage : BaseMessage base { messageType = MessageType.Disconnect }
-%{
-%} : read write size;
-
-struct ConnectionInfoMessage : BaseMessage base { messageType = MessageType.ConnectionInfo }
-%{
-    ConnectionType type;
     String name;
-    bool connected;
-    Array Property settingsCollection;
-%} : read write size;
+    String id;
+%} : toXml fromXml;
+
+struct IpRagne
+%{
+    String from;
+    String to;
+%} : toXml fromXml;
+
+struct Instance
+%{
+    String name;
+    int32 id;
+    String host;
+    int32 port;
+%} : toXml fromXml;
+
+struct Path
+%{
+    String modules;
+    String modulesData;
+%} : toXml fromXml;
+
+struct Connection
+%{
+    String host;
+    int32 port;
+%} : toXml fromXml;
+
+struct Configuration
+%{
+    Instance instance;
+    Path path;
+    Array Connection busses;
+    Array IpRagne whiteIp;
+    Array IpRagne blackIp;
+    Array Module modules;
+%} : toXml fromXml;
 
 ## Namespace xmq
 ## 
