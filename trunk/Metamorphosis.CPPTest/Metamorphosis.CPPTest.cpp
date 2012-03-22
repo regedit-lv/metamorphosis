@@ -10,6 +10,62 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    xmq::bus::configuration::Configuration conf;
+    xmq::bus::configuration::IpRagne ir;
+
+    ir.from = "192.168.0.1";
+    ir.to = "192.168.0.255";
+    conf.whiteIp.push_back(ir);
+    ir.from = "192.168.1.1";
+    ir.to = "192.168.1.255";
+    conf.whiteIp.push_back(ir);
+    ir.from = "192.168.0.111";
+    ir.to = "192.168.0.120";
+    conf.blackIp.push_back(ir);
+
+    xmq::bus::configuration::Connection c;
+    c.host = "localhost";
+    c.port = 40001;
+    conf.busses.push_back(c);
+    c.port = 40002;
+    conf.busses.push_back(c);
+
+    conf.path.modules = "C:\\DataPath";
+    conf.path.modulesData = "C:\\Path";
+    conf.instance.host = "localhost";
+    conf.instance.name = "bus1";
+    conf.instance.port = 2000;
+    conf.instance.id = 12;
+    std::string xml = conf.toXml(nullptr);
+
+    std::cout << xml << std::endl;
+
+
+    TiXmlDocument doc;
+
+    doc.Parse(xml.c_str());
+
+    long a = sizeof(long);;
+
+    TiXmlElement *root = doc.RootElement();
+
+    std::cout << root->Value() << std::endl;
+
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        const char * s = child->Value();
+        if (strcmp(child->Value(), "instance") == 0)
+        {
+        }
+    }
+    
+    int aaa = _stricmp("AA", "aa");
+    xmq::bus::configuration::Configuration conf2;
+
+    conf2.fromXml(xml, nullptr);
+
+    return 0;
+    /*
     xmq::SM sm, sm2;
 
     sm.mss["asd"] = "123";
@@ -38,11 +94,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
     ts.sub.subI = 3;
     ts.sub.subString = "sub string value";
-
+    */
     //std::string xml = ts.toXml(nullptr);
 
     //std::cout << xml << std::endl;
-
+    /*
     TiXmlDocument doc;
     TiXmlDeclaration * decl = new TiXmlDeclaration("1.0", "", "");
     TiXmlElement * element = new TiXmlElement("Hello");
@@ -61,7 +117,7 @@ int _tmain(int argc, _TCHAR* argv[])
     std::string xmltext = printer.CStr();
 
     std::cout << xmltext;
-
+    */
  //   xmq::TestStruct ts, ts2;
  //   ts.ss.i = 0;
  //   ts.ss.sub_ai.push_back(123);

@@ -2,69 +2,79 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <cstdint>
 #include "tinyXML\tinyxml.h"
 
 
 namespace xmq
 {
-
-namespace TE
+namespace bus
 {
-    enum Type
-    {
-        AA ,
-        BB = 3 ,
-        CC ,
-        
-    };
-};
-
-
-struct SM 
+namespace configuration
 {
-    std::map<std::string, std::string> mss ;
+
+struct IpRagne 
+{
+    std::string from ;
+    std::string to ;
     
-    SM() ;
-    void read(const void *data) ;
-    size_t write(void **data) ;
-    size_t size(void) ; 
+    IpRagne() ;
+    std::string toXml(TiXmlElement *parentNode) ;
+    void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
 };
 
 
-struct SubStruct 
+struct Instance 
 {
-    int subI ;
-    std::string subString ;
+    std::string name ;
+    int32_t id ;
+    std::string host ;
+    int32_t port ;
     
-    SubStruct() ;
-    void read(const void *data) ;
-    size_t write(void **data) ;
-    size_t size(void) ; 
+    Instance() ;
+    std::string toXml(TiXmlElement *parentNode) ;
+    void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
 };
 
 
-struct BaseStruct 
+struct Path 
 {
-    std::string bs ;
-    int bi ;
+    std::string modules ;
+    std::string modulesData ;
     
-    BaseStruct() ; 
+    Path() ;
+    std::string toXml(TiXmlElement *parentNode) ;
+    void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
 };
 
 
-struct TestStruct : public BaseStruct
+struct Connection 
 {
-    struct SubStruct sub ;
-    unsigned int ui ;
-    std::vector<int> ai ;
-    std::string s ;
-    std::vector<std::vector<std::string>> ass ;
+    std::string host ;
+    int32_t port ;
     
-    TestStruct() ;
-    void read(const void *data) ;
-    size_t write(void **data) ;
-    size_t size(void) ; 
+    Connection() ;
+    std::string toXml(TiXmlElement *parentNode) ;
+    void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
 };
 
+
+struct Configuration 
+{
+    struct xmq::bus::configuration::Instance instance ;
+    struct xmq::bus::configuration::Path path ;
+    std::vector<struct xmq::bus::configuration::Connection> busses ;
+    std::vector<struct xmq::bus::configuration::IpRagne> whiteIp ;
+    std::vector<struct xmq::bus::configuration::IpRagne> blackIp ;
+    
+    Configuration() ;
+    std::string toXml(TiXmlElement *parentNode) ;
+    void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
+};
+
+
+}
+
+}
 
 }

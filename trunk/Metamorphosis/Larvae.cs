@@ -112,7 +112,7 @@ namespace Metamorphosis
             return text;
         }
 
-        public static string ReplaceExpression(string text, object obj)
+        public static string ReplaceExpression(ref string text, object obj)
         {
             while (true)
             {
@@ -155,7 +155,7 @@ namespace Metamorphosis
                 }
             }
 
-            text = ReplaceExpression(text, part);
+            ReplaceExpression(ref text, part);
 
             while (true)
             {

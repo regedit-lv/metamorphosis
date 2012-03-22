@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <cstdint>
 #include "tinyXML\tinyxml.h"
 !}
 
@@ -81,8 +82,8 @@ namespace %name%
 !}
 
 type 1 default bool = bool
-type 1 default int32 = int
-type 1 default uint32 = !{unsigned int!}
+type 1 default int32 = int32_t
+type 1 default uint32 = uint32_t
 type 1 string String = std::string
 type 2 array Array = std::vector<%type0%>
 type 1 struct struct = !{struct %namespace%::%name%!}
@@ -303,10 +304,7 @@ method toXml body default = !{
 { // %field%
     std::stringstream oss;
     oss << %field%;
-    TiXmlElement * element = new TiXmlElement("%field%");
-    TiXmlText * text = new TiXmlText(oss.str().c_str());
-    element->LinkEndChild(text);
-    parent->LinkEndChild(element);
+    parent->SetAttribute("%field%", oss.str().c_str());
 }
 !}
 
@@ -314,10 +312,7 @@ method toXml body string = !{
 { // %field%
     std::stringstream oss;
     oss << %field%;
-    TiXmlElement * element = new TiXmlElement("%field%");
-    TiXmlText * text = new TiXmlText(oss.str().c_str());
-    element->LinkEndChild(text);
-    parent->LinkEndChild(element);
+    parent->SetAttribute("%field%", oss.str().c_str());
 }
 !}
 
@@ -340,10 +335,120 @@ parent = %field%_element;
 
 for (size_t i = 0; i < %field%.size(); i++)
 {
-    %!Larva.SubLarvae[0].GetTypeDefinition()% &%field%_sub = %field%[i];
+    %!Larva.SubLarvae[0].GetTypeDefinition()% &%!Larva.SubLarvae[0].Name% = %field%[i];
 
-    %#method toXml body#%field%_sub#%!Larva.SubLarvae[0].FullName%#%
+    %#method toXml body#%!Larva.SubLarvae[0].Name%#%!Larva.SubLarvae[0].FullName%#%
 }
 
 parent = parent_%field%;
+!}
+
+method toXml body array string = !{ 
+// write array %field%
+TiXmlElement * %field%_element = new TiXmlElement("%field%");
+parent->LinkEndChild(%field%_element);
+%field%_element->SetAttribute("size", %field%.size());
+
+for (size_t i = 0; i < %field%.size(); i++)
+{
+    %!Larva.SubLarvae[0].GetTypeDefinition()% &%_value% = %field%[i];
+
+    TiXmlElement * %_element% = new TiXmlElement("%!Larva.SubLarvae[0].Name%");
+    
+    std::stringstream oss;
+    oss << %_value%;
+    %_element%->SetAttribute("value", oss.str().c_str());
+
+    %field%_element->LinkEndChild(%_element%);
+}
+!}
+
+
+## fromXml
+
+method fromXml param = !{const std::string &xml, TiXmlElement *parentNode!}
+method fromXml returnType = void
+
+method fromXml body =
+!{
+TiXmlElement *root;
+TiXmlDocument doc;
+
+if (parentNode == nullptr)
+{
+    doc.Parse(xml.c_str());
+    root = doc.RootElement();
+}
+else
+{
+    root = parentNode;
+}
+
+%readDirect%
+
+%~struct% 
+%~array% 
+
+!}
+
+method fromXml body readDirect = !{
+%~default% 
+%~string% 
+!}
+
+method fromXml body readDirect default = !{
+// %field%
+root->Attribute("%field%", &%field%);
+!}
+
+method fromXml body readDirect string = !{
+// %field%
+%field% = root->Attribute("%field%");
+!}
+
+method fromXml body readDirect struct = !{
+// %field%
+%field%.fromXml("", root);
+!}
+
+method fromXml body struct = !{ 
+// %field%
+for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+{
+    if (_stricmp(child->Value(), "%field%") == 0)
+    {
+        TiXmlElement *element = child->ToElement();
+        %field%.fromXml("", element);
+        break;
+    }
+}
+
+!}
+
+method fromXml body array = !{ 
+// read array %field%
+for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+{
+    if (_stricmp(child->Value(), "%field%") == 0)
+    {
+        TiXmlElement *element = child->ToElement();
+
+        TiXmlElement *originalRoot = root;
+
+        for (TiXmlNode *arrayChild = element->FirstChild(); arrayChild != 0; arrayChild = arrayChild->NextSibling()) 
+        {
+            root = arrayChild->ToElement();
+            
+            %!Larva.SubLarvae[0].GetTypeDefinition()% sub;
+
+            %#method fromXml body readDirect#sub#%!Larva.SubLarvae[0].FullName%#%
+
+            %field%.push_back(sub);
+        }
+
+        root = originalRoot;
+
+        break;
+    }
+}
 !}

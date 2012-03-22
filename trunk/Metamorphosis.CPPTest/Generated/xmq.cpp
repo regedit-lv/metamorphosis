@@ -8,302 +8,660 @@
 
 namespace xmq
 {
+namespace bus
+{
+namespace configuration
+{
  
-SM::SM()
+IpRagne::IpRagne()
 {
     
 }
 
  
-void SM::read(const void *data)
+std::string IpRagne::toXml(TiXmlElement *parentNode)
 {
     
-    ByteReader reader(data);
-    
-     
-    // read array mss
-    size_t s_mss = reader.read<size_t>();
-    
-    for (size_t i = 0; i < s_mss; i++)
+    TiXmlElement *parent;
+    if (parentNode == nullptr)
     {
-        std::string e_key_1;
-        std::string e_value_2;
-            
-        e_key_1 = reader.readString();
-        e_value_2 = reader.readString();
-        
-        mss[e_key_1] = e_value_2;
+        parent = new TiXmlElement("IpRagne");
+    }
+    else
+    {
+        parent = parentNode;
     }
     
     
+    { // from
+        std::stringstream oss;
+        oss << from;
+        parent->SetAttribute("from", oss.str().c_str());
+    }
     
-}
-
- 
-size_t SM::write(void **data)
-{
     
-    ByteWriter writer(*data, size());
-    
-     
-    // write map mss
-    writer.write<size_t>(mss.size());
-    {
-        for (std::map<std::string, std::string>::iterator it = mss.begin(); it != mss.end(); ++it)        
-        {
-            const std::string &e_key_1 = it->first;
-            const std::string &e_value_2 = it->second;
-            
-            writer.writeString(e_key_1);
-            writer.writeString(e_value_2);
-        }
+    { // to
+        std::stringstream oss;
+        oss << to;
+        parent->SetAttribute("to", oss.str().c_str());
     }
     
      
     
-    if (*data == NULL)
+    if (parentNode == nullptr)
     {
-        *data = writer.getData();
-        writer.giveBufferOwnership();
+        TiXmlDocument doc;
+        doc.LinkEndChild(parent);
+    
+        TiXmlPrinter printer;
+        printer.SetIndent("    ");
+        doc.Accept(&printer);
+        return printer.CStr();
+    }
+    else
+    {
+        return "";
     }
     
-    return writer.getDataSize();
+}
+
+ 
+void IpRagne::fromXml(const std::string &xml, TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *root;
+    TiXmlDocument doc;
+    
+    if (parentNode == nullptr)
+    {
+        doc.Parse(xml.c_str());
+        root = doc.RootElement();
+    }
+    else
+    {
+        root = parentNode;
+    }
+    
+    
+     
+    
+    // from
+    from = root->Attribute("from");
+    
+    
+    // to
+    to = root->Attribute("to");
+    
+     
+    
+    
+     
+     
+    
     
 }
 
  
-size_t SM::size(void)
+Instance::Instance()
 {
     
+}
+
+ 
+std::string Instance::toXml(TiXmlElement *parentNode)
+{
     
-    size_t s_mss = sizeof(size_t);
+    TiXmlElement *parent;
+    if (parentNode == nullptr)
     {
-        for (std::map<std::string, std::string>::iterator it = mss.begin(); it != mss.end(); ++it)        
-        {
-            const std::string &e_key_1 = it->first;
-            const std::string &e_value_2 = it->second;
-            
-            
-            
-            
-            s_mss += 0  + (2 + e_key_1.size())
-                            + (2 + e_value_2.size());
-        }
+        parent = new TiXmlElement("Instance");
+    }
+    else
+    {
+        parent = parentNode;
+    }
+    
+    
+    { // name
+        std::stringstream oss;
+        oss << name;
+        parent->SetAttribute("name", oss.str().c_str());
+    }
+    
+    
+    { // id
+        std::stringstream oss;
+        oss << id;
+        parent->SetAttribute("id", oss.str().c_str());
+    }
+    
+    
+    { // host
+        std::stringstream oss;
+        oss << host;
+        parent->SetAttribute("host", oss.str().c_str());
+    }
+    
+    
+    { // port
+        std::stringstream oss;
+        oss << port;
+        parent->SetAttribute("port", oss.str().c_str());
+    }
+    
+     
+    
+    if (parentNode == nullptr)
+    {
+        TiXmlDocument doc;
+        doc.LinkEndChild(parent);
+    
+        TiXmlPrinter printer;
+        printer.SetIndent("    ");
+        doc.Accept(&printer);
+        return printer.CStr();
+    }
+    else
+    {
+        return "";
+    }
+    
+}
+
+ 
+void Instance::fromXml(const std::string &xml, TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *root;
+    TiXmlDocument doc;
+    
+    if (parentNode == nullptr)
+    {
+        doc.Parse(xml.c_str());
+        root = doc.RootElement();
+    }
+    else
+    {
+        root = parentNode;
     }
     
     
     
-    return 0  + s_mss
-    ;
-    
-}
-
- 
-SubStruct::SubStruct()
-{
-    
-}
-
- 
-void SubStruct::read(const void *data)
-{
-    
-    ByteReader reader(data);
-    
-    subI = reader.read<int>();
-    subString = reader.readString();
+    // id
+    root->Attribute("id", &id);
     
     
-}
-
- 
-size_t SubStruct::write(void **data)
-{
+    // port
+    root->Attribute("port", &port);
     
-    ByteWriter writer(*data, size());
-    
-    writer.write<int>(subI);
-    writer.writeString(subString);
      
     
-    if (*data == NULL)
+    // name
+    name = root->Attribute("name");
+    
+    
+    // host
+    host = root->Attribute("host");
+    
+     
+    
+    
+     
+     
+    
+    
+}
+
+ 
+Path::Path()
+{
+    
+}
+
+ 
+std::string Path::toXml(TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *parent;
+    if (parentNode == nullptr)
     {
-        *data = writer.getData();
-        writer.giveBufferOwnership();
+        parent = new TiXmlElement("Path");
+    }
+    else
+    {
+        parent = parentNode;
     }
     
-    return writer.getDataSize();
     
-}
-
- 
-size_t SubStruct::size(void)
-{
-    
+    { // modules
+        std::stringstream oss;
+        oss << modules;
+        parent->SetAttribute("modules", oss.str().c_str());
+    }
     
     
-    return 0  + sizeof(int)
-     + (2 + subString.size())
-    ;
+    { // modulesData
+        std::stringstream oss;
+        oss << modulesData;
+        parent->SetAttribute("modulesData", oss.str().c_str());
+    }
     
-}
-
- 
-BaseStruct::BaseStruct()
-{
-    
-}
-
- 
-TestStruct::TestStruct() : BaseStruct()
-{
-    bs = "bs_value" ;
-    bi = 3 ;
-    
-}
-
- 
-void TestStruct::read(const void *data)
-{
-    
-    ByteReader reader(data);
-    
-    bs = reader.readString();
-    bi = reader.read<int>();
      
-    sub.read(reader.getPosition());
-    reader.skipBytes(sub.size()); 
     
-    ui = reader.read<unsigned int>();
-     
-    // read array ai
-    size_t s_ai = reader.read<size_t>();
-    ai.resize(s_ai);
-    reader.readBytes((char*)ai.data(), sizeof(int) * s_ai);
-    
-    s = reader.readString();
-     
-    // read array ass
-    size_t s_ass = reader.read<size_t>();
-    ass.resize(s_ass);
-    
-    for (size_t i = 0; i < s_ass; i++)
+    if (parentNode == nullptr)
     {
-        std::vector<std::string> &e_name_3 = ass[i];
-            
+        TiXmlDocument doc;
+        doc.LinkEndChild(parent);
+    
+        TiXmlPrinter printer;
+        printer.SetIndent("    ");
+        doc.Accept(&printer);
+        return printer.CStr();
+    }
+    else
+    {
+        return "";
+    }
+    
+}
+
+ 
+void Path::fromXml(const std::string &xml, TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *root;
+    TiXmlDocument doc;
+    
+    if (parentNode == nullptr)
+    {
+        doc.Parse(xml.c_str());
+        root = doc.RootElement();
+    }
+    else
+    {
+        root = parentNode;
+    }
+    
+    
+     
+    
+    // modules
+    modules = root->Attribute("modules");
+    
+    
+    // modulesData
+    modulesData = root->Attribute("modulesData");
+    
+     
+    
+    
+     
+     
+    
+    
+}
+
+ 
+Connection::Connection()
+{
+    
+}
+
+ 
+std::string Connection::toXml(TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *parent;
+    if (parentNode == nullptr)
+    {
+        parent = new TiXmlElement("Connection");
+    }
+    else
+    {
+        parent = parentNode;
+    }
+    
+    
+    { // host
+        std::stringstream oss;
+        oss << host;
+        parent->SetAttribute("host", oss.str().c_str());
+    }
+    
+    
+    { // port
+        std::stringstream oss;
+        oss << port;
+        parent->SetAttribute("port", oss.str().c_str());
+    }
+    
+     
+    
+    if (parentNode == nullptr)
+    {
+        TiXmlDocument doc;
+        doc.LinkEndChild(parent);
+    
+        TiXmlPrinter printer;
+        printer.SetIndent("    ");
+        doc.Accept(&printer);
+        return printer.CStr();
+    }
+    else
+    {
+        return "";
+    }
+    
+}
+
+ 
+void Connection::fromXml(const std::string &xml, TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *root;
+    TiXmlDocument doc;
+    
+    if (parentNode == nullptr)
+    {
+        doc.Parse(xml.c_str());
+        root = doc.RootElement();
+    }
+    else
+    {
+        root = parentNode;
+    }
+    
+    
+    
+    // port
+    root->Attribute("port", &port);
+    
+     
+    
+    // host
+    host = root->Attribute("host");
+    
+     
+    
+    
+     
+     
+    
+    
+}
+
+ 
+Configuration::Configuration()
+{
+    
+}
+
+ 
+std::string Configuration::toXml(TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *parent;
+    if (parentNode == nullptr)
+    {
+        parent = new TiXmlElement("Configuration");
+    }
+    else
+    {
+        parent = parentNode;
+    }
+    
+     
+    { // instance
+        TiXmlElement * element = new TiXmlElement("instance");
+        std::string xml = instance.toXml(element);
+        parent->LinkEndChild(element);
+    }
+    
+     
+    { // path
+        TiXmlElement * element = new TiXmlElement("path");
+        std::string xml = path.toXml(element);
+        parent->LinkEndChild(element);
+    }
+    
+     
+    // write array busses
+    TiXmlElement * busses_element = new TiXmlElement("busses");
+    parent->LinkEndChild(busses_element);
+    busses_element->SetAttribute("size", busses.size());
+    
+    TiXmlElement * parent_busses = parent;
+    parent = busses_element;
+    
+    for (size_t i = 0; i < busses.size(); i++)
+    {
+        struct xmq::bus::configuration::Connection &Connection = busses[i];
+    
          
-        // read array e_name_3
-        size_t s_e_name_3 = reader.read<size_t>();
-        e_name_3.resize(s_e_name_3);
-        
-        for (size_t i = 0; i < s_e_name_3; i++)
-        {
-            std::string &e_name_7 = e_name_3[i];
-                
-            e_name_7 = reader.readString();
+        { // Connection
+            TiXmlElement * element = new TiXmlElement("Connection");
+            std::string xml = Connection.toXml(element);
+            parent->LinkEndChild(element);
         }
         
     }
     
+    parent = parent_busses;
     
-    
-}
-
- 
-size_t TestStruct::write(void **data)
-{
-    
-    ByteWriter writer(*data, size());
-    
-    writer.writeString(bs);
-    writer.write<int>(bi);
      
-    void *p_sub = writer.getPosition();
-    sub.write(&p_sub);
-    writer.skipBytes(sub.size()); 
+    // write array whiteIp
+    TiXmlElement * whiteIp_element = new TiXmlElement("whiteIp");
+    parent->LinkEndChild(whiteIp_element);
+    whiteIp_element->SetAttribute("size", whiteIp.size());
     
-    writer.write<unsigned int>(ui);
+    TiXmlElement * parent_whiteIp = parent;
+    parent = whiteIp_element;
     
-    // write array ai
-    writer.write<size_t>(ai.size());
-    writer.writeBytes(ai.data(), sizeof(int) * ai.size() );
-    
-    writer.writeString(s);
-     
-    // write array ass
-    writer.write<size_t>(ass.size());
-    
-    for (size_t i = 0; i < ass.size(); i++)
+    for (size_t i = 0; i < whiteIp.size(); i++)
     {
-        std::vector<std::string> &e_name_3 = ass[i];
-            
+        struct xmq::bus::configuration::IpRagne &IpRagne = whiteIp[i];
+    
          
-        // write array e_name_3
-        writer.write<size_t>(e_name_3.size());
-        
-        for (size_t i = 0; i < e_name_3.size(); i++)
-        {
-            std::string &e_name_8 = e_name_3[i];
-                
-            writer.writeString(e_name_8);
+        { // IpRagne
+            TiXmlElement * element = new TiXmlElement("IpRagne");
+            std::string xml = IpRagne.toXml(element);
+            parent->LinkEndChild(element);
         }
         
     }
     
-     
+    parent = parent_whiteIp;
     
-    if (*data == NULL)
+     
+    // write array blackIp
+    TiXmlElement * blackIp_element = new TiXmlElement("blackIp");
+    parent->LinkEndChild(blackIp_element);
+    blackIp_element->SetAttribute("size", blackIp.size());
+    
+    TiXmlElement * parent_blackIp = parent;
+    parent = blackIp_element;
+    
+    for (size_t i = 0; i < blackIp.size(); i++)
     {
-        *data = writer.getData();
-        writer.giveBufferOwnership();
+        struct xmq::bus::configuration::IpRagne &IpRagne = blackIp[i];
+    
+         
+        { // IpRagne
+            TiXmlElement * element = new TiXmlElement("IpRagne");
+            std::string xml = IpRagne.toXml(element);
+            parent->LinkEndChild(element);
+        }
+        
     }
     
-    return writer.getDataSize();
+    parent = parent_blackIp;
+    
+     
+    
+    if (parentNode == nullptr)
+    {
+        TiXmlDocument doc;
+        doc.LinkEndChild(parent);
+    
+        TiXmlPrinter printer;
+        printer.SetIndent("    ");
+        doc.Accept(&printer);
+        return printer.CStr();
+    }
+    else
+    {
+        return "";
+    }
     
 }
 
  
-size_t TestStruct::size(void)
+void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
 {
     
+    TiXmlElement *root;
+    TiXmlDocument doc;
+    
+    if (parentNode == nullptr)
+    {
+        doc.Parse(xml.c_str());
+        root = doc.RootElement();
+    }
+    else
+    {
+        root = parentNode;
+    }
+    
+    
+     
      
     
-    size_t s_ass = sizeof(size_t);
+    
+     
+    // instance
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
     {
-        for (size_t i = 0; i < ass.size(); i++)
+        if (_stricmp(child->Value(), "instance") == 0)
         {
-            std::vector<std::string> &e_name_3 = ass[i];
-            
-            
-            size_t s_e_name_3 = sizeof(size_t);
+            TiXmlElement *element = child->ToElement();
+            instance.fromXml("", element);
+            break;
+        }
+    }
+    
+    
+     
+    // path
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        if (_stricmp(child->Value(), "path") == 0)
+        {
+            TiXmlElement *element = child->ToElement();
+            path.fromXml("", element);
+            break;
+        }
+    }
+    
+    
+     
+     
+    // read array busses
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        if (_stricmp(child->Value(), "busses") == 0)
+        {
+            TiXmlElement *element = child->ToElement();
+    
+            TiXmlElement *originalRoot = root;
+    
+            for (TiXmlNode *arrayChild = element->FirstChild(); arrayChild != 0; arrayChild = arrayChild->NextSibling()) 
             {
-                for (size_t i = 0; i < e_name_3.size(); i++)
-                {
-                    std::string &e_name_9 = e_name_3[i];
-                    
-                    
-                    
-                    s_e_name_3 += 0  + (2 + e_name_9.size());
-                }
+                root = arrayChild->ToElement();
+                
+                struct xmq::bus::configuration::Connection sub;
+    
+                
+                // sub
+                sub.fromXml("", root);
+                
+    
+                busses.push_back(sub);
             }
-            
-            
-            s_ass += 0  + s_e_name_3;
+    
+            root = originalRoot;
+    
+            break;
         }
     }
     
+     
+    // read array whiteIp
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        if (_stricmp(child->Value(), "whiteIp") == 0)
+        {
+            TiXmlElement *element = child->ToElement();
     
+            TiXmlElement *originalRoot = root;
     
-    return 0  + (2 + bs.size())
-     + sizeof(int)
-     + sub.size()
-     + sizeof(unsigned int)
-     + (sizeof(size_t) + sizeof(int) * ai.size())
-     + (2 + s.size())
-     + s_ass
-    ;
+            for (TiXmlNode *arrayChild = element->FirstChild(); arrayChild != 0; arrayChild = arrayChild->NextSibling()) 
+            {
+                root = arrayChild->ToElement();
+                
+                struct xmq::bus::configuration::IpRagne sub;
+    
+                
+                // sub
+                sub.fromXml("", root);
+                
+    
+                whiteIp.push_back(sub);
+            }
+    
+            root = originalRoot;
+    
+            break;
+        }
+    }
+    
+     
+    // read array blackIp
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        if (_stricmp(child->Value(), "blackIp") == 0)
+        {
+            TiXmlElement *element = child->ToElement();
+    
+            TiXmlElement *originalRoot = root;
+    
+            for (TiXmlNode *arrayChild = element->FirstChild(); arrayChild != 0; arrayChild = arrayChild->NextSibling()) 
+            {
+                root = arrayChild->ToElement();
+                
+                struct xmq::bus::configuration::IpRagne sub;
+    
+                
+                // sub
+                sub.fromXml("", root);
+                
+    
+                blackIp.push_back(sub);
+            }
+    
+            root = originalRoot;
+    
+            break;
+        }
+    }
+    
+     
+    
     
 }
 
+
+}
+
+}
 
 }

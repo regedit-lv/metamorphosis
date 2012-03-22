@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Metamorphosis
@@ -75,58 +76,85 @@ namespace Metamorphosis
 
         public string ReplaceAll(string text, Larva larva)
         {
-            if (text.IndexOf("%%") != -1)
+            while (true)
             {
-                string fields = "";
-                
-                // replace with base larva fields
-                Larva bl = larva;
-                while (true)
+                // check for expression
+                Match match = Regex.Match(text, @"%(~[^%]+)?%", RegexOptions.IgnoreCase);
+
+                // Here we check the Match instance.
+                if (match.Success)
                 {
-                    if (bl.BaseName == null)
+                    string v = match.Captures[0].Value;
+                    string group = null;
+
+                    if (v != "%%")
                     {
-                        break;
+                        group = v.Substring(2, v.Length - 3);
                     }
 
-                    bl = Larvae.GetLarva(bl.BaseName, true);
-                    if (bl == null)
+                    string fields = "";
+
+                    // replace with base larva fields
+                    Larva bl = larva;
+                    while (true)
                     {
-                        break;
+                        if (bl.BaseName == null)
+                        {
+                            break;
+                        }
+
+                        bl = Larvae.GetLarva(bl.BaseName, true);
+                        if (bl == null)
+                        {
+                            break;
+                        }
+
+                        foreach (Part p in bl.Parts)
+                        {
+                            if (group != null && group != p.Larva.TypeDefinition.Group)
+                            {
+                                continue;
+                            }
+
+                            string sp = ReplacePart(p);
+                            if (sp != "")
+                            {
+                                fields += sp + Environment.NewLine;
+                            }
+                        }
                     }
 
-                    foreach (Part p in bl.Parts)
+                    // replace with larva fields
+                    foreach (Part p in larva.Parts)
                     {
+                        if (group != null && group != p.Larva.TypeDefinition.Group)
+                        {
+                            continue;
+                        }
+
                         string sp = ReplacePart(p);
                         if (sp != "")
                         {
                             fields += sp + Environment.NewLine;
                         }
                     }
-                }
 
-                // replace with larva fields
-                foreach (Part p in larva.Parts)
+                    text = Larvae.ReplaceField(ref text, v, fields);
+                }
+                else
                 {
-                    string sp = ReplacePart(p);
-                    if (sp != "")
-                    {
-                        fields += sp + Environment.NewLine;
-                    }
+                    break;
                 }
-
-                return Larvae.ReplaceField(ref text, "%%", fields);
             }
-            else
+
+            // replace with variables
+            foreach (Variable v in Items)
             {
-                // replace with variables
-                foreach (Variable v in Items)
-                {
-                    string name = "%" + v.Name + "%";
-                    string value = v.Value;
-                    value = v.Variables.ReplaceAll(value, larva);
-                    Larvae.ReplaceExpression(value, larva);
-                    Larvae.ReplaceField(ref text, name, value);
-                }
+                string name = "%" + v.Name + "%";
+                string value = v.Value;
+                value = v.Variables.ReplaceAll(value, larva);
+                Larvae.ReplaceExpression(ref value, larva);
+                Larvae.ReplaceField(ref text, name, value);
             }
             return text;
         }

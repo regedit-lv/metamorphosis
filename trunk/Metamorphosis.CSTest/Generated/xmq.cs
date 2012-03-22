@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Helpers;
 
 
+
 namespace xmq
 {
 
@@ -103,72 +104,6 @@ public class SM
         
         return 0  + s_mss
         ;
-        
-    }
-     
-}
-
-
-public class SubStruct 
-{
-    public int subI ;
-    public string subString ;
-    
-     
-    public SubStruct()
-    {
-        
-    }
-    
-     
-    public void read(byte[] bytes, ByteReader byteReader = null)
-    {
-        
-        ByteReader reader = byteReader == null ? new ByteReader(bytes) : byteReader;
-        
-        reader.Read(out subI);
-        subString = reader.ReadString();
-        
-        
-    }
-    
-     
-    public byte[] write(ByteWriter byteWriter = null)
-    {
-        
-        ByteWriter writer = byteWriter == null ? new ByteWriter() : byteWriter;
-        
-        writer.Write(subI);
-        writer.WriteString(subString);
-         
-        
-        return writer.GetBuffer();
-        
-    }
-    
-     
-    public int size()
-    {
-        
-        
-        
-        return 0  + sizeof(int)
-         + (2 + subString.Length)
-        ;
-        
-    }
-     
-}
-
-
-public class BaseStruct 
-{
-    public string bs ;
-    public int bi ;
-    
-     
-    public BaseStruct()
-    {
         
     }
      
