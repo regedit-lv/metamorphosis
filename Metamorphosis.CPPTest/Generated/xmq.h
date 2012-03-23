@@ -13,12 +13,45 @@ namespace bus
 namespace configuration
 {
 
-struct IpRagne 
+enum class MetaType : int
+{
+    Int ,
+    String ,
+    Array ,
+    Object ,
+    
+};
+
+
+struct MetaData 
+{
+    xmq::bus::configuration::MetaType type ;
+    std::string name ;
+    std::vector<struct xmq::bus::configuration::MetaData> elements ;
+    
+    MetaData() ;
+    std::string toXml(TiXmlElement *parentNode) ;
+    void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
+};
+
+
+struct Module 
+{
+    std::string name ;
+    std::string id ;
+    
+    Module() ;
+    std::string toXml(TiXmlElement *parentNode) ;
+    void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
+};
+
+
+struct IpRange 
 {
     std::string from ;
     std::string to ;
     
-    IpRagne() ;
+    IpRange() ;
     std::string toXml(TiXmlElement *parentNode) ;
     void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
 };
@@ -61,11 +94,13 @@ struct Connection
 
 struct Configuration 
 {
+    struct xmq::bus::configuration::MetaData metaData ;
     struct xmq::bus::configuration::Instance instance ;
     struct xmq::bus::configuration::Path path ;
     std::vector<struct xmq::bus::configuration::Connection> busses ;
-    std::vector<struct xmq::bus::configuration::IpRagne> whiteIp ;
-    std::vector<struct xmq::bus::configuration::IpRagne> blackIp ;
+    std::vector<struct xmq::bus::configuration::IpRange> whiteIp ;
+    std::vector<struct xmq::bus::configuration::IpRange> blackIp ;
+    std::vector<struct xmq::bus::configuration::Module> modules ;
     
     Configuration() ;
     std::string toXml(TiXmlElement *parentNode) ;

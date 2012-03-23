@@ -104,6 +104,11 @@
     <ClCompile Include="tinyXML\tinyxmlerror.cpp" />
     <ClCompile Include="tinyXML\tinyxmlparser.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config.xml">
+      <DeploymentContent>true</DeploymentContent>
+    </Xml>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

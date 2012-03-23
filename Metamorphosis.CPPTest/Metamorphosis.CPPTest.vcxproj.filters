@@ -47,4 +47,7 @@
       <UniqueIdentifier>{385ba531-3a61-477b-b43f-638974356042}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="config.xml" />
+  </ItemGroup>
 </Project>

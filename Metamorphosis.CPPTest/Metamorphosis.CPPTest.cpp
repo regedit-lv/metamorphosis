@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include "xmq.h"
 
@@ -11,7 +12,15 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
     xmq::bus::configuration::Configuration conf;
-    xmq::bus::configuration::IpRagne ir;
+    xmq::bus::configuration::IpRange ir;
+    xmq::bus::configuration::Module m;
+    
+    m.name = "Module1";
+    m.id = "test1";
+    conf.modules.push_back(m);
+    m.name = "Module2";
+    m.id = "test2";
+    conf.modules.push_back(m);
 
     ir.from = "192.168.0.1";
     ir.to = "192.168.0.255";
@@ -62,7 +71,17 @@ int _tmain(int argc, _TCHAR* argv[])
     int aaa = _stricmp("AA", "aa");
     xmq::bus::configuration::Configuration conf2;
 
-    conf2.fromXml(xml, nullptr);
+    std::ifstream infile("config.xml");
+    std::string allText = "";
+    std::string line;
+
+    while(!infile.eof()) // To get you all the lines.
+    {
+	    getline(infile, line); // Saves the line in STRING.
+	    allText += line;
+    }
+
+    conf2.fromXml(allText, nullptr);
 
     return 0;
     /*

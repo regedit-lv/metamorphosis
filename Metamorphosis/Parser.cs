@@ -14,6 +14,7 @@ namespace Metamorphosis
         Method,
         Type,
         OutputLanguage,
+        DefinitionFile,
 
         ImportInclude,
 
@@ -58,8 +59,10 @@ namespace Metamorphosis
 
     enum ParserMode
     {
+        Unknown,
         Normal,
-        Import,
+        ImportRules,
+        ImportLarva,
     };
 
     class Parser
@@ -333,13 +336,16 @@ namespace Metamorphosis
 
                     larva.Namespace = Larvae.GetElement(ElementType.Namespace);
 
-                    if (Mode == ParserMode.Import)
+                    switch (Mode)
                     {
-                        larva.Mode = LarvaMode.Skip;
-                    }
-                    else
-                    {
-                        larva.Mode = LarvaMode.Generate;
+                        case ParserMode.Normal:
+                        case ParserMode.ImportLarva:
+                            larva.Mode = LarvaMode.Generate;
+                            break;
+
+                        default:
+                            larva.Mode = LarvaMode.Skip;
+                            break;
                     }
 
                     larva.Type = LarvaType.Struct;
@@ -470,13 +476,16 @@ namespace Metamorphosis
                     larva.Name = larvaName;
                     larva.Namespace = Larvae.GetElement(ElementType.Namespace);
 
-                    if (Mode == ParserMode.Import)
+                    switch (Mode)
                     {
-                        larva.Mode = LarvaMode.Skip;
-                    }
-                    else
-                    {
-                        larva.Mode = LarvaMode.Generate;
+                        case ParserMode.Normal:
+                        case ParserMode.ImportLarva:
+                            larva.Mode = LarvaMode.Generate;
+                            break;
+
+                        default:
+                            larva.Mode = LarvaMode.Skip;
+                            break;
                     }
 
                     larva.Type = LarvaType.Enum;
@@ -529,11 +538,35 @@ namespace Metamorphosis
 
                 case "import":
                 {
+                    token = GetNextToken();
+                    ParserMode parserMode = ParserMode.Unknown;
+
+                    switch (token.ToLower())
+                    {
+                        case "larva":
+                            parserMode = ParserMode.ImportLarva;
+                            break;
+
+                        case "rules":
+                            parserMode = ParserMode.ImportRules;
+                            break;
+
+                        default:
+                            Console.WriteLine("Error. Unknown parser mode: " + token);
+                            return ElementType.Error;
+                            break;
+                    }
+
                     string fileName = GetNextToken();
-                    Larvae.AddImport(fileName);
+                    
+                    if (parserMode == ParserMode.ImportLarva)
+                    {
+                        Larvae.AddImport(fileName);
+                    }
+
                     // save current namespace
                     string ns = Larvae.GetElement(ElementType.Namespace);
-                    Parser p = new Parser(Program.ReadAllText(fileName), ParserMode.Import);
+                    Parser p = new Parser(Program.ReadAllText(fileName), parserMode);
                     p.Parse();
                     // restore namespace
                     Larvae.SetElement(ElementType.Namespace, ns);
@@ -697,7 +730,7 @@ namespace Metamorphosis
                         break;
 
                     default:
-                        if (Mode == ParserMode.Normal)
+                        if (Mode == ParserMode.Normal || Mode == ParserMode.ImportRules)
                         {
                             Larvae.SetElement(t, GetElement() as string);
                         }

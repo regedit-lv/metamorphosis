@@ -200,18 +200,6 @@ namespace Metamorphosis
             return m;
         }
 
-        public static bool tt1(KeyValuePair<string, Larva> x)
-        {
-            return true;
-        }
-
-        public static bool tt2(KeyValuePair<string, Larva> x)
-        {
-            return true;
-        }
-
-        
-
         public string GetDefinition(Larva larva)
         {
             string m = Larvae.GetElement(ElementType.MethodDefinition);

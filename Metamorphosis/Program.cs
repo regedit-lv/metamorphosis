@@ -47,25 +47,47 @@ namespace Metamorphosis
 
                     case "-ol":
                         Larvae.SetElement(ElementType.OutputLanguage, next);
-                        Larvae.ParseLanguageDefinition();
+                        i++;
+                        break;
+
+                    case "-df":
+                        Larvae.SetElement(ElementType.DefinitionFile, next);
+                        i++;
+                        break;
+
+                    case "-id":
+                        Directory.SetCurrentDirectory(next);
+                        i++;
+                        break;
+
+                    case "-on":
+                        Larvae.SetElement(ElementType.OutputName, next);
                         i++;
                         break;
                 }
             }
 
-            if (Larvae.GetElement(ElementType.OutputLanguage) == null)
+            if (Larvae.GetElement(ElementType.OutputLanguage) == "")
             {
                 Console.WriteLine("Error: output language is not set. Use -ol to set it. Example: -ol C++");
                 return;
             }
+
+            if (Larvae.GetElement(ElementType.OutputName) == "")
+            {
+                Console.WriteLine("Error: output name is not set. Use -ol to set it. Example: -on generated_from_meta");
+                return;
+            }
+
+            string name = Larvae.GetElement(ElementType.OutputName);
+
+            Larvae.ParseLanguageDefinition();
 
             Generator.SetGenerator(Larvae.GetElement(ElementType.OutputLanguage));
 
             Directory.CreateDirectory(path);
             
             path += @"\";
-
-            string name = Program.RemoveExtension(fileName);
 
             path += name;
 

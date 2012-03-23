@@ -1,0 +1,96 @@
+<configuration>
+  <metaData name="configuration" type="3">
+    <elements>
+      <MetaData name="instance" type="3">
+        <elements>
+          <MetaData name="name" type="1"/>
+          <MetaData name="id" type="0"/>
+          <MetaData name="host" type="1"/>
+          <MetaData name="port" type="0"/>
+        </elements>
+      </MetaData>
+
+      <MetaData name="whiteIp" type="2">
+        <elements>
+          <MetaData name="IpRange" type="3">
+            <elements>
+              <MetaData name="from" type="1"/>
+              <MetaData name="to" type="1"/>
+            </elements>
+          </MetaData>
+        </elements>
+      </MetaData>
+
+      <MetaData name="blackIp" type="2">
+        <elements>
+          <MetaData name="IpRange" type="3">
+            <elements>
+              <MetaData name="from" type="1"/>
+              <MetaData name="to" type="1"/>
+            </elements>
+          </MetaData>
+        </elements>
+      </MetaData>
+
+      <MetaData name="busses" type="2">
+        <elements>
+          <MetaData name="Connection" type="3">
+            <elements>
+              <MetaData name="host" type="1"/>
+              <MetaData name="port" type="0"/>
+            </elements>
+          </MetaData>
+        </elements>
+      </MetaData>
+
+      <MetaData name="modules" type="2">
+        <elements>
+          <MetaData name="Module" type="3">
+            <elements>
+              <MetaData name="name" type="1"/>
+              <MetaData name="id" type="1"/>
+            </elements>
+          </MetaData>
+        </elements>
+      </MetaData>
+    </elements>
+  </metaData>
+  
+  <instance name="bus3" id="13" port="4003" host="*"/>
+
+  <whiteIp>
+    <IpRange from = "192.168.1.100" to ="192.168.1.200"/>
+  </whiteIp>
+
+  <blackIp>
+    <IpRange from = "192.168.1.147" to ="192.168.1.147"/>
+  </blackIp>
+
+  <busses>
+    <connection2 host="YM-PC" port="4000"/>
+    <connection2 host="Hellada" port="4000" type="tcpip"/>
+    <connection2 host="Hellada" port="4002" type="tcpip"/>
+    <connection2 host="Hellada" port="4003" type="tcpip"/>
+    <connection2 host="Hellada" port="4004" type="tcpip"/>
+    <connection2 host="Hellada" port="4005" type="tcpip"/>
+  </busses>
+
+  <path modules = "%TELEMIK_HOME%\Modules\x64\Debug"
+        modulesData = "%TELEMIK_HOME%\Modules\Configs"/>
+
+  <modules>
+    <module2 name="XMQModule" id="storage"/>
+    <module2 name="XMQModule" id="storage_lock_read"/>
+    <module2 name="XMQModule" id="storage_lock_read"/>
+    <module2 name="XMQModule" id="storage_lock_write"/>
+    <module2 name="XMQModule" id="storage_lock_write"/>
+
+    <module2 name="XMQModule" id="r1"/>
+    <module2 name="XMQModule" id="w1"/>
+
+    <module2 name="XMQModule" id="settings_check"/>
+    <module name="Chainer" id="dj"/>
+    <module name="Mongo" id="dj"/>
+  </modules>
+
+</configuration>

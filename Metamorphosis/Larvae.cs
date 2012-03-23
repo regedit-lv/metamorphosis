@@ -75,19 +75,21 @@ namespace Metamorphosis
 
         public static void ParseLanguageDefinition()
         {
-            string ol = Elements[ElementType.OutputLanguage];
-            string fn = null;
-            switch (ol.ToUpper())
+            string fn = GetElement(ElementType.DefinitionFile);
+            if (fn == "")
             {
-                case "C++":
-                    fn = "cpp.def";
-                    break;
+                string ol = GetElement(ElementType.OutputLanguage);
+                switch (ol.ToUpper())
+                {
+                    case "C++":
+                        fn = "cpp.def";
+                        break;
 
-                case "C#":
-                    fn = "cs.def";
-                    break;
+                    case "C#":
+                        fn = "cs.def";
+                        break;
+                }
             }
-
             if (fn != null)
             {
                 string lines = Program.ReadAllText(fn);
