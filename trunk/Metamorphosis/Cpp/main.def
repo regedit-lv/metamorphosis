@@ -1,0 +1,87 @@
+﻿IncludeDeclarationTop 
+!{ 
+#include <vector>
+#include <string>
+#include <map>
+#include <cstdint>
+#include "tinyXML\tinyxml.h"
+!}
+
+IncludeDefinitionTop !{
+#include "stdafx.h"
+
+#include <sstream>
+#include "%output_name%.h"
+!}
+
+ImportInclude %{ #include "%name%.h" %}
+
+StructDeclaration %{ extern struct %name%; %}
+
+StructDefinition 
+!{
+struct %name% 
+{
+    %body% 
+};
+!}
+
+StructDefinitionWithBase
+!{
+struct %name% : public %base%
+{
+    %body% 
+};
+!}
+
+StructFieldDeclaration %{ %type% %field%; %}
+
+MethodDeclaration %{ 
+    %returnType% %method%(%param%);
+%}
+
+MethodDefinition !{ 
+%returnType% %larva%::%method%(%param%)
+{
+    %body%
+}
+!}
+
+ConstructorDeclaration %{ %name%(); %}
+ConstructorDefinition !{ 
+%name%::%name%()
+{
+    %body%
+}
+!}
+
+ConstructorWithBaseDeclaration %{ %name%(); %}
+ConstructorWithBaseDefinition !{ 
+%name%::%name%() : %base%()
+{
+    %body%
+}
+!}
+
+FieldInitialisation %{ %field% = %value%; %}
+
+EnumFieldDeclaration %{ %field% , %}
+EnumFieldWithValueDeclaration %{ %field% = %value% , %}
+EnumValueDeclaration %{ %name%::%value% %}
+
+EnumDeclaration !{
+enum class %name% : int
+{
+    %body%
+};
+!}
+
+type 1 default bool = bool
+type 1 default int32 = int32_t
+type 1 default uint32 = uint32_t
+type 1 string String = std::string
+type 2 array Array = std::vector<%type0%>
+type 1 struct struct = !{struct %namespace%::%name%!}
+type 1 enum enum = !{%namespace%::%name%!}
+type 3 map Map = !{std::map<%type0%, %type1%>!}
+

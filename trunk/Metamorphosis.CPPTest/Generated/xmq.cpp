@@ -1,8 +1,6 @@
 
 #include "stdafx.h"
 
-#include "ByteReader.h"
-#include "ByteWriter.h"
 #include <sstream>
 #include "xmq.h"
 
@@ -13,19 +11,274 @@ namespace bus
 namespace configuration
 {
  
-IpRagne::IpRagne()
+MetaData::MetaData()
 {
     
 }
 
  
-std::string IpRagne::toXml(TiXmlElement *parentNode)
+std::string MetaData::toXml(TiXmlElement *parentNode)
 {
     
     TiXmlElement *parent;
     if (parentNode == nullptr)
     {
-        parent = new TiXmlElement("IpRagne");
+        parent = new TiXmlElement("MetaData");
+    }
+    else
+    {
+        parent = parentNode;
+    }
+    
+    
+    { // type
+        std::stringstream oss;
+        oss << (int)type;
+        parent->SetAttribute("type", oss.str().c_str());
+    }
+    
+    
+    { // name
+        std::stringstream oss;
+        oss << name;
+        parent->SetAttribute("name", oss.str().c_str());
+    }
+    
+     
+    // write array elements
+    TiXmlElement * elements_element = new TiXmlElement("elements");
+    parent->LinkEndChild(elements_element);
+    elements_element->SetAttribute("size", elements.size());
+    
+    TiXmlElement * parent_elements = parent;
+    parent = elements_element;
+    
+    for (size_t i = 0; i < elements.size(); i++)
+    {
+        struct xmq::bus::configuration::MetaData &MetaData = elements[i];
+    
+         
+        { // MetaData
+            TiXmlElement * element = new TiXmlElement("MetaData");
+            std::string xml = MetaData.toXml(element);
+            parent->LinkEndChild(element);
+        }
+        
+    }
+    
+    parent = parent_elements;
+    
+     
+    
+    if (parentNode == nullptr)
+    {
+        TiXmlDocument doc;
+        doc.LinkEndChild(parent);
+    
+        TiXmlPrinter printer;
+        printer.SetIndent("    ");
+        doc.Accept(&printer);
+        return printer.CStr();
+    }
+    else
+    {
+        return "";
+    }
+    
+}
+
+ 
+void MetaData::fromXml(const std::string &xml, TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *root;
+    TiXmlDocument doc;
+    
+    if (parentNode == nullptr)
+    {
+        doc.Parse(xml.c_str());
+        root = doc.RootElement();
+    }
+    else
+    {
+        root = parentNode;
+    }
+    
+    
+    
+    
+    // type
+    root->Attribute("type", (int*)&type);
+    
+      
+    
+    // name
+    {
+        const char *s = root->Attribute("name");
+        if (s != nullptr)
+        {
+            name = s;
+        }
+    }
+    
+     
+    
+    
+     
+     
+    // read array elements
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        if (_stricmp(child->Value(), "elements") == 0)
+        {
+            TiXmlElement *element = child->ToElement();
+    
+            TiXmlElement *originalRoot = root;
+    
+            for (TiXmlNode *arrayChild = element->FirstChild(); arrayChild != 0; arrayChild = arrayChild->NextSibling()) 
+            {
+                root = arrayChild->ToElement();
+                
+                struct xmq::bus::configuration::MetaData sub;
+    
+                if (_stricmp("MetaData", root->Value()) == 0)
+                {
+                    
+                    // sub
+                    sub.fromXml("", root);
+                    
+    
+                    elements.push_back(sub);
+                }
+            }
+    
+            root = originalRoot;
+    
+            break;
+        }
+    }
+    
+     
+    
+    
+}
+
+ 
+Module::Module()
+{
+    
+}
+
+ 
+std::string Module::toXml(TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *parent;
+    if (parentNode == nullptr)
+    {
+        parent = new TiXmlElement("Module");
+    }
+    else
+    {
+        parent = parentNode;
+    }
+    
+    
+    { // name
+        std::stringstream oss;
+        oss << name;
+        parent->SetAttribute("name", oss.str().c_str());
+    }
+    
+    
+    { // id
+        std::stringstream oss;
+        oss << id;
+        parent->SetAttribute("id", oss.str().c_str());
+    }
+    
+     
+    
+    if (parentNode == nullptr)
+    {
+        TiXmlDocument doc;
+        doc.LinkEndChild(parent);
+    
+        TiXmlPrinter printer;
+        printer.SetIndent("    ");
+        doc.Accept(&printer);
+        return printer.CStr();
+    }
+    else
+    {
+        return "";
+    }
+    
+}
+
+ 
+void Module::fromXml(const std::string &xml, TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *root;
+    TiXmlDocument doc;
+    
+    if (parentNode == nullptr)
+    {
+        doc.Parse(xml.c_str());
+        root = doc.RootElement();
+    }
+    else
+    {
+        root = parentNode;
+    }
+    
+    
+    
+      
+    
+    // name
+    {
+        const char *s = root->Attribute("name");
+        if (s != nullptr)
+        {
+            name = s;
+        }
+    }
+    
+    
+    // id
+    {
+        const char *s = root->Attribute("id");
+        if (s != nullptr)
+        {
+            id = s;
+        }
+    }
+    
+     
+    
+    
+     
+     
+    
+    
+}
+
+ 
+IpRange::IpRange()
+{
+    
+}
+
+ 
+std::string IpRange::toXml(TiXmlElement *parentNode)
+{
+    
+    TiXmlElement *parent;
+    if (parentNode == nullptr)
+    {
+        parent = new TiXmlElement("IpRange");
     }
     else
     {
@@ -66,7 +319,7 @@ std::string IpRagne::toXml(TiXmlElement *parentNode)
 }
 
  
-void IpRagne::fromXml(const std::string &xml, TiXmlElement *parentNode)
+void IpRange::fromXml(const std::string &xml, TiXmlElement *parentNode)
 {
     
     TiXmlElement *root;
@@ -83,14 +336,27 @@ void IpRagne::fromXml(const std::string &xml, TiXmlElement *parentNode)
     }
     
     
-     
+    
+      
     
     // from
-    from = root->Attribute("from");
+    {
+        const char *s = root->Attribute("from");
+        if (s != nullptr)
+        {
+            from = s;
+        }
+    }
     
     
     // to
-    to = root->Attribute("to");
+    {
+        const char *s = root->Attribute("to");
+        if (s != nullptr)
+        {
+            to = s;
+        }
+    }
     
      
     
@@ -194,14 +460,27 @@ void Instance::fromXml(const std::string &xml, TiXmlElement *parentNode)
     // port
     root->Attribute("port", &port);
     
-     
+    
+      
     
     // name
-    name = root->Attribute("name");
+    {
+        const char *s = root->Attribute("name");
+        if (s != nullptr)
+        {
+            name = s;
+        }
+    }
     
     
     // host
-    host = root->Attribute("host");
+    {
+        const char *s = root->Attribute("host");
+        if (s != nullptr)
+        {
+            host = s;
+        }
+    }
     
      
     
@@ -283,14 +562,27 @@ void Path::fromXml(const std::string &xml, TiXmlElement *parentNode)
     }
     
     
-     
+    
+      
     
     // modules
-    modules = root->Attribute("modules");
+    {
+        const char *s = root->Attribute("modules");
+        if (s != nullptr)
+        {
+            modules = s;
+        }
+    }
     
     
     // modulesData
-    modulesData = root->Attribute("modulesData");
+    {
+        const char *s = root->Attribute("modulesData");
+        if (s != nullptr)
+        {
+            modulesData = s;
+        }
+    }
     
      
     
@@ -376,10 +668,17 @@ void Connection::fromXml(const std::string &xml, TiXmlElement *parentNode)
     // port
     root->Attribute("port", &port);
     
-     
+    
+      
     
     // host
-    host = root->Attribute("host");
+    {
+        const char *s = root->Attribute("host");
+        if (s != nullptr)
+        {
+            host = s;
+        }
+    }
     
      
     
@@ -408,6 +707,13 @@ std::string Configuration::toXml(TiXmlElement *parentNode)
     else
     {
         parent = parentNode;
+    }
+    
+     
+    { // metaData
+        TiXmlElement * element = new TiXmlElement("metaData");
+        std::string xml = metaData.toXml(element);
+        parent->LinkEndChild(element);
     }
     
      
@@ -459,12 +765,12 @@ std::string Configuration::toXml(TiXmlElement *parentNode)
     
     for (size_t i = 0; i < whiteIp.size(); i++)
     {
-        struct xmq::bus::configuration::IpRagne &IpRagne = whiteIp[i];
+        struct xmq::bus::configuration::IpRange &IpRange = whiteIp[i];
     
          
-        { // IpRagne
-            TiXmlElement * element = new TiXmlElement("IpRagne");
-            std::string xml = IpRagne.toXml(element);
+        { // IpRange
+            TiXmlElement * element = new TiXmlElement("IpRange");
+            std::string xml = IpRange.toXml(element);
             parent->LinkEndChild(element);
         }
         
@@ -483,18 +789,42 @@ std::string Configuration::toXml(TiXmlElement *parentNode)
     
     for (size_t i = 0; i < blackIp.size(); i++)
     {
-        struct xmq::bus::configuration::IpRagne &IpRagne = blackIp[i];
+        struct xmq::bus::configuration::IpRange &IpRange = blackIp[i];
     
          
-        { // IpRagne
-            TiXmlElement * element = new TiXmlElement("IpRagne");
-            std::string xml = IpRagne.toXml(element);
+        { // IpRange
+            TiXmlElement * element = new TiXmlElement("IpRange");
+            std::string xml = IpRange.toXml(element);
             parent->LinkEndChild(element);
         }
         
     }
     
     parent = parent_blackIp;
+    
+     
+    // write array modules
+    TiXmlElement * modules_element = new TiXmlElement("modules");
+    parent->LinkEndChild(modules_element);
+    modules_element->SetAttribute("size", modules.size());
+    
+    TiXmlElement * parent_modules = parent;
+    parent = modules_element;
+    
+    for (size_t i = 0; i < modules.size(); i++)
+    {
+        struct xmq::bus::configuration::Module &Module = modules[i];
+    
+         
+        { // Module
+            TiXmlElement * element = new TiXmlElement("Module");
+            std::string xml = Module.toXml(element);
+            parent->LinkEndChild(element);
+        }
+        
+    }
+    
+    parent = parent_modules;
     
      
     
@@ -533,8 +863,22 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
     }
     
     
+    
+      
      
+    
+    
      
+    // metaData
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        if (_stricmp(child->Value(), "metaData") == 0)
+        {
+            TiXmlElement *element = child->ToElement();
+            metaData.fromXml("", element);
+            break;
+        }
+    }
     
     
      
@@ -580,12 +924,15 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
                 
                 struct xmq::bus::configuration::Connection sub;
     
-                
-                // sub
-                sub.fromXml("", root);
-                
+                if (_stricmp("Connection", root->Value()) == 0)
+                {
+                    
+                    // sub
+                    sub.fromXml("", root);
+                    
     
-                busses.push_back(sub);
+                    busses.push_back(sub);
+                }
             }
     
             root = originalRoot;
@@ -608,14 +955,17 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
             {
                 root = arrayChild->ToElement();
                 
-                struct xmq::bus::configuration::IpRagne sub;
+                struct xmq::bus::configuration::IpRange sub;
     
-                
-                // sub
-                sub.fromXml("", root);
-                
+                if (_stricmp("IpRange", root->Value()) == 0)
+                {
+                    
+                    // sub
+                    sub.fromXml("", root);
+                    
     
-                whiteIp.push_back(sub);
+                    whiteIp.push_back(sub);
+                }
             }
     
             root = originalRoot;
@@ -638,14 +988,50 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
             {
                 root = arrayChild->ToElement();
                 
-                struct xmq::bus::configuration::IpRagne sub;
+                struct xmq::bus::configuration::IpRange sub;
     
-                
-                // sub
-                sub.fromXml("", root);
-                
+                if (_stricmp("IpRange", root->Value()) == 0)
+                {
+                    
+                    // sub
+                    sub.fromXml("", root);
+                    
     
-                blackIp.push_back(sub);
+                    blackIp.push_back(sub);
+                }
+            }
+    
+            root = originalRoot;
+    
+            break;
+        }
+    }
+    
+     
+    // read array modules
+    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
+    {
+        if (_stricmp(child->Value(), "modules") == 0)
+        {
+            TiXmlElement *element = child->ToElement();
+    
+            TiXmlElement *originalRoot = root;
+    
+            for (TiXmlNode *arrayChild = element->FirstChild(); arrayChild != 0; arrayChild = arrayChild->NextSibling()) 
+            {
+                root = arrayChild->ToElement();
+                
+                struct xmq::bus::configuration::Module sub;
+    
+                if (_stricmp("Module", root->Value()) == 0)
+                {
+                    
+                    // sub
+                    sub.fromXml("", root);
+                    
+    
+                    modules.push_back(sub);
+                }
             }
     
             root = originalRoot;

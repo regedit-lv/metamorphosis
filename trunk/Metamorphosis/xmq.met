@@ -1,12 +1,27 @@
 ﻿Namespace xmq.bus.configuration
 
+enum MetaType
+%{
+    Int,
+    String,
+    Array,
+    Object,
+%}
+
+struct MetaData
+%{
+    MetaType type;
+    String name;
+    Array MetaData elements;
+%} : toXml fromXml;
+
 struct Module
 %{
     String name;
     String id;
 %} : toXml fromXml;
 
-struct IpRagne
+struct IpRange
 %{
     String from;
     String to;
@@ -34,11 +49,12 @@ struct Connection
 
 struct Configuration
 %{
+    MetaData metaData;
     Instance instance;
     Path path;
     Array Connection busses;
-    Array IpRagne whiteIp;
-    Array IpRagne blackIp;
+    Array IpRange whiteIp;
+    Array IpRange blackIp;
     Array Module modules;
 %} : toXml fromXml;
 
