@@ -1,0 +1,72 @@
+﻿IncludeDeclarationTop 
+!{ 
+using System;
+using System.Collections.Generic;
+using Helpers;
+using System.Xml;
+!}
+
+ImportInclude %{ %}
+
+StructDeclaration %{%}
+
+StructDefinition 
+!{
+public class %name% 
+{
+    %body% 
+}
+!}
+
+StructDefinitionWithBase
+!{
+public class %name% : %base%
+{
+    %body% 
+};
+!}
+
+StructFieldDeclaration %{ public %type% %field%; %}
+
+MethodDeclaration !{ 
+public %returnType% %method%(%param%)
+{
+    %body%
+}
+!}
+
+ConstructorDeclaration !{ 
+public %name%()
+{
+    %body%
+}
+!}
+
+ConstructorWithBaseDeclaration !{ 
+public %name%() :base()
+{
+    %body%
+}
+!}
+
+FieldInitialisation %{ %field% = %value%; %}
+
+EnumFieldDeclaration %{ %field% , %}
+EnumFieldWithValueDeclaration %{ %field% = %value% , %}
+EnumValueDeclaration %{ %name%.%value% %}
+
+EnumDeclaration !{
+public enum %name% : int
+{
+    %body%
+}
+!}
+
+type 1 default bool = bool
+type 1 default int32 = int
+type 1 default uint32 = uint
+type 1 string String = string
+type 2 array Array = List<%type0%>
+type 1 struct struct = %namespace%.%name%
+type 1 enum enum = %name%
+type 3 map Map = !{Dictionary<%type0%, %type1%>!}

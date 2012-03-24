@@ -1,0 +1,56 @@
+﻿<metaData name="configuration" type="3">
+  <elements>
+    <MetaData name="instance" type="3">
+      <elements>
+        <MetaData name="name" type="1"/>
+        <MetaData name="id" type="0"/>
+        <MetaData name="host" type="1"/>
+        <MetaData name="port" type="0"/>
+      </elements>
+    </MetaData>
+
+    <MetaData name="whiteIp" type="2">
+      <elements>
+        <MetaData name="IpRange" type="3">
+          <elements>
+            <MetaData name="from" type="1"/>
+            <MetaData name="to" type="1"/>
+          </elements>
+        </MetaData>
+      </elements>
+    </MetaData>
+
+    <MetaData name="blackIp" type="2">
+      <elements>
+        <MetaData name="IpRange" type="3">
+          <elements>
+            <MetaData name="from" type="1"/>
+            <MetaData name="to" type="1"/>
+          </elements>
+        </MetaData>
+      </elements>
+    </MetaData>
+
+    <MetaData name="busses" type="2">
+      <elements>
+        <MetaData name="Connection" type="3">
+          <elements>
+            <MetaData name="host" type="1"/>
+            <MetaData name="port" type="0"/>
+          </elements>
+        </MetaData>
+      </elements>
+    </MetaData>
+
+    <MetaData name="modules" type="2">
+      <elements>
+        <MetaData name="Module" type="3">
+          <elements>
+            <MetaData name="name" type="1"/>
+            <MetaData name="id" type="1"/>
+          </elements>
+        </MetaData>
+      </elements>
+    </MetaData>
+  </elements>
+</metaData>

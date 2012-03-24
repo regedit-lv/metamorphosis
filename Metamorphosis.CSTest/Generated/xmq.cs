@@ -2,275 +2,754 @@
 using System;
 using System.Collections.Generic;
 using Helpers;
+using System.Xml;
 
 
-
-namespace xmq
+namespace xmq.configuration
 {
 
-public enum TE : int
+public enum MetaType : int
 {
-    AA ,
-    BB = 3 ,
-    CC ,
+    Int ,
+    String ,
+    Array ,
+    Object ,
     
 }
 
 
-public class SM 
+public class MetaData 
 {
-    public Dictionary<string, string> mss ;
+    public MetaType type ;
+    public string name ;
+    public List<xmq.configuration.MetaData> elements ;
     
      
-    public SM()
+    public MetaData()
     {
         
     }
     
      
-    public void read(byte[] bytes, ByteReader byteReader = null)
+    public string toXml()
     {
         
-        ByteReader reader = byteReader == null ? new ByteReader(bytes) : byteReader;
-        
-         
-        // read array mss
-        int s_mss;
-        reader.Read(out s_mss);
-        mss = new Dictionary<string, string>();
-        
-        for (int i_1 = 0; i_1 < s_mss; i_1++)
-        {
-            string e_key_2;        
-            string e_value_3;       
-             
-            e_key_2 = reader.ReadString();
-            e_value_3 = reader.ReadString();
-        
-            mss[e_key_2] = e_value_3;
-        }
-        
-        
-        
+            return "";
         
     }
     
      
-    public byte[] write(ByteWriter byteWriter = null)
+    public void fromXml(string xml, XmlReader parentReader = null)
     {
         
-        ByteWriter writer = byteWriter == null ? new ByteWriter() : byteWriter;
-        
-         
-        // write array mss
-        writer.Write(mss.Count);
-        
-        foreach (var p in mss)
-        {
-            string e_key_2 = p.Key;
-            string e_value_3 = p.Value;
-                
-            writer.WriteString(e_key_2);
-            writer.WriteString(e_value_3);
-        }
-        
-         
-        
-        return writer.GetBuffer();
-        
-    }
-    
-     
-    public int size()
-    {
-        
-        
-        int s_mss = sizeof(int);
-        {
-            foreach (var p in mss)
-            {
-                string e_key_2 = p.Key;
-                string e_value_3 = p.Value;
-                
-                
-                
-                
-                s_mss += 0  + (2 + e_key_2.Length)
-                                + (2 + e_value_3.Length);
-            }
-        }
-        
-        
-        
-        return 0  + s_mss
-        ;
-        
-    }
-     
-}
-
-
-public class TestStruct : BaseStruct
-{
-    public SubStruct sub ;
-    public uint ui ;
-    public List<int> ai ;
-    public string s ;
-    public List<List<string>> ass ;
-    
-     
-    public TestStruct() :base()
-    {
-        bs = "bs_value" ;
-        bi = 3 ;
-        
-    }
-    
-     
-    public void read(byte[] bytes, ByteReader byteReader = null)
-    {
-        
-        ByteReader reader = byteReader == null ? new ByteReader(bytes) : byteReader;
-        
-        bs = reader.ReadString();
-        reader.Read(out bi);
-         
-        sub = new SubStruct();
-        sub.read(null, reader);
-        
-        reader.Read(out ui);
-         
-        // read array ai
-        int s_ai;
-        reader.Read(out s_ai);
-        ai = new List<int>(s_ai);
-        
-        for (int i_4 = 0; i_4 < s_ai; i_4++)
-        {
-            int e_name_5;        
-            reader.Read(out e_name_5);
-            ai[i_4] = e_name_5;
-        }
-        
-        s = reader.ReadString();
-         
-        // read array ass
-        int s_ass;
-        reader.Read(out s_ass);
-        ass = new List<List<string>>(s_ass);
-        
-        for (int i_6 = 0; i_6 < s_ass; i_6++)
-        {
-            List<string> e_name_7;        
-             
-            // read array e_name_7
-            int s_e_name_7;
-            reader.Read(out s_e_name_7);
-            e_name_7 = new List<string>(s_e_name_7);
+            XmlReader reader;
             
-            for (int i_8 = 0; i_8 < s_e_name_7; i_8++)
+            if (parentReader != null)
             {
-                string e_name_9;        
-                e_name_9 = reader.ReadString();
-                e_name_7[i_8] = e_name_9;
+                reader = parentReader;
+            }
+            else
+            {
+                reader = XmlReader.Create(new System.IO.StringReader(xml));
             }
             
-            ass[i_6] = e_name_7;
-        }
-        
-        
-        
-    }
-    
-     
-    public byte[] write(ByteWriter byteWriter = null)
-    {
-        
-        ByteWriter writer = byteWriter == null ? new ByteWriter() : byteWriter;
-        
-        writer.WriteString(bs);
-        writer.Write(bi);
-         
-        sub.write(writer);
-        
-        writer.Write(ui);
-         
-        // write array ai
-        writer.Write(ai.Count);
-        
-        for (int i_4 = 0; i_4 < ai.Count; i_4++)
-        {
-            writer.Write(ai[i_4]);
-        }
-        
-        writer.WriteString(s);
-         
-        // write array ass
-        writer.Write(ass.Count);
-        
-        for (int i_6 = 0; i_6 < ass.Count; i_6++)
-        {
-             
-            // write array ass[i_6]
-            writer.Write(ass[i_6].Count);
-            
-            for (int i_10 = 0; i_10 < ass[i_6].Count; i_10++)
+            if (!reader.IsStartElement())
             {
-                writer.WriteString(ass[i_6][i_10]);
+                // error must be start element
+                return;
+            }
+        
+            string topName = reader.Name;
+        
+            
+            
+            
+            // MetaType type
+            {
+                int i_type;
+                XmlReaderWrapper.ReadAttribute(reader, "type", out i_type);
+                type = (MetaType)i_type;
             }
             
-        }
+              
+            
+            // string name
+            XmlReaderWrapper.ReadAttribute(reader, "name", out name);
+            
+             
+            
         
-         
-        
-        return writer.GetBuffer();
-        
-    }
-    
-     
-    public int size()
-    {
-        
-         
-        
-        int s_ass = sizeof(int);
-        {
-            for (int i_6 = 0; i_6 < ass.Count; i_6++)
+            // read internal objects
+            if (!reader.IsEmptyElement)
             {
-                List<string> e_name_7 = ass[i_6];
-                
-                
-                int s_e_name_7 = sizeof(int);
+                while(reader.Read())
                 {
-                    for (int i_11 = 0; i_11 < e_name_7.Count; i_11++)
+                    if (reader.IsStartElement())
                     {
-                        string e_name_12 = e_name_7[i_11];
+                         
+                         
+                        // read array elements
+                        if (reader.Name.ToLower() == "elements".ToLower())
+                        {
+                            elements = new List<xmq.configuration.MetaData>();
+                            if (!reader.IsEmptyElement)
+                            {
+                                while (reader.Read())
+                                {
+                                    if (reader.IsStartElement())
+                                    {
+                                        if ("MetaData".ToLower() == reader.Name.ToLower())
+                                        {
+                                            xmq.configuration.MetaData sub = new xmq.configuration.MetaData();
                         
+                                            
+                                            // xmq.configuration.MetaData sub
+                                            sub.fromXml("", reader);
+                                            
                         
+                                            elements.Add(sub);
+                                        }
+                                    }       
+                                    if (reader.Name.ToLower() == "elements".ToLower() && reader.NodeType == XmlNodeType.EndElement)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         
-                        s_e_name_7 += 0  + (2 + e_name_12.Length);
+                         
+                    }
+                    else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        break;
                     }
                 }
-                
-                
-                s_ass += 0  + s_e_name_7;
             }
-        }
-        
-        
-        
-        return 0  + (2 + bs.Length)
-         + sizeof(int)
-         + sub.size()
-         + sizeof(uint)
-         + (sizeof(int) + sizeof(int) * ai.Count)
-         + (2 + s.Length)
-         + s_ass
-        ;
         
     }
      
-};
+}
+
+
+public class Module 
+{
+    public string name ;
+    public string id ;
+    
+     
+    public Module()
+    {
+        
+    }
+    
+     
+    public string toXml()
+    {
+        
+            return "";
+        
+    }
+    
+     
+    public void fromXml(string xml, XmlReader parentReader = null)
+    {
+        
+            XmlReader reader;
+            
+            if (parentReader != null)
+            {
+                reader = parentReader;
+            }
+            else
+            {
+                reader = XmlReader.Create(new System.IO.StringReader(xml));
+            }
+            
+            if (!reader.IsStartElement())
+            {
+                // error must be start element
+                return;
+            }
+        
+            string topName = reader.Name;
+        
+            
+            
+              
+            
+            // string name
+            XmlReaderWrapper.ReadAttribute(reader, "name", out name);
+            
+            
+            // string id
+            XmlReaderWrapper.ReadAttribute(reader, "id", out id);
+            
+             
+            
+        
+            // read internal objects
+            if (!reader.IsEmptyElement)
+            {
+                while(reader.Read())
+                {
+                    if (reader.IsStartElement())
+                    {
+                         
+                         
+                    }
+                    else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        break;
+                    }
+                }
+            }
+        
+    }
+     
+}
+
+
+public class IpRange 
+{
+    public string from ;
+    public string to ;
+    
+     
+    public IpRange()
+    {
+        
+    }
+    
+     
+    public string toXml()
+    {
+        
+            return "";
+        
+    }
+    
+     
+    public void fromXml(string xml, XmlReader parentReader = null)
+    {
+        
+            XmlReader reader;
+            
+            if (parentReader != null)
+            {
+                reader = parentReader;
+            }
+            else
+            {
+                reader = XmlReader.Create(new System.IO.StringReader(xml));
+            }
+            
+            if (!reader.IsStartElement())
+            {
+                // error must be start element
+                return;
+            }
+        
+            string topName = reader.Name;
+        
+            
+            
+              
+            
+            // string from
+            XmlReaderWrapper.ReadAttribute(reader, "from", out from);
+            
+            
+            // string to
+            XmlReaderWrapper.ReadAttribute(reader, "to", out to);
+            
+             
+            
+        
+            // read internal objects
+            if (!reader.IsEmptyElement)
+            {
+                while(reader.Read())
+                {
+                    if (reader.IsStartElement())
+                    {
+                         
+                         
+                    }
+                    else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        break;
+                    }
+                }
+            }
+        
+    }
+     
+}
+
+
+public class Instance 
+{
+    public string name ;
+    public int id ;
+    public string host ;
+    public int port ;
+    
+     
+    public Instance()
+    {
+        
+    }
+    
+     
+    public string toXml()
+    {
+        
+            return "";
+        
+    }
+    
+     
+    public void fromXml(string xml, XmlReader parentReader = null)
+    {
+        
+            XmlReader reader;
+            
+            if (parentReader != null)
+            {
+                reader = parentReader;
+            }
+            else
+            {
+                reader = XmlReader.Create(new System.IO.StringReader(xml));
+            }
+            
+            if (!reader.IsStartElement())
+            {
+                // error must be start element
+                return;
+            }
+        
+            string topName = reader.Name;
+        
+            
+            
+            // int id
+            XmlReaderWrapper.ReadAttribute(reader, "id", out id);
+            
+            
+            // int port
+            XmlReaderWrapper.ReadAttribute(reader, "port", out port);
+            
+            
+              
+            
+            // string name
+            XmlReaderWrapper.ReadAttribute(reader, "name", out name);
+            
+            
+            // string host
+            XmlReaderWrapper.ReadAttribute(reader, "host", out host);
+            
+             
+            
+        
+            // read internal objects
+            if (!reader.IsEmptyElement)
+            {
+                while(reader.Read())
+                {
+                    if (reader.IsStartElement())
+                    {
+                         
+                         
+                    }
+                    else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        break;
+                    }
+                }
+            }
+        
+    }
+     
+}
+
+
+public class Path 
+{
+    public string modules ;
+    public string modulesData ;
+    
+     
+    public Path()
+    {
+        
+    }
+    
+     
+    public string toXml()
+    {
+        
+            return "";
+        
+    }
+    
+     
+    public void fromXml(string xml, XmlReader parentReader = null)
+    {
+        
+            XmlReader reader;
+            
+            if (parentReader != null)
+            {
+                reader = parentReader;
+            }
+            else
+            {
+                reader = XmlReader.Create(new System.IO.StringReader(xml));
+            }
+            
+            if (!reader.IsStartElement())
+            {
+                // error must be start element
+                return;
+            }
+        
+            string topName = reader.Name;
+        
+            
+            
+              
+            
+            // string modules
+            XmlReaderWrapper.ReadAttribute(reader, "modules", out modules);
+            
+            
+            // string modulesData
+            XmlReaderWrapper.ReadAttribute(reader, "modulesData", out modulesData);
+            
+             
+            
+        
+            // read internal objects
+            if (!reader.IsEmptyElement)
+            {
+                while(reader.Read())
+                {
+                    if (reader.IsStartElement())
+                    {
+                         
+                         
+                    }
+                    else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        break;
+                    }
+                }
+            }
+        
+    }
+     
+}
+
+
+public class Connection 
+{
+    public string host ;
+    public int port ;
+    
+     
+    public Connection()
+    {
+        
+    }
+    
+     
+    public string toXml()
+    {
+        
+            return "";
+        
+    }
+    
+     
+    public void fromXml(string xml, XmlReader parentReader = null)
+    {
+        
+            XmlReader reader;
+            
+            if (parentReader != null)
+            {
+                reader = parentReader;
+            }
+            else
+            {
+                reader = XmlReader.Create(new System.IO.StringReader(xml));
+            }
+            
+            if (!reader.IsStartElement())
+            {
+                // error must be start element
+                return;
+            }
+        
+            string topName = reader.Name;
+        
+            
+            
+            // int port
+            XmlReaderWrapper.ReadAttribute(reader, "port", out port);
+            
+            
+              
+            
+            // string host
+            XmlReaderWrapper.ReadAttribute(reader, "host", out host);
+            
+             
+            
+        
+            // read internal objects
+            if (!reader.IsEmptyElement)
+            {
+                while(reader.Read())
+                {
+                    if (reader.IsStartElement())
+                    {
+                         
+                         
+                    }
+                    else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        break;
+                    }
+                }
+            }
+        
+    }
+     
+}
+
+
+public class Configuration 
+{
+    public xmq.configuration.MetaData metaData ;
+    public xmq.configuration.Instance instance ;
+    public xmq.configuration.Path path ;
+    public List<xmq.configuration.Connection> busses ;
+    public List<xmq.configuration.IpRange> whiteIp ;
+    public List<xmq.configuration.IpRange> blackIp ;
+    public List<xmq.configuration.Module> modules ;
+    
+     
+    public Configuration()
+    {
+        
+    }
+    
+     
+    public string toXml()
+    {
+        
+            return "";
+        
+    }
+    
+     
+    public void fromXml(string xml, XmlReader parentReader = null)
+    {
+        
+            XmlReader reader;
+            
+            if (parentReader != null)
+            {
+                reader = parentReader;
+            }
+            else
+            {
+                reader = XmlReader.Create(new System.IO.StringReader(xml));
+            }
+            
+            if (!reader.IsStartElement())
+            {
+                // error must be start element
+                return;
+            }
+        
+            string topName = reader.Name;
+        
+            
+            
+              
+             
+            
+        
+            // read internal objects
+            if (!reader.IsEmptyElement)
+            {
+                while(reader.Read())
+                {
+                    if (reader.IsStartElement())
+                    {
+                         
+                        // struct metaData
+                        if (reader.Name.ToLower() == "metaData".ToLower())
+                        {
+                            metaData.fromXml("", reader);
+                        }
+                        
+                         
+                        // struct instance
+                        if (reader.Name.ToLower() == "instance".ToLower())
+                        {
+                            instance.fromXml("", reader);
+                        }
+                        
+                         
+                        // struct path
+                        if (reader.Name.ToLower() == "path".ToLower())
+                        {
+                            path.fromXml("", reader);
+                        }
+                        
+                         
+                         
+                        // read array busses
+                        if (reader.Name.ToLower() == "busses".ToLower())
+                        {
+                            busses = new List<xmq.configuration.Connection>();
+                            if (!reader.IsEmptyElement)
+                            {
+                                while (reader.Read())
+                                {
+                                    if (reader.IsStartElement())
+                                    {
+                                        if ("Connection".ToLower() == reader.Name.ToLower())
+                                        {
+                                            xmq.configuration.Connection sub = new xmq.configuration.Connection();
+                        
+                                            
+                                            // xmq.configuration.Connection sub
+                                            sub.fromXml("", reader);
+                                            
+                        
+                                            busses.Add(sub);
+                                        }
+                                    }       
+                                    if (reader.Name.ToLower() == "busses".ToLower() && reader.NodeType == XmlNodeType.EndElement)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                         
+                        // read array whiteIp
+                        if (reader.Name.ToLower() == "whiteIp".ToLower())
+                        {
+                            whiteIp = new List<xmq.configuration.IpRange>();
+                            if (!reader.IsEmptyElement)
+                            {
+                                while (reader.Read())
+                                {
+                                    if (reader.IsStartElement())
+                                    {
+                                        if ("IpRange".ToLower() == reader.Name.ToLower())
+                                        {
+                                            xmq.configuration.IpRange sub = new xmq.configuration.IpRange();
+                        
+                                            
+                                            // xmq.configuration.IpRange sub
+                                            sub.fromXml("", reader);
+                                            
+                        
+                                            whiteIp.Add(sub);
+                                        }
+                                    }       
+                                    if (reader.Name.ToLower() == "whiteIp".ToLower() && reader.NodeType == XmlNodeType.EndElement)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                         
+                        // read array blackIp
+                        if (reader.Name.ToLower() == "blackIp".ToLower())
+                        {
+                            blackIp = new List<xmq.configuration.IpRange>();
+                            if (!reader.IsEmptyElement)
+                            {
+                                while (reader.Read())
+                                {
+                                    if (reader.IsStartElement())
+                                    {
+                                        if ("IpRange".ToLower() == reader.Name.ToLower())
+                                        {
+                                            xmq.configuration.IpRange sub = new xmq.configuration.IpRange();
+                        
+                                            
+                                            // xmq.configuration.IpRange sub
+                                            sub.fromXml("", reader);
+                                            
+                        
+                                            blackIp.Add(sub);
+                                        }
+                                    }       
+                                    if (reader.Name.ToLower() == "blackIp".ToLower() && reader.NodeType == XmlNodeType.EndElement)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                         
+                        // read array modules
+                        if (reader.Name.ToLower() == "modules".ToLower())
+                        {
+                            modules = new List<xmq.configuration.Module>();
+                            if (!reader.IsEmptyElement)
+                            {
+                                while (reader.Read())
+                                {
+                                    if (reader.IsStartElement())
+                                    {
+                                        if ("Module".ToLower() == reader.Name.ToLower())
+                                        {
+                                            xmq.configuration.Module sub = new xmq.configuration.Module();
+                        
+                                            
+                                            // xmq.configuration.Module sub
+                                            sub.fromXml("", reader);
+                                            
+                        
+                                            modules.Add(sub);
+                                        }
+                                    }       
+                                    if (reader.Name.ToLower() == "modules".ToLower() && reader.NodeType == XmlNodeType.EndElement)
+                                    {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        
+                         
+                    }
+                    else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+                    {
+                        break;
+                    }
+                }
+            }
+        
+    }
+     
+}
 
 
 }

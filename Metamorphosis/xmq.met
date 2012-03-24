@@ -1,4 +1,4 @@
-﻿Namespace xmq.bus.configuration
+﻿Namespace xmq.configuration
 
 enum MetaType
 %{

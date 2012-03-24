@@ -437,6 +437,16 @@ namespace Metamorphosis
                             t = GetNextToken();
                         }
 
+                        if (t ==":")
+                        {
+                            t = GetNextToken(); // read modificator
+                            if (t == "skip")
+                            {
+                                p.Mode = PartMode.Skip;
+                            }
+                            t = GetNextToken();
+                        }
+
                         if (t != ";")
                         {
                             Console.WriteLine("Error: Unexpected token '" + token +"' field name not found");
