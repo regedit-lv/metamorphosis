@@ -1,0 +1,124 @@
+﻿## toXml
+
+method toXml param = !{!}
+method toXml returnType = string
+
+method toXml body =
+!{
+    return "";
+!}
+
+## fromXml
+
+method fromXml param = !{string xml, XmlReader parentReader = null!}
+method fromXml returnType = void
+
+method fromXml body =
+!{
+    XmlReader reader;
+    
+    if (parentReader != null)
+    {
+        reader = parentReader;
+    }
+    else
+    {
+        reader = XmlReader.Create(new System.IO.StringReader(xml));
+    }
+    
+    if (!reader.IsStartElement())
+    {
+        // error must be start element
+        return;
+    }
+
+    string topName = reader.Name;
+
+    %readDirect%
+
+    // read internal objects
+    if (!reader.IsEmptyElement)
+    {
+        while(reader.Read())
+        {
+            if (reader.IsStartElement())
+            {
+                %~struct% 
+                %~array% 
+            }
+            else if (reader.Name == topName && reader.NodeType == XmlNodeType.EndElement)
+            {
+                break;
+            }
+        }
+    }
+!}
+
+method fromXml body readDirect = !{
+%~default%
+%~enum%  
+%~string% 
+!}
+
+method fromXml body readDirect default = !{
+// %type% %field%
+XmlReaderWrapper.ReadAttribute(reader, "%field%", out %field%);
+!}
+
+method fromXml body readDirect enum = !{
+// %type% %field%
+{
+    int i_%field%;
+    XmlReaderWrapper.ReadAttribute(reader, "%field%", out i_%field%);
+    %field% = (%type%)i_%field%;
+}
+!}
+
+method fromXml body readDirect string = !{
+// %type% %field%
+XmlReaderWrapper.ReadAttribute(reader, "%field%", out %field%);
+!}
+
+method fromXml body readDirect struct = !{
+// %type% %field%
+%field% = new %!Larva.GetTypeDefinition()%();
+%field%.fromXml("", reader);
+!}
+
+method fromXml body struct = !{ 
+// struct %field%
+if (reader.Name.ToLower() == "%field%".ToLower())
+{
+    %field% = new %!Larva.GetTypeDefinition()%();
+    %field%.fromXml("", reader);
+}
+!}
+
+method fromXml body array = !{ 
+// read array %field%
+if (reader.Name.ToLower() == "%field%".ToLower())
+{
+    %field% = new %!Larva.GetTypeDefinition()%();
+    if (!reader.IsEmptyElement)
+    {
+        while (reader.Read())
+        {
+            if (reader.IsStartElement())
+            {
+                if ("%!Larva.SubLarvae[0].Name%".ToLower() == reader.Name.ToLower())
+                {
+                    %!Larva.SubLarvae[0].GetTypeDefinition()% sub;
+
+                    %#method fromXml body readDirect#sub#%!Larva.SubLarvae[0].FullName%#%
+
+                    %field%.Add(sub);
+                }
+            }       
+            if (reader.Name.ToLower() == "%field%".ToLower() && reader.NodeType == XmlNodeType.EndElement)
+            {
+                break;
+            }
+        }
+    }
+}
+!}

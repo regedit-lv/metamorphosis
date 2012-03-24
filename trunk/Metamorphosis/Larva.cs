@@ -13,6 +13,11 @@ namespace Metamorphosis
         Custom,
     };
 
+    enum PartMode
+    {
+        Generate,
+        Skip,
+    }
 
     class PartVariable
     {
@@ -22,6 +27,7 @@ namespace Metamorphosis
 
     class Part
     {
+        public PartMode Mode = PartMode.Generate;
         public string Name;
         public Larva Larva;
         public string InitialValue;

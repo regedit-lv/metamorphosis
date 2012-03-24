@@ -28,6 +28,7 @@ struct MetaData
     xmq::bus::configuration::MetaType type ;
     std::string name ;
     std::vector<struct xmq::bus::configuration::MetaData> elements ;
+    int32_t sa ;
     
     MetaData() ;
     std::string toXml(TiXmlElement *parentNode) ;

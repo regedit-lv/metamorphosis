@@ -111,7 +111,9 @@ namespace Metamorphosis
 
                         foreach (Part p in bl.Parts)
                         {
-                            if (group != null && group != p.Larva.TypeDefinition.Group)
+                            // skip part if part from different group or with skip mode
+                            if ((group != null && group != p.Larva.TypeDefinition.Group) || 
+                                p.Mode == PartMode.Skip)
                             {
                                 continue;
                             }
@@ -127,7 +129,9 @@ namespace Metamorphosis
                     // replace with larva fields
                     foreach (Part p in larva.Parts)
                     {
-                        if (group != null && group != p.Larva.TypeDefinition.Group)
+                        // skip part if part from different group or with skip mode
+                        if ((group != null && group != p.Larva.TypeDefinition.Group) ||
+                            p.Mode == PartMode.Skip)
                         {
                             continue;
                         }
