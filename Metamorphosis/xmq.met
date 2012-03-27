@@ -2,11 +2,18 @@
 
 enum MetaType
 %{
-    Int,
-    String,
-    Array,
-    Object,
+    Int : int,
+    String : string,
+    Array : array,
+    Object : object,
 %}
+
+static MetaTypeHelper : MetaType
+%{
+    bool initDone = false;
+    Map MetaType String valueToName;
+    Map String MetaType nameToValue;
+%} : getEnumName getEnumValue initEnum;
 
 struct MetaData
 %{

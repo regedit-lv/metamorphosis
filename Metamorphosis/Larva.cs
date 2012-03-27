@@ -9,6 +9,7 @@ namespace Metamorphosis
     enum LarvaType
     {
         Struct,
+        Static,
         Enum,
         Custom,
     };
@@ -31,6 +32,7 @@ namespace Metamorphosis
         public string Name;
         public Larva Larva;
         public string InitialValue;
+        public string Description;
 
         List<PartVariable> variables = new List<PartVariable>();
 
@@ -80,6 +82,12 @@ namespace Metamorphosis
                 }
             }
         }
+        
+        
+        public Larva GetBaseLarva()
+        {
+            return Larvae.GetLarva(BaseName, true);
+        }
 
         public string GetTypeDefinition()
         {
@@ -108,9 +116,27 @@ namespace Metamorphosis
             return typeName;
         }
 
-        public string GetStructFieldDefinition(string fieldName)
+        public string GetStructFieldDeclaration(string fieldName)
         {
             string tpd = Larvae.Elements[ElementType.StructFieldDeclaration];
+            string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName);
+            return d;
+        }
+
+        public string GetStaticFieldDefinition(Larva owner, string fieldName, string value)
+        {
+            string tpd = value == null ? Larvae.GetElement(ElementType.StaticFieldDefinition) : Larvae.GetElement(ElementType.StaticFieldDefinitionWithValue);
+            string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName).Replace("%larva%", owner.GetTypeDefinition());
+            if (value != null)
+            {
+                d = d.Replace("%value%", value);
+            }
+            return d;
+        }
+
+        public string GetStaticFieldDeclaration(string fieldName)
+        {
+            string tpd = Larvae.GetElement(ElementType.StaticFieldDeclaration);
             string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName);
             return d;
         }
@@ -194,18 +220,39 @@ namespace Metamorphosis
         public string GetStructBody()
         {
             string body = "";
-            
+
             // add fields
             foreach (Part p in Parts)
             {
-                string pd = p.Larva.GetStructFieldDefinition(p.Name);
+                string pd = p.Larva.GetStructFieldDeclaration(p.Name);
                 body += pd + Environment.NewLine;
             }
 
             // add constrctor
             string ct = GetConstructorDeclaration();
             body += Environment.NewLine + ct;
-            
+
+            // add methods
+            foreach (string name in Methods)
+            {
+                Method m = MethodFactory.GetMethod(name);
+                body += Environment.NewLine + m.GetDeclaration(this);
+            }
+
+            return body;
+        }
+
+        public string GetStaticBody()
+        {
+            string body = "";
+
+            // add fields
+            foreach (Part p in Parts)
+            {
+                string pd = p.Larva.GetStaticFieldDeclaration(p.Name);
+                body += pd + Environment.NewLine;
+            }
+
             // add methods
             foreach (string name in Methods)
             {

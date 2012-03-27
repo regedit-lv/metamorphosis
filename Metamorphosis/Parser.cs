@@ -24,6 +24,13 @@ namespace Metamorphosis
         StructDefinitionWithBase,
         StructFieldDeclaration,
 
+        Static,
+        StaticDeclaration,
+        StaticDefinition,
+        StaticFieldDeclaration,
+        StaticFieldDefinition,
+        StaticFieldDefinitionWithValue,
+
         Enum,
         EnumDeclaration,
         EnumFieldDeclaration,
@@ -32,6 +39,9 @@ namespace Metamorphosis
 
         MethodDeclaration,
         MethodDefinition,
+
+        StaticMethodDeclaration,
+        StaticMethodDefinition,
 
         IncludeDeclarationTop,
         IncludeDefinitionTop,
@@ -326,15 +336,18 @@ namespace Metamorphosis
 
             switch (token)
             {
+                case "static":
                 case "struct":
                 {
+                    LarvaType larvaType = token == "struct" ? LarvaType.Struct : LarvaType.Static;
                     // parse struct data
                     string larvaName = GetNextToken();
                     string fullName = Larvae.GetFullName(larvaName);
                     Larva larva = Larvae.GetLarva(fullName);
-                    larva.Name = larvaName;
 
+                    larva.Name = larvaName;
                     larva.Namespace = Larvae.GetElement(ElementType.Namespace);
+                    larva.TypeDefinition = larvaType == LarvaType.Struct ? TypeDefinitions.Get("struct", true) : TypeDefinitions.Get("static", true);
 
                     switch (Mode)
                     {
@@ -348,7 +361,7 @@ namespace Metamorphosis
                             break;
                     }
 
-                    larva.Type = LarvaType.Struct;
+                    larva.Type = larvaType;
                     token = GetNextToken();
 
                     if (token == ":")
@@ -483,8 +496,10 @@ namespace Metamorphosis
                     string larvaName = GetNextToken();
                     string fullName = Larvae.GetFullName(larvaName);
                     Larva larva = Larvae.GetLarva(fullName);
+
                     larva.Name = larvaName;
                     larva.Namespace = Larvae.GetElement(ElementType.Namespace);
+                    larva.TypeDefinition = TypeDefinitions.Get("enum", true);
 
                     switch (Mode)
                     {
@@ -518,6 +533,7 @@ namespace Metamorphosis
 
                         Part p = new Part();
                         p.Name = t;
+                        p.Larva = larva;
                         larva.Parts.Add(p);
 
                         t = GetNextToken();
@@ -525,6 +541,12 @@ namespace Metamorphosis
                         if (t == "=")
                         {
                             p.InitialValue = GetNextToken();
+                            t = GetNextToken();
+                        }
+
+                        if (t == ":")
+                        {
+                            p.Description = GetNextToken();
                             t = GetNextToken();
                         }
 
@@ -667,19 +689,6 @@ namespace Metamorphosis
                     Console.WriteLine("Error! Type '" + type + "' not found");
                     return null;
                 }
-
-                switch (l.Type)
-                {
-                    case LarvaType.Enum:
-                        td = TypeDefinitions.Get("enum", true);
-                        break;
-
-                    case LarvaType.Struct:
-                        td = TypeDefinitions.Get("struct", true);
-                        break;
-                }
-                
-                l.TypeDefinition = td;
 
                 return l;
             }

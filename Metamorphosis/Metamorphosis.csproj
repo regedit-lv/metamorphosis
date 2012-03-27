@@ -64,6 +64,9 @@
     <Content Include="Cpp\bytes.def">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Cpp\enum.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Cpp\main.def">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

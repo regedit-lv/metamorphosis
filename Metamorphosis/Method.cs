@@ -55,6 +55,13 @@ namespace Metamorphosis
                 }
 
                 string value = v.Value.Replace("%type%", l.GetTypeDefinition()).Replace("%field%", part.Name);
+
+                if (l.Type == LarvaType.Enum)
+                {
+                    string description = part.Description == null ? part.Name : part.Description;
+                    value = value.Replace("%value%", l.GetEnumValue(part.Name)).Replace("%description%", description);                    
+                }
+
                 value = Larvae.ReplaceSystemFields(value, part);
 
                 // replace sub types
@@ -103,7 +110,7 @@ namespace Metamorphosis
                             break;
                         }
 
-                        bl = Larvae.GetLarva(bl.BaseName, true);
+                        bl = larva.GetBaseLarva();
                         if (bl == null)
                         {
                             break;
@@ -171,7 +178,7 @@ namespace Metamorphosis
 
         public string GetDeclaration(Larva larva)
         {
-            string m = Larvae.GetElement(ElementType.MethodDeclaration);
+            string m = larva.Type == LarvaType.Struct ? Larvae.GetElement(ElementType.MethodDeclaration) : Larvae.GetElement(ElementType.StaticMethodDeclaration);
 
             // check does this method need to be virtual            
             // check does base class contain the same method
@@ -206,7 +213,7 @@ namespace Metamorphosis
 
         public string GetDefinition(Larva larva)
         {
-            string m = Larvae.GetElement(ElementType.MethodDefinition);
+            string m = larva.Type == LarvaType.Struct ? Larvae.GetElement(ElementType.MethodDefinition) : Larvae.GetElement(ElementType.StaticMethodDefinition);
 
             m = Variables.ReplaceAll(m, larva).Replace("%larva%", larva.Name).Replace("%method%", Name);
 
