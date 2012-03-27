@@ -282,13 +282,7 @@ namespace Metamorphosis
         static void GenerateStruct(Larva larva)
         {
             // generate struct
-            string templateLarvaDeclaration = larva.BaseName == null ? Elements[ElementType.StructDefinition] : Elements[ElementType.StructDefinitionWithBase];
-
-            string n = larva.Name;
-            if (larva.BaseName != null)
-            {
-                n += " : " + larva.BaseName;
-            }
+            string templateLarvaDeclaration = larva.BaseName == null ? GetElement(ElementType.StructDefinition) : GetElement(ElementType.StructDefinitionWithBase);
 
             string larvaDeclaration = templateLarvaDeclaration.Replace("%name%", larva.Name).Replace("%base%", larva.BaseName);
 
@@ -297,6 +291,32 @@ namespace Metamorphosis
 
             larva.Declaration.Add(larvaDeclaration);
             larva.Definitions.Add(larva.GetConstructorDefinition());
+
+            // generate method definition
+            foreach (string name in larva.Methods)
+            {
+                Method m = MethodFactory.GetMethod(name);
+                larva.Definitions.Add(m.GetDefinition(larva));
+            }
+        }
+
+        static void GenerateStatic(Larva larva)
+        {
+            // generate struct
+            string templateLarvaDeclaration = GetElement(ElementType.StaticDefinition);
+
+            string larvaDeclaration = templateLarvaDeclaration.Replace("%name%", larva.Name).Replace("%base%", larva.BaseName);
+
+            string body = larva.GetStaticBody();
+            Larvae.ReplaceField(ref larvaDeclaration, "%body%", body);
+
+            larva.Declaration.Add(larvaDeclaration);
+
+            // generate field definition
+            foreach (Part p in larva.Parts)
+            {
+                larva.Definitions.Add(p.Larva.GetStaticFieldDefinition(larva, p.Name, p.InitialValue));
+            }
 
             // generate method definition
             foreach (string name in larva.Methods)
@@ -334,6 +354,10 @@ namespace Metamorphosis
                 {
                     case LarvaType.Struct:
                         GenerateStruct(l);
+                        break;
+
+                    case LarvaType.Static:
+                        GenerateStatic(l);
                         break;
 
                     case LarvaType.Enum:

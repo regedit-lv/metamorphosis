@@ -1,0 +1,45 @@
+## getName
+
+method getEnumName param = !{%!GetBaseLarva().GetTypeDefinition()% value!}
+method getEnumName returnType = std::string
+          
+method getEnumName body =
+!{
+if (!initDone)
+{
+    initEnum();
+}
+return valueToName[value];
+!}
+
+## getValue
+
+method getEnumValue param = !{std::string name!}
+method getEnumValue returnType = %!GetBaseLarva().GetTypeDefinition()%
+          
+method getEnumValue body =
+!{
+if (!initDone)
+{
+    initEnum();
+}
+return nameToValue[name];
+!}
+
+## initEnum
+
+method initEnum param = !{void!}
+method initEnum returnType = void
+       
+
+method initEnum body enum = 
+!{
+valueToName[%value%] = "%description%";
+nameToValue["%description%"] = %value%;
+!}
+
+method initEnum body =
+!{
+    %%
+    initDone = true;
+!}

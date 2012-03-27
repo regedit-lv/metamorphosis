@@ -6,10 +6,60 @@
 
 namespace xmq
 {
-namespace bus
-{
 namespace configuration
 {
+bool xmq::configuration::MetaTypeHelper::initDone = false ;
+std::map<xmq::configuration::MetaType, std::string> xmq::configuration::MetaTypeHelper::valueToName ;
+std::map<std::string, xmq::configuration::MetaType> xmq::configuration::MetaTypeHelper::nameToValue ;
+ 
+std::string MetaTypeHelper::getEnumName(xmq::configuration::MetaType value)
+{
+    
+    if (!initDone)
+    {
+        initEnum();
+    }
+    return valueToName[value];
+    
+}
+
+ 
+xmq::configuration::MetaType MetaTypeHelper::getEnumValue(std::string name)
+{
+    
+    if (!initDone)
+    {
+        initEnum();
+    }
+    return nameToValue[name];
+    
+}
+
+ 
+void MetaTypeHelper::initEnum(void)
+{
+    
+        
+        valueToName[MetaType::Int] = "int";
+        nameToValue["int"] = MetaType::Int;
+        
+        
+        valueToName[MetaType::String] = "string";
+        nameToValue["string"] = MetaType::String;
+        
+        
+        valueToName[MetaType::Array] = "Array";
+        nameToValue["Array"] = MetaType::Array;
+        
+        
+        valueToName[MetaType::Object] = "Object";
+        nameToValue["Object"] = MetaType::Object;
+        
+        
+        initDone = true;
+    
+}
+
  
 MetaData::MetaData()
 {
@@ -55,7 +105,7 @@ std::string MetaData::toXml(TiXmlElement *parentNode)
     
     for (size_t i = 0; i < elements.size(); i++)
     {
-        struct xmq::bus::configuration::MetaData &MetaData = elements[i];
+        struct xmq::configuration::MetaData &MetaData = elements[i];
     
          
         { // MetaData
@@ -139,7 +189,7 @@ void MetaData::fromXml(const std::string &xml, TiXmlElement *parentNode)
             {
                 root = arrayChild->ToElement();
                 
-                struct xmq::bus::configuration::MetaData sub;
+                struct xmq::configuration::MetaData sub;
     
                 if (_stricmp("MetaData", root->Value()) == 0)
                 {
@@ -741,7 +791,7 @@ std::string Configuration::toXml(TiXmlElement *parentNode)
     
     for (size_t i = 0; i < busses.size(); i++)
     {
-        struct xmq::bus::configuration::Connection &Connection = busses[i];
+        struct xmq::configuration::Connection &Connection = busses[i];
     
          
         { // Connection
@@ -765,7 +815,7 @@ std::string Configuration::toXml(TiXmlElement *parentNode)
     
     for (size_t i = 0; i < whiteIp.size(); i++)
     {
-        struct xmq::bus::configuration::IpRange &IpRange = whiteIp[i];
+        struct xmq::configuration::IpRange &IpRange = whiteIp[i];
     
          
         { // IpRange
@@ -789,7 +839,7 @@ std::string Configuration::toXml(TiXmlElement *parentNode)
     
     for (size_t i = 0; i < blackIp.size(); i++)
     {
-        struct xmq::bus::configuration::IpRange &IpRange = blackIp[i];
+        struct xmq::configuration::IpRange &IpRange = blackIp[i];
     
          
         { // IpRange
@@ -813,7 +863,7 @@ std::string Configuration::toXml(TiXmlElement *parentNode)
     
     for (size_t i = 0; i < modules.size(); i++)
     {
-        struct xmq::bus::configuration::Module &Module = modules[i];
+        struct xmq::configuration::Module &Module = modules[i];
     
          
         { // Module
@@ -922,7 +972,7 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
             {
                 root = arrayChild->ToElement();
                 
-                struct xmq::bus::configuration::Connection sub;
+                struct xmq::configuration::Connection sub;
     
                 if (_stricmp("Connection", root->Value()) == 0)
                 {
@@ -955,7 +1005,7 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
             {
                 root = arrayChild->ToElement();
                 
-                struct xmq::bus::configuration::IpRange sub;
+                struct xmq::configuration::IpRange sub;
     
                 if (_stricmp("IpRange", root->Value()) == 0)
                 {
@@ -988,7 +1038,7 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
             {
                 root = arrayChild->ToElement();
                 
-                struct xmq::bus::configuration::IpRange sub;
+                struct xmq::configuration::IpRange sub;
     
                 if (_stricmp("IpRange", root->Value()) == 0)
                 {
@@ -1021,7 +1071,7 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
             {
                 root = arrayChild->ToElement();
                 
-                struct xmq::bus::configuration::Module sub;
+                struct xmq::configuration::Module sub;
     
                 if (_stricmp("Module", root->Value()) == 0)
                 {
@@ -1045,8 +1095,6 @@ void Configuration::fromXml(const std::string &xml, TiXmlElement *parentNode)
     
 }
 
-
-}
 
 }
 

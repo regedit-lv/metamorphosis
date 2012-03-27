@@ -40,62 +40,75 @@ namespace Metamorphosis
             }
             expression = expression.Remove(0, f.Length);
 
+            object fo = null;
+
+            // check is it function call
             if (expression.Length > 0 && expression[0] == '(')
             {
+                expression = expression.Remove(0, 2); // remove ()
                 // method call
                 MethodInfo m = obj.GetType().GetMethod(f);
-                string s = m.Invoke(obj, null) as string;
-                return s;
+                fo = m.Invoke(obj, null);
             }
-
-            FieldInfo field = obj.GetType().GetField(f);
-
-            if (field == null)
+            else
             {
-                return null;
-            }
+                // check for field
+                FieldInfo field = obj.GetType().GetField(f);
 
-            object fo = field.GetValue(obj);            
+                if (field == null)
+                {
+                    return null;
+                }
+
+                fo = field.GetValue(obj);
+
+                if (expression.Length != 0)
+                {
+                    // get array element
+                    if (expression[0] == '[')
+                    {
+                        expression = expression.Remove(0, 1);
+                        int i = expression.IndexOf(']');
+                        if (i == -1)
+                        {
+                            return null;
+                        }
+                        string si = expression.Substring(0, i);
+                        expression = expression.Remove(0, i + 1);
+                        try
+                        {
+                            i = Convert.ToInt32(si);
+                            IList a = fo as IList;
+                            if (a == null)
+                            {
+                                return null;
+                            }
+                            fo = a[i];
+                        }
+                        catch (Exception)
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
 
             if (expression.Length == 0)
             {
                 return fo.ToString();
             }
+
+            // remove '.'
+            if (expression[0] == '.')
+            {
+                expression = expression.Remove(0, 1);
+            }
             else
             {
-                // get array element
-                if (expression[0] == '[')
-                {
-                    expression = expression.Remove(0, 1);
-                    int i = expression.IndexOf(']');
-                    if (i == -1)
-                    {
-                        return null;
-                    }
-                    string si = expression.Substring(0, i);
-                    expression = expression.Remove(0, i + 1);
-                    try
-                    {
-                        i = Convert.ToInt32(si);
-                        IList a = fo as IList;
-                        if (a == null)
-                        {
-                            return null;
-                        }
-                        fo = a[i];
-                    }
-                    catch (Exception)
-                    {
-                        return null;
-                    }
-                }
-
-                // remove '.'
-                if (expression[0] == '.')
-                {
-                    expression = expression.Remove(0, 1);
-                }
+                // unexpected
+                return "<expected symbol '.' but received '" + expression + "'>";
             }
+
             return GetValue(fo, expression);
         }
 

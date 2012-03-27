@@ -8,8 +8,6 @@
 
 namespace xmq
 {
-namespace bus
-{
 namespace configuration
 {
 
@@ -23,12 +21,24 @@ enum class MetaType : int
 };
 
 
+class MetaTypeHelper 
+{
+public:
+    static bool initDone ;
+    static std::map<xmq::configuration::MetaType, std::string> valueToName ;
+    static std::map<std::string, xmq::configuration::MetaType> nameToValue ;
+    
+    static std::string getEnumName(xmq::configuration::MetaType value) ;
+    static xmq::configuration::MetaType getEnumValue(std::string name) ;
+    static void initEnum(void) ; 
+};
+
+
 struct MetaData 
 {
-    xmq::bus::configuration::MetaType type ;
+    xmq::configuration::MetaType type ;
     std::string name ;
-    std::vector<struct xmq::bus::configuration::MetaData> elements ;
-    int32_t sa ;
+    std::vector<struct xmq::configuration::MetaData> elements ;
     
     MetaData() ;
     std::string toXml(TiXmlElement *parentNode) ;
@@ -95,21 +105,19 @@ struct Connection
 
 struct Configuration 
 {
-    struct xmq::bus::configuration::MetaData metaData ;
-    struct xmq::bus::configuration::Instance instance ;
-    struct xmq::bus::configuration::Path path ;
-    std::vector<struct xmq::bus::configuration::Connection> busses ;
-    std::vector<struct xmq::bus::configuration::IpRange> whiteIp ;
-    std::vector<struct xmq::bus::configuration::IpRange> blackIp ;
-    std::vector<struct xmq::bus::configuration::Module> modules ;
+    struct xmq::configuration::MetaData metaData ;
+    struct xmq::configuration::Instance instance ;
+    struct xmq::configuration::Path path ;
+    std::vector<struct xmq::configuration::Connection> busses ;
+    std::vector<struct xmq::configuration::IpRange> whiteIp ;
+    std::vector<struct xmq::configuration::IpRange> blackIp ;
+    std::vector<struct xmq::configuration::Module> modules ;
     
     Configuration() ;
     std::string toXml(TiXmlElement *parentNode) ;
     void fromXml(const std::string &xml, TiXmlElement *parentNode) ; 
 };
 
-
-}
 
 }
 
