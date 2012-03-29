@@ -11,11 +11,12 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    /*
-    xmq::bus::configuration::Configuration conf;
-    xmq::bus::configuration::IpRange ir;
-    xmq::bus::configuration::Module m;
     
+    xmq::configuration::Configuration conf;
+    xmq::configuration::IpRange ir;
+    xmq::configuration::Module m;
+    xmq::configuration::Connection c;
+
     m.name = "Module1";
     m.id = "test1";
     conf.modules.push_back(m);
@@ -33,7 +34,6 @@ int _tmain(int argc, _TCHAR* argv[])
     ir.to = "192.168.0.120";
     conf.blackIp.push_back(ir);
 
-    xmq::bus::configuration::Connection c;
     c.host = "localhost";
     c.port = 40001;
     conf.busses.push_back(c);
@@ -51,26 +51,10 @@ int _tmain(int argc, _TCHAR* argv[])
     std::cout << xml << std::endl;
 
 
-    TiXmlDocument doc;
-
-    doc.Parse(xml.c_str());
-
-    long a = sizeof(long);;
-
-    TiXmlElement *root = doc.RootElement();
-
-    std::cout << root->Value() << std::endl;
-
-    for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
-    {
-        const char * s = child->Value();
-        if (strcmp(child->Value(), "instance") == 0)
-        {
-        }
-    }
+   
     
     int aaa = _stricmp("AA", "aa");
-    xmq::bus::configuration::Configuration conf2;
+    xmq::configuration::Configuration conf2;
 
     std::ifstream infile("config.xml");
     std::string allText = "";

@@ -13,6 +13,7 @@ namespace configuration
 
 enum class MetaType : int
 {
+    None ,
     Int ,
     String ,
     Array ,

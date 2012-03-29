@@ -46,7 +46,7 @@
     <Compile Include="Generated\xmq.cs" />
     <Compile Include="Helpers\ByteReader.cs" />
     <Compile Include="Helpers\ByteWriter.cs" />
-    <Compile Include="Helpers\XmlReaderWrapper.cs" />
+    <Compile Include="Helpers\XmlWrapper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

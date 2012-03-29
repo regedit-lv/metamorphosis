@@ -40,6 +40,10 @@ void MetaTypeHelper::initEnum(void)
 {
     
         
+        valueToName[MetaType::None] = "none";
+        nameToValue["none"] = MetaType::None;
+        
+        
         valueToName[MetaType::Int] = "int";
         nameToValue["int"] = MetaType::Int;
         
@@ -48,12 +52,12 @@ void MetaTypeHelper::initEnum(void)
         nameToValue["string"] = MetaType::String;
         
         
-        valueToName[MetaType::Array] = "Array";
-        nameToValue["Array"] = MetaType::Array;
+        valueToName[MetaType::Array] = "array";
+        nameToValue["array"] = MetaType::Array;
         
         
-        valueToName[MetaType::Object] = "Object";
-        nameToValue["Object"] = MetaType::Object;
+        valueToName[MetaType::Object] = "object";
+        nameToValue["object"] = MetaType::Object;
         
         
         initDone = true;
@@ -63,6 +67,7 @@ void MetaTypeHelper::initEnum(void)
  
 MetaData::MetaData()
 {
+    type = MetaType::None ;
     
 }
 
@@ -83,7 +88,7 @@ std::string MetaData::toXml(TiXmlElement *parentNode)
     
     { // type
         std::stringstream oss;
-        oss << (int)type;
+        oss << xmq::configuration::MetaTypeHelper::getEnumName(type);
         parent->SetAttribute("type", oss.str().c_str());
     }
     
@@ -158,7 +163,8 @@ void MetaData::fromXml(const std::string &xml, TiXmlElement *parentNode)
     
     
     // type
-    root->Attribute("type", (int*)&type);
+    std::string s_1 = root->Attribute("type");
+    type = xmq::configuration::MetaTypeHelper::getEnumValue(s_1);
     
       
     

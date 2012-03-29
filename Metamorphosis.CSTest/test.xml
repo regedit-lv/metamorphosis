@@ -1,53 +1,53 @@
-﻿<metaData name="configuration" type="3">
+﻿<metaData name="configuration" type="object">
   <elements>
-    <MetaData name="instance" type="3">
+    <MetaData name="instance" type="object">
       <elements>
-        <MetaData name="name" type="1"/>
-        <MetaData name="id" type="0"/>
-        <MetaData name="host" type="1"/>
-        <MetaData name="port" type="0"/>
+        <MetaData name="name" type="string"/>
+        <MetaData name="id" type="int"/>
+        <MetaData name="host" type="string"/>
+        <MetaData name="port" type="int"/>
       </elements>
     </MetaData>
 
-    <MetaData name="whiteIp" type="2">
+    <MetaData name="whiteIp" type="array">
       <elements>
-        <MetaData name="IpRange" type="3">
+        <MetaData name="IpRange" type="object">
           <elements>
-            <MetaData name="from" type="1"/>
-            <MetaData name="to" type="1"/>
+            <MetaData name="from" type="string"/>
+            <MetaData name="to" type="string"/>
           </elements>
         </MetaData>
       </elements>
     </MetaData>
 
-    <MetaData name="blackIp" type="2">
+    <MetaData name="blackIp" type="array">
       <elements>
-        <MetaData name="IpRange" type="3">
+        <MetaData name="IpRange" type="object">
           <elements>
-            <MetaData name="from" type="1"/>
-            <MetaData name="to" type="1"/>
+            <MetaData name="from" type="string"/>
+            <MetaData name="to" type="string"/>
           </elements>
         </MetaData>
       </elements>
     </MetaData>
 
-    <MetaData name="busses" type="2">
+    <MetaData name="busses" type="array">
       <elements>
-        <MetaData name="Connection" type="3">
+        <MetaData name="Connection" type="object">
           <elements>
-            <MetaData name="host" type="1"/>
-            <MetaData name="port" type="0"/>
+            <MetaData name="host" type="string"/>
+            <MetaData name="port" type="string"/>
           </elements>
         </MetaData>
       </elements>
     </MetaData>
 
-    <MetaData name="modules" type="2">
+    <MetaData name="modules" type="array">
       <elements>
-        <MetaData name="Module" type="3">
+        <MetaData name="Module" type="object">
           <elements>
-            <MetaData name="name" type="1"/>
-            <MetaData name="id" type="1"/>
+            <MetaData name="name" type="string"/>
+            <MetaData name="id" type="string"/>
           </elements>
         </MetaData>
       </elements>

@@ -1,11 +1,96 @@
 ﻿## toXml
 
-method toXml param = !{!}
+method toXml param = !{XmlWriter parentWriter = null!}
 method toXml returnType = string
+
+method toXml body direct =
+!{
+%~default%
+%~enum%  
+%~string% 
+!}
 
 method toXml body =
 !{
-    return "";
+    StringWriter sw = null;
+    XmlWriter writer = null;
+
+    if (parentWriter == null)
+    {
+        sw = new StringWriter();
+        writer = XmlWriter.Create(sw);
+        writer.WriteStartDocument();
+        writer.WriteStartElement("%!Name%");
+    }
+    else
+    {
+        writer = parentWriter;
+    }
+
+    // write primitive types
+    %direct%
+
+    // write complex types
+    %~struct% 
+    %~array% 
+    
+    if (parentWriter == null)
+    {
+        writer.WriteEndElement();
+        writer.Flush();
+        string xml = sw.ToString();
+        return XElement.Parse(xml).ToString();
+    }
+    else
+    {
+        return null;
+    }
+!}
+
+method toXml body direct default = !{
+// %type% %field%
+XmlWrapper.WriteAttribute(writer, "%field%", %field%);
+!}
+
+method toXml body direct enum = !{
+// %type% %field%
+XmlWrapper.WriteAttribute(writer, "%field%", %!Larva.GetTypeDefinition()%Helper.getEnumName(%field%));
+!}
+
+method toXml body direct string = !{
+// %type% %field%
+XmlWrapper.WriteAttribute(writer, "%field%", %field%);
+!}
+
+method toXml body direct struct = !{
+// %field%
+%field%.toXml(writer);
+!}
+
+method toXml body struct = !{
+// %field%
+writer.WriteStartElement("%field%");
+%field%.toXml(writer);
+writer.WriteEndElement();
+!}
+
+method toXml body array = !{
+// %field%
+if (%field% != null)
+{
+    writer.WriteStartElement("%field%");
+
+    foreach (var %_element% in %field%)
+    {
+        writer.WriteStartElement("%!Larva.SubLarvae[0].Name%");
+
+        %#method toXml body direct#%_element%#%!Larva.SubLarvae[0].FullName%#%
+    
+        writer.WriteEndElement();
+    }
+                   
+    writer.WriteEndElement();
+}
 !}
 
 ## fromXml
@@ -62,21 +147,21 @@ method fromXml body readDirect = !{
 
 method fromXml body readDirect default = !{
 // %type% %field%
-XmlReaderWrapper.ReadAttribute(reader, "%field%", out %field%);
+XmlWrapper.ReadAttribute(reader, "%field%", out %field%);
 !}
 
 method fromXml body readDirect enum = !{
 // %type% %field%
 {
-    int i_%field%;
-    XmlReaderWrapper.ReadAttribute(reader, "%field%", out i_%field%);
-    %field% = (%type%)i_%field%;
+    string i_%field%;
+    XmlWrapper.ReadAttribute(reader, "%field%", out i_%field%);
+    %field% = %!Larva.GetTypeDefinition()%Helper.getEnumValue(i_%field%);
 }
 !}
 
 method fromXml body readDirect string = !{
 // %type% %field%
-XmlReaderWrapper.ReadAttribute(reader, "%field%", out %field%);
+XmlWrapper.ReadAttribute(reader, "%field%", out %field%);
 !}
 
 method fromXml body readDirect struct = !{

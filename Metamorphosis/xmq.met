@@ -2,6 +2,7 @@
 
 enum MetaType
 %{
+    None : none,
     Int : int,
     String : string,
     Array : array,
@@ -17,7 +18,7 @@ static MetaTypeHelper : MetaType
 
 struct MetaData
 %{
-    MetaType type;
+    MetaType type = MetaType.None;
     String name;
     Array MetaData elements;
 %} : toXml fromXml;

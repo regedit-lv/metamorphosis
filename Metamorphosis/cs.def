@@ -1,2 +1,3 @@
 ﻿import rules Cs\main.def
+import rules Cs\enum.def
 import rules Cs\xml.def

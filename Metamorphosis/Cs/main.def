@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using Helpers;
 using System.Xml;
+using System.IO;
+using System.Xml.Linq;
 !}
 
 ImportInclude %{ %}
@@ -44,6 +46,24 @@ public %name%()
 
 ConstructorWithBaseDeclaration !{ 
 public %name%() :base()
+{
+    %body%
+}
+!}
+
+StaticDefinition 
+!{
+static class %name% 
+{
+    %body% 
+}
+!}
+
+StaticFieldDeclaration %{ public static %type% %field%; %}
+StaticFieldDeclarationWithValue %{ public static %type% %field% = %value%; %}
+
+StaticMethodDeclaration !{ 
+public static %returnType% %method%(%param%)
 {
     %body%
 }
