@@ -91,6 +91,11 @@ namespace Metamorphosis
 
         public string GetTypeDefinition()
         {
+            if (TypeDefinition == null)
+            {
+                return "";
+            }
+
             string typeName = TypeDefinition.Definition.Replace("%name%", Name);
 
             if (SubLarvae != null)
@@ -125,7 +130,21 @@ namespace Metamorphosis
 
         public string GetStaticFieldDefinition(Larva owner, string fieldName, string value)
         {
-            string tpd = value == null ? Larvae.GetElement(ElementType.StaticFieldDefinition) : Larvae.GetElement(ElementType.StaticFieldDefinitionWithValue);
+            string tpd = null;
+
+            if (value == null)
+            {
+                tpd = Larvae.GetElement(ElementType.StaticFieldDefinition);
+            }
+            else
+            {
+                tpd = Larvae.GetElement(ElementType.StaticFieldDefinitionWithValue);
+                if (tpd == "")
+                {
+                    tpd = Larvae.GetElement(ElementType.StaticFieldDefinition);
+                }
+            }
+
             string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName).Replace("%larva%", owner.GetTypeDefinition());
             if (value != null)
             {
@@ -134,10 +153,28 @@ namespace Metamorphosis
             return d;
         }
 
-        public string GetStaticFieldDeclaration(string fieldName)
+        public string GetStaticFieldDeclaration(string fieldName, string value)
         {
-            string tpd = Larvae.GetElement(ElementType.StaticFieldDeclaration);
+            string tpd = null;
+
+            if (value == null)
+            {
+                tpd = Larvae.GetElement(ElementType.StaticFieldDeclaration);
+            }
+            else
+            {
+                tpd = Larvae.GetElement(ElementType.StaticFieldDeclarationWithValue);
+                if (tpd == "")
+                {
+                    tpd = Larvae.GetElement(ElementType.StaticFieldDeclaration);
+                }
+            }
+
             string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName);
+            if (value != null)
+            {
+                d = d.Replace("%value%", value);
+            }
             return d;
         }
 
@@ -249,7 +286,7 @@ namespace Metamorphosis
             // add fields
             foreach (Part p in Parts)
             {
-                string pd = p.Larva.GetStaticFieldDeclaration(p.Name);
+                string pd = p.Larva.GetStaticFieldDeclaration(p.Name, p.InitialValue);
                 body += pd + Environment.NewLine;
             }
 

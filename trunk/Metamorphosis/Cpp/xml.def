@@ -44,7 +44,7 @@ method toXml body default = !{
 method toXml body enum = !{
 { // %field%
     std::stringstream oss;
-    oss << (int)%field%;
+    oss << %!Larva.GetTypeDefinition()%Helper::getEnumName(%field%);
     parent->SetAttribute("%field%", oss.str().c_str());
 }
 !}
@@ -63,6 +63,15 @@ method toXml body struct = !{
     std::string xml = %field%.toXml(element);
     parent->LinkEndChild(element);
 }
+!}
+
+method toXml body array = !{ 
+{ // %field%
+    TiXmlElement * element = new TiXmlElement("%field%");
+    std::string xml = %field%.toXml(element);
+    parent->LinkEndChild(element);
+}
+
 !}
 
 method toXml body array = !{ 
@@ -144,7 +153,8 @@ root->Attribute("%field%", &%field%);
 
 method fromXml body readDirect enum = !{
 // %field%
-root->Attribute("%field%", (int*)&%field%);
+std::string %_s% = root->Attribute("%field%");
+%field% = %!Larva.GetTypeDefinition()%Helper::getEnumValue(%_s%);
 !}
 
 method fromXml body readDirect string = !{

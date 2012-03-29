@@ -28,6 +28,7 @@ namespace Metamorphosis
         StaticDeclaration,
         StaticDefinition,
         StaticFieldDeclaration,
+        StaticFieldDeclarationWithValue,
         StaticFieldDefinition,
         StaticFieldDefinitionWithValue,
 

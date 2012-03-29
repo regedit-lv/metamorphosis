@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace Helpers
 {
-    static class XmlReaderWrapper
+    static class XmlWrapper
     {
         public static bool ReadAttribute(XmlReader reader, string name, out Int32 value)
         {
@@ -140,5 +140,41 @@ namespace Helpers
             return true;
         }
 
+        public static void WriteAttribute(XmlWriter writer, string name, Int32 value)
+        {
+            writer.WriteAttributeString(name, value.ToString());
+        }
+
+        public static void WriteAttribute(XmlWriter writer, string name, UInt16 value)
+        {
+            writer.WriteAttributeString(name, value.ToString());
+        }
+
+        public static void WriteAttribute(XmlWriter writer, string name, Int16 value)
+        {
+            writer.WriteAttributeString(name, value.ToString());
+        }
+
+        public static void WriteAttribute(XmlWriter writer, string name, UInt64 value)
+        {
+            writer.WriteAttributeString(name, value.ToString());
+        }
+
+        public static void WriteAttribute(XmlWriter writer, string name, bool value)
+        {
+            if (value)
+            {
+                writer.WriteAttributeString(name, "true");
+            }
+            else
+            {
+                writer.WriteAttributeString(name, "false");
+            }
+        }
+
+        public static void WriteAttribute(XmlWriter writer, string name, string value)
+        {
+            writer.WriteAttributeString(name, value);
+        }
     }
 }

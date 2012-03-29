@@ -82,6 +82,9 @@
     <Content Include="Cs\bytes.def">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Cs\enum.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Cs\main.def">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

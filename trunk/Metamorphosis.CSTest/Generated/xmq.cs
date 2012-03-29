@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using Helpers;
 using System.Xml;
+using System.IO;
+using System.Xml.Linq;
 
 
 namespace xmq.configuration
@@ -15,6 +17,66 @@ public enum MetaType : int
     Array ,
     Object ,
     
+}
+
+
+static class MetaTypeHelper 
+{
+    public static bool initDone = false ;
+    public static Dictionary<MetaType, string> valueToName ;
+    public static Dictionary<string, MetaType> nameToValue ;
+    
+     
+    public static string getEnumName(MetaType value)
+    {
+        
+        if (!initDone)
+        {
+            initEnum();
+        }
+        return valueToName[value];
+        
+    }
+    
+     
+    public static MetaType getEnumValue(string name)
+    {
+        
+        if (!initDone)
+        {
+            initEnum();
+        }
+        return nameToValue[name];
+        
+    }
+    
+     
+    public static void initEnum()
+    {
+        
+            valueToName = new Dictionary<MetaType, string>();
+            nameToValue = new Dictionary<string, MetaType>();
+            
+            valueToName[MetaType.Int] = "int";
+            nameToValue["int"] = MetaType.Int;
+            
+            
+            valueToName[MetaType.String] = "string";
+            nameToValue["string"] = MetaType.String;
+            
+            
+            valueToName[MetaType.Array] = "array";
+            nameToValue["array"] = MetaType.Array;
+            
+            
+            valueToName[MetaType.Object] = "object";
+            nameToValue["object"] = MetaType.Object;
+            
+            
+            initDone = true;
+        
+    }
+     
 }
 
 
@@ -31,10 +93,75 @@ public class MetaData
     }
     
      
-    public string toXml()
+    public string toXml(XmlWriter parentWriter = null)
     {
         
-            return "";
+            StringWriter sw = null;
+            XmlWriter writer = null;
+        
+            if (parentWriter == null)
+            {
+                sw = new StringWriter();
+                writer = XmlWriter.Create(sw);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("MetaData");
+            }
+            else
+            {
+                writer = parentWriter;
+            }
+        
+            // write primitive types
+            
+            
+            
+            // MetaType type
+            XmlWrapper.WriteAttribute(writer, "type", MetaTypeHelper.getEnumName(type));
+            
+              
+            
+            // string name
+            XmlWrapper.WriteAttribute(writer, "name", name);
+            
+             
+            
+        
+            // write complex types
+             
+            
+            // elements
+            if (elements != null)
+            {
+                writer.WriteStartElement("elements");
+            
+                foreach (var element_1 in elements)
+                {
+                    writer.WriteStartElement("MetaData");
+            
+                    
+                    // element_1
+                    element_1.toXml(writer);
+                    
+                
+                    writer.WriteEndElement();
+                }
+                               
+                writer.WriteEndElement();
+            }
+            
+             
+            
+            if (parentWriter == null)
+            {
+                writer.WriteEndElement();
+                writer.Flush();
+                string xml = sw.ToString();
+                return XElement.Parse(xml).ToString();
+            }
+            else
+            {
+                return null;
+            }
         
     }
     
@@ -66,15 +193,15 @@ public class MetaData
             
             // MetaType type
             {
-                int i_type;
-                XmlReaderWrapper.ReadAttribute(reader, "type", out i_type);
-                type = (MetaType)i_type;
+                string i_type;
+                XmlWrapper.ReadAttribute(reader, "type", out i_type);
+                type = MetaTypeHelper.getEnumValue(i_type);
             }
             
               
             
             // string name
-            XmlReaderWrapper.ReadAttribute(reader, "name", out name);
+            XmlWrapper.ReadAttribute(reader, "name", out name);
             
              
             
@@ -100,10 +227,11 @@ public class MetaData
                                     {
                                         if ("MetaData".ToLower() == reader.Name.ToLower())
                                         {
-                                            xmq.configuration.MetaData sub = new xmq.configuration.MetaData();
+                                            xmq.configuration.MetaData sub;
                         
                                             
                                             // xmq.configuration.MetaData sub
+                                            sub = new xmq.configuration.MetaData();
                                             sub.fromXml("", reader);
                                             
                         
@@ -144,10 +272,54 @@ public class Module
     }
     
      
-    public string toXml()
+    public string toXml(XmlWriter parentWriter = null)
     {
         
-            return "";
+            StringWriter sw = null;
+            XmlWriter writer = null;
+        
+            if (parentWriter == null)
+            {
+                sw = new StringWriter();
+                writer = XmlWriter.Create(sw);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Module");
+            }
+            else
+            {
+                writer = parentWriter;
+            }
+        
+            // write primitive types
+            
+            
+              
+            
+            // string name
+            XmlWrapper.WriteAttribute(writer, "name", name);
+            
+            
+            // string id
+            XmlWrapper.WriteAttribute(writer, "id", id);
+            
+             
+            
+        
+            // write complex types
+             
+             
+            
+            if (parentWriter == null)
+            {
+                writer.WriteEndElement();
+                writer.Flush();
+                string xml = sw.ToString();
+                return XElement.Parse(xml).ToString();
+            }
+            else
+            {
+                return null;
+            }
         
     }
     
@@ -179,11 +351,11 @@ public class Module
               
             
             // string name
-            XmlReaderWrapper.ReadAttribute(reader, "name", out name);
+            XmlWrapper.ReadAttribute(reader, "name", out name);
             
             
             // string id
-            XmlReaderWrapper.ReadAttribute(reader, "id", out id);
+            XmlWrapper.ReadAttribute(reader, "id", out id);
             
              
             
@@ -222,10 +394,54 @@ public class IpRange
     }
     
      
-    public string toXml()
+    public string toXml(XmlWriter parentWriter = null)
     {
         
-            return "";
+            StringWriter sw = null;
+            XmlWriter writer = null;
+        
+            if (parentWriter == null)
+            {
+                sw = new StringWriter();
+                writer = XmlWriter.Create(sw);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("IpRange");
+            }
+            else
+            {
+                writer = parentWriter;
+            }
+        
+            // write primitive types
+            
+            
+              
+            
+            // string from
+            XmlWrapper.WriteAttribute(writer, "from", from);
+            
+            
+            // string to
+            XmlWrapper.WriteAttribute(writer, "to", to);
+            
+             
+            
+        
+            // write complex types
+             
+             
+            
+            if (parentWriter == null)
+            {
+                writer.WriteEndElement();
+                writer.Flush();
+                string xml = sw.ToString();
+                return XElement.Parse(xml).ToString();
+            }
+            else
+            {
+                return null;
+            }
         
     }
     
@@ -257,11 +473,11 @@ public class IpRange
               
             
             // string from
-            XmlReaderWrapper.ReadAttribute(reader, "from", out from);
+            XmlWrapper.ReadAttribute(reader, "from", out from);
             
             
             // string to
-            XmlReaderWrapper.ReadAttribute(reader, "to", out to);
+            XmlWrapper.ReadAttribute(reader, "to", out to);
             
              
             
@@ -302,10 +518,62 @@ public class Instance
     }
     
      
-    public string toXml()
+    public string toXml(XmlWriter parentWriter = null)
     {
         
-            return "";
+            StringWriter sw = null;
+            XmlWriter writer = null;
+        
+            if (parentWriter == null)
+            {
+                sw = new StringWriter();
+                writer = XmlWriter.Create(sw);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Instance");
+            }
+            else
+            {
+                writer = parentWriter;
+            }
+        
+            // write primitive types
+            
+            
+            // int id
+            XmlWrapper.WriteAttribute(writer, "id", id);
+            
+            
+            // int port
+            XmlWrapper.WriteAttribute(writer, "port", port);
+            
+            
+              
+            
+            // string name
+            XmlWrapper.WriteAttribute(writer, "name", name);
+            
+            
+            // string host
+            XmlWrapper.WriteAttribute(writer, "host", host);
+            
+             
+            
+        
+            // write complex types
+             
+             
+            
+            if (parentWriter == null)
+            {
+                writer.WriteEndElement();
+                writer.Flush();
+                string xml = sw.ToString();
+                return XElement.Parse(xml).ToString();
+            }
+            else
+            {
+                return null;
+            }
         
     }
     
@@ -335,21 +603,21 @@ public class Instance
             
             
             // int id
-            XmlReaderWrapper.ReadAttribute(reader, "id", out id);
+            XmlWrapper.ReadAttribute(reader, "id", out id);
             
             
             // int port
-            XmlReaderWrapper.ReadAttribute(reader, "port", out port);
+            XmlWrapper.ReadAttribute(reader, "port", out port);
             
             
               
             
             // string name
-            XmlReaderWrapper.ReadAttribute(reader, "name", out name);
+            XmlWrapper.ReadAttribute(reader, "name", out name);
             
             
             // string host
-            XmlReaderWrapper.ReadAttribute(reader, "host", out host);
+            XmlWrapper.ReadAttribute(reader, "host", out host);
             
              
             
@@ -388,10 +656,54 @@ public class Path
     }
     
      
-    public string toXml()
+    public string toXml(XmlWriter parentWriter = null)
     {
         
-            return "";
+            StringWriter sw = null;
+            XmlWriter writer = null;
+        
+            if (parentWriter == null)
+            {
+                sw = new StringWriter();
+                writer = XmlWriter.Create(sw);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Path");
+            }
+            else
+            {
+                writer = parentWriter;
+            }
+        
+            // write primitive types
+            
+            
+              
+            
+            // string modules
+            XmlWrapper.WriteAttribute(writer, "modules", modules);
+            
+            
+            // string modulesData
+            XmlWrapper.WriteAttribute(writer, "modulesData", modulesData);
+            
+             
+            
+        
+            // write complex types
+             
+             
+            
+            if (parentWriter == null)
+            {
+                writer.WriteEndElement();
+                writer.Flush();
+                string xml = sw.ToString();
+                return XElement.Parse(xml).ToString();
+            }
+            else
+            {
+                return null;
+            }
         
     }
     
@@ -423,11 +735,11 @@ public class Path
               
             
             // string modules
-            XmlReaderWrapper.ReadAttribute(reader, "modules", out modules);
+            XmlWrapper.ReadAttribute(reader, "modules", out modules);
             
             
             // string modulesData
-            XmlReaderWrapper.ReadAttribute(reader, "modulesData", out modulesData);
+            XmlWrapper.ReadAttribute(reader, "modulesData", out modulesData);
             
              
             
@@ -466,10 +778,54 @@ public class Connection
     }
     
      
-    public string toXml()
+    public string toXml(XmlWriter parentWriter = null)
     {
         
-            return "";
+            StringWriter sw = null;
+            XmlWriter writer = null;
+        
+            if (parentWriter == null)
+            {
+                sw = new StringWriter();
+                writer = XmlWriter.Create(sw);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Connection");
+            }
+            else
+            {
+                writer = parentWriter;
+            }
+        
+            // write primitive types
+            
+            
+            // int port
+            XmlWrapper.WriteAttribute(writer, "port", port);
+            
+            
+              
+            
+            // string host
+            XmlWrapper.WriteAttribute(writer, "host", host);
+            
+             
+            
+        
+            // write complex types
+             
+             
+            
+            if (parentWriter == null)
+            {
+                writer.WriteEndElement();
+                writer.Flush();
+                string xml = sw.ToString();
+                return XElement.Parse(xml).ToString();
+            }
+            else
+            {
+                return null;
+            }
         
     }
     
@@ -499,13 +855,13 @@ public class Connection
             
             
             // int port
-            XmlReaderWrapper.ReadAttribute(reader, "port", out port);
+            XmlWrapper.ReadAttribute(reader, "port", out port);
             
             
               
             
             // string host
-            XmlReaderWrapper.ReadAttribute(reader, "host", out host);
+            XmlWrapper.ReadAttribute(reader, "host", out host);
             
              
             
@@ -549,10 +905,148 @@ public class Configuration
     }
     
      
-    public string toXml()
+    public string toXml(XmlWriter parentWriter = null)
     {
         
-            return "";
+            StringWriter sw = null;
+            XmlWriter writer = null;
+        
+            if (parentWriter == null)
+            {
+                sw = new StringWriter();
+                writer = XmlWriter.Create(sw);
+                writer.WriteStartDocument();
+                writer.WriteStartElement("Configuration");
+            }
+            else
+            {
+                writer = parentWriter;
+            }
+        
+            // write primitive types
+            
+            
+              
+             
+            
+        
+            // write complex types
+            
+            // metaData
+            writer.WriteStartElement("metaData");
+            metaData.toXml(writer);
+            writer.WriteEndElement();
+            
+            
+            // instance
+            writer.WriteStartElement("instance");
+            instance.toXml(writer);
+            writer.WriteEndElement();
+            
+            
+            // path
+            writer.WriteStartElement("path");
+            path.toXml(writer);
+            writer.WriteEndElement();
+            
+             
+            
+            // busses
+            if (busses != null)
+            {
+                writer.WriteStartElement("busses");
+            
+                foreach (var element_2 in busses)
+                {
+                    writer.WriteStartElement("Connection");
+            
+                    
+                    // element_2
+                    element_2.toXml(writer);
+                    
+                
+                    writer.WriteEndElement();
+                }
+                               
+                writer.WriteEndElement();
+            }
+            
+            
+            // whiteIp
+            if (whiteIp != null)
+            {
+                writer.WriteStartElement("whiteIp");
+            
+                foreach (var element_3 in whiteIp)
+                {
+                    writer.WriteStartElement("IpRange");
+            
+                    
+                    // element_3
+                    element_3.toXml(writer);
+                    
+                
+                    writer.WriteEndElement();
+                }
+                               
+                writer.WriteEndElement();
+            }
+            
+            
+            // blackIp
+            if (blackIp != null)
+            {
+                writer.WriteStartElement("blackIp");
+            
+                foreach (var element_4 in blackIp)
+                {
+                    writer.WriteStartElement("IpRange");
+            
+                    
+                    // element_4
+                    element_4.toXml(writer);
+                    
+                
+                    writer.WriteEndElement();
+                }
+                               
+                writer.WriteEndElement();
+            }
+            
+            
+            // modules
+            if (modules != null)
+            {
+                writer.WriteStartElement("modules");
+            
+                foreach (var element_5 in modules)
+                {
+                    writer.WriteStartElement("Module");
+            
+                    
+                    // element_5
+                    element_5.toXml(writer);
+                    
+                
+                    writer.WriteEndElement();
+                }
+                               
+                writer.WriteEndElement();
+            }
+            
+             
+            
+            if (parentWriter == null)
+            {
+                writer.WriteEndElement();
+                writer.Flush();
+                string xml = sw.ToString();
+                return XElement.Parse(xml).ToString();
+            }
+            else
+            {
+                return null;
+            }
         
     }
     
@@ -596,6 +1090,7 @@ public class Configuration
                         // struct metaData
                         if (reader.Name.ToLower() == "metaData".ToLower())
                         {
+                            metaData = new xmq.configuration.MetaData();
                             metaData.fromXml("", reader);
                         }
                         
@@ -603,6 +1098,7 @@ public class Configuration
                         // struct instance
                         if (reader.Name.ToLower() == "instance".ToLower())
                         {
+                            instance = new xmq.configuration.Instance();
                             instance.fromXml("", reader);
                         }
                         
@@ -610,6 +1106,7 @@ public class Configuration
                         // struct path
                         if (reader.Name.ToLower() == "path".ToLower())
                         {
+                            path = new xmq.configuration.Path();
                             path.fromXml("", reader);
                         }
                         
@@ -627,10 +1124,11 @@ public class Configuration
                                     {
                                         if ("Connection".ToLower() == reader.Name.ToLower())
                                         {
-                                            xmq.configuration.Connection sub = new xmq.configuration.Connection();
+                                            xmq.configuration.Connection sub;
                         
                                             
                                             // xmq.configuration.Connection sub
+                                            sub = new xmq.configuration.Connection();
                                             sub.fromXml("", reader);
                                             
                         
@@ -658,10 +1156,11 @@ public class Configuration
                                     {
                                         if ("IpRange".ToLower() == reader.Name.ToLower())
                                         {
-                                            xmq.configuration.IpRange sub = new xmq.configuration.IpRange();
+                                            xmq.configuration.IpRange sub;
                         
                                             
                                             // xmq.configuration.IpRange sub
+                                            sub = new xmq.configuration.IpRange();
                                             sub.fromXml("", reader);
                                             
                         
@@ -689,10 +1188,11 @@ public class Configuration
                                     {
                                         if ("IpRange".ToLower() == reader.Name.ToLower())
                                         {
-                                            xmq.configuration.IpRange sub = new xmq.configuration.IpRange();
+                                            xmq.configuration.IpRange sub;
                         
                                             
                                             // xmq.configuration.IpRange sub
+                                            sub = new xmq.configuration.IpRange();
                                             sub.fromXml("", reader);
                                             
                         
@@ -720,10 +1220,11 @@ public class Configuration
                                     {
                                         if ("Module".ToLower() == reader.Name.ToLower())
                                         {
-                                            xmq.configuration.Module sub = new xmq.configuration.Module();
+                                            xmq.configuration.Module sub;
                         
                                             
                                             // xmq.configuration.Module sub
+                                            sub = new xmq.configuration.Module();
                                             sub.fromXml("", reader);
                                             
                         
