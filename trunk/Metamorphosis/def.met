@@ -1,7 +1,7 @@
 ﻿Namespace xmq.def
 
 struct SubStruct
-%{
+!{
     int32 subI;
-%} : read write size;
+!} : read write size;
 

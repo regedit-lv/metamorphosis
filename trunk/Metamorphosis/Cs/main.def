@@ -8,9 +8,9 @@ using System.IO;
 using System.Xml.Linq;
 !}
 
-ImportInclude %{ %}
+ImportInclude !{ !}
 
-StructDeclaration %{%}
+StructDeclaration !{!}
 
 StructDefinition 
 !{
@@ -28,7 +28,7 @@ public class %name% : %base%
 };
 !}
 
-StructFieldDeclaration %{ public %type% %field%; %}
+StructFieldDeclaration !{ public %type% %field%; !}
 
 MethodDeclaration !{ 
 public %returnType% %method%(%param%)
@@ -59,8 +59,8 @@ static class %name%
 }
 !}
 
-StaticFieldDeclaration %{ public static %type% %field%; %}
-StaticFieldDeclarationWithValue %{ public static %type% %field% = %value%; %}
+StaticFieldDeclaration !{ public static %type% %field%; !}
+StaticFieldDeclarationWithValue !{ public static %type% %field% = %value%; !}
 
 StaticMethodDeclaration !{ 
 public static %returnType% %method%(%param%)
@@ -69,11 +69,11 @@ public static %returnType% %method%(%param%)
 }
 !}
 
-FieldInitialisation %{ %field% = %value%; %}
+FieldInitialisation !{ %field% = %value%; !}
 
-EnumFieldDeclaration %{ %field% , %}
-EnumFieldWithValueDeclaration %{ %field% = %value% , %}
-EnumValueDeclaration %{ %name%.%value% %}
+EnumFieldDeclaration !{ %field% , !}
+EnumFieldWithValueDeclaration !{ %field% = %value% , !}
+EnumValueDeclaration !{ %name%.%value% !}
 
 EnumDeclaration !{
 public enum %name% : int

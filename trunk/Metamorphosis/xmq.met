@@ -1,62 +1,66 @@
-﻿Namespace xmq.configuration
+﻿Namespace = xmq.configuration
 
 enum MetaType
-%{
+{
     None : none,
     Int : int,
     String : string,
     Array : array,
     Object : object,
-%}
+}
 
 static MetaTypeHelper : MetaType
-%{
+{
     bool initDone = false;
     Map MetaType String valueToName;
     Map String MetaType nameToValue;
-%} : getEnumName getEnumValue initEnum;
+} : getEnumName getEnumValue initEnum;
 
 struct MetaData
-%{
+{
     MetaType type = MetaType.None;
     String name;
     Array MetaData elements;
-%} : toXml fromXml;
+} : toXml fromXml;
+
+struct MetaData2 : MetaData
+{
+}
 
 struct Module
-%{
+{
     String name;
     String id;
-%} : toXml fromXml;
+} : toXml fromXml;
 
 struct IpRange
-%{
+{
     String from;
     String to;
-%} : toXml fromXml;
+} : toXml fromXml;
 
 struct Instance
-%{
+{
     String name;
     int32 id;
     String host;
     int32 port;
-%} : toXml fromXml;
+} : toXml fromXml;
 
 struct Path
-%{
+{
     String modules;
     String modulesData;
-%} : toXml fromXml;
+} : toXml fromXml;
 
 struct Connection
-%{
+{
     String host;
     int32 port;
-%} : toXml fromXml;
+} : toXml fromXml;
 
 struct Configuration
-%{
+{
     MetaData metaData;
     Instance instance;
     Path path;
@@ -64,30 +68,30 @@ struct Configuration
     Array IpRange whiteIp;
     Array IpRange blackIp;
     Array Module modules;
-%} : toXml fromXml;
+} : toXml fromXml;
 
 ## Namespace xmq
 ## 
 ## import def.met
 ## 
 ## struct SubStruct
-## %{
+## {
 ##     String subString;
-## %} : read write size;
+## } : read write size;
 ## 
 ## struct BaseStruct
-## %{
+## {
 ##     String bs;
 ##     int32 bi;
-## %} : read write size;
+## } : read write size;
 ## 
 ## struct TestStruct : BaseStruct
-## %{
+## {
 ##     Array xmq.def.SubStruct sd;
 ##     Array SubStruct sx;
 ##     Array String as;
 ##     String s;
 ##     int32 i;
-## %} : read write size;
+## } : read write size;
 
 

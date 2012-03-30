@@ -29,12 +29,77 @@ namespace Metamorphosis
     class Part
     {
         public PartMode Mode = PartMode.Generate;
+        public Larva Parent;
         public string Name;
         public Larva Larva;
         public string InitialValue;
         public string Description;
 
         List<PartVariable> variables = new List<PartVariable>();
+
+        public string Alias
+        {
+            get
+            {
+                return Description == null ? Name : Description;
+            }
+        }
+
+        public string EnumValue
+        {
+            get
+            {
+                string d = Larvae.GetElement(ElementType.EnumValueDeclaration);
+                return TextHelper.ReplaceExpressions(ref d, this);
+            }
+        }
+
+        public string TypeDefinition
+        {
+            get
+            {
+                return Larva.TypeDefinition;
+            }
+        }
+
+        public string InitialValueDefinition
+        {
+            get
+            {
+                string value = InitialValue;
+
+                int i = value.IndexOf(".");
+                if (i != -1)
+                {
+                    string b = value.Substring(0, i);
+                    Larva l = Larvae.GetLarva(b, true);
+                    if (l != null && l.Type == LarvaType.Enum)
+                    {
+                        value = value.Remove(0, i + 1);
+                        Part p = Larva.Parts.Find(x => x.Name == value);
+                        if (p != null)
+                        {
+                            InitialValue = p.EnumValue;
+                        }
+                        else
+                        {
+                            Log.Error(value, Error.NotFound, "Enum not found");
+                        }
+                    }
+                    else
+                    {
+                        Log.Error(b, Error.NotFound, "Enum not found");
+                    }
+                }
+
+                return value;
+            }
+        }
+
+        public Part(Larva parent)
+        {
+            Parent = parent;
+        }
 
         public string GetVariable(string name)
         {
@@ -48,6 +113,66 @@ namespace Metamorphosis
             }
 
             return pv.Value;
+        }
+
+        public string GetStructFieldDeclaration()
+        {
+            string tpd = Larvae.GetElement(ElementType.StructFieldDeclaration);
+            return TextHelper.ReplaceExpressions(ref tpd, this);
+        }
+
+        public string GetStaticFieldDeclaration()
+        {
+            string d = null;
+
+            if (InitialValue == null)
+            {
+                d = Larvae.GetElement(ElementType.StaticFieldDeclaration);
+            }
+            else
+            {
+                d = Larvae.GetElement(ElementType.StaticFieldDeclarationWithValue);
+                if (d == "")
+                {
+                    d = Larvae.GetElement(ElementType.StaticFieldDeclaration);
+                }
+            }
+
+            return TextHelper.ReplaceExpressions(ref d, this);            
+        }
+
+        public string GetStaticFieldDefinition()
+        {
+            string d = null;
+
+            if (InitialValue == null)
+            {
+                d = Larvae.GetElement(ElementType.StaticFieldDefinition);
+            }
+            else
+            {
+                d = Larvae.GetElement(ElementType.StaticFieldDefinitionWithValue);
+                if (d == "")
+                {
+                    d = Larvae.GetElement(ElementType.StaticFieldDefinition);
+                }
+            }
+            return TextHelper.ReplaceExpressions(ref d, this);
+        }
+
+        public string GetEnumFieldDefinition()
+        {
+            string d = InitialValue == null ?
+                Larvae.GetElement(ElementType.EnumFieldDeclaration) :
+                Larvae.GetElement(ElementType.EnumFieldWithValueDeclaration);
+
+            return TextHelper.ReplaceExpressions(ref d, this);
+        }
+
+        public string GetFieldInitialisation()
+        {
+            string d = Larvae.GetElement(ElementType.FieldInitialisation);
+            return TextHelper.ReplaceExpressions(ref d, this);
         }
     }
 
@@ -66,7 +191,7 @@ namespace Metamorphosis
         public List<Part> Parts = new List<Part>();
         public List<Part> BaseParts = new List<Part>();
         public LarvaMode Mode;
-        public TypeDefinition TypeDefinition;
+        public TypeInfo TypeInfo;
         public bool IsPrimitive
         {
             get
@@ -82,100 +207,34 @@ namespace Metamorphosis
                 }
             }
         }
-        
-        
+
+        public string TypeDefinition
+        {
+            get
+            {
+                if (TypeInfo == null)
+                {
+                    return "";
+                }
+
+                string d = TypeInfo.Definition;
+                TextHelper.ReplaceExpressions(ref d, this);
+
+                return d;
+            }
+        }
+
+        public string NamespaceDefinition
+        {
+            get
+            {
+                return Generator.Current.GetNamespace(Namespace);
+            }
+        }
+
         public Larva GetBaseLarva()
         {
             return Larvae.GetLarva(BaseName, true);
-        }
-
-        public string GetTypeDefinition()
-        {
-            if (TypeDefinition == null)
-            {
-                return "";
-            }
-
-            string typeName = TypeDefinition.Definition.Replace("%name%", Name);
-
-            if (SubLarvae != null)
-            {
-                for (int i = 0; i < SubLarvae.Count; i++)
-                {
-                    Larva sl = SubLarvae[i];
-                    string t = "%type" + i.ToString() + "%";
-                    typeName = typeName.Replace(t, sl.GetTypeDefinition());
-                }
-            }
-
-            if (Namespace != null)
-            {
-                string ns = Generator.Current.GetNamespace(Namespace);
-                typeName = typeName.Replace("%namespace%", ns);
-            }
-            else
-            {
-                typeName = typeName.Replace("%namespace%", "");
-            }
-
-            return typeName;
-        }
-
-        public string GetStructFieldDeclaration(string fieldName)
-        {
-            string tpd = Larvae.Elements[ElementType.StructFieldDeclaration];
-            string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName);
-            return d;
-        }
-
-        public string GetStaticFieldDefinition(Larva owner, string fieldName, string value)
-        {
-            string tpd = null;
-
-            if (value == null)
-            {
-                tpd = Larvae.GetElement(ElementType.StaticFieldDefinition);
-            }
-            else
-            {
-                tpd = Larvae.GetElement(ElementType.StaticFieldDefinitionWithValue);
-                if (tpd == "")
-                {
-                    tpd = Larvae.GetElement(ElementType.StaticFieldDefinition);
-                }
-            }
-
-            string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName).Replace("%larva%", owner.GetTypeDefinition());
-            if (value != null)
-            {
-                d = d.Replace("%value%", value);
-            }
-            return d;
-        }
-
-        public string GetStaticFieldDeclaration(string fieldName, string value)
-        {
-            string tpd = null;
-
-            if (value == null)
-            {
-                tpd = Larvae.GetElement(ElementType.StaticFieldDeclaration);
-            }
-            else
-            {
-                tpd = Larvae.GetElement(ElementType.StaticFieldDeclarationWithValue);
-                if (tpd == "")
-                {
-                    tpd = Larvae.GetElement(ElementType.StaticFieldDeclaration);
-                }
-            }
-
-            string d = tpd.Replace("%type%", GetTypeDefinition()).Replace("%field%", fieldName);
-            if (value != null)
-            {
-                d = d.Replace("%value%", value);
-            }
-            return d;
         }
 
         public string GetConstructorBody()
@@ -185,20 +244,7 @@ namespace Metamorphosis
             {
                 if (p.InitialValue != null)
                 {
-                    string value = p.InitialValue;
-
-                    int i = value.IndexOf(".");
-                    if (i != -1)
-                    {
-                        string b = value.Substring(0, i);
-                        Larva l = Larvae.GetLarva(b, true);
-                        if (l != null && l.Type == LarvaType.Enum)
-                        {
-                            value = l.GetEnumValue(value.Remove(0, i + 1));
-                        }
-                    }
-
-                    body += Larvae.GetElement(ElementType.FieldInitialisation).Replace("%field%", p.Name).Replace("%value%", value) + Environment.NewLine;
+                    body += p.GetFieldInitialisation() + Environment.NewLine;
                 }
             }
 
@@ -206,20 +252,7 @@ namespace Metamorphosis
             {
                 if (p.InitialValue != null)
                 {
-                    string value = p.InitialValue;
-
-                    int i = value.IndexOf(".");
-                    if (i != -1)
-                    {
-                        string b = value.Substring(0, i);
-                        Larva l = Larvae.GetLarva(b, true);
-                        if (l != null && l.Type == LarvaType.Enum)
-                        {
-                            value = l.GetEnumValue(value.Remove(0, i + 1));
-                        }
-                    }
-
-                    body += Larvae.GetElement(ElementType.FieldInitialisation).Replace("%field%", p.Name).Replace("%value%", value) + Environment.NewLine;
+                    body += p.GetFieldInitialisation() + Environment.NewLine;
                 }
             }
 
@@ -228,30 +261,30 @@ namespace Metamorphosis
 
         public string GetConstructorDefinition()
         {
-            string cd = BaseName == null ?
+            string d = BaseName == null ?
                 Larvae.GetElement(ElementType.ConstructorDefinition) :
-                Larvae.GetElement(ElementType.ConstructorWithBaseDefinition).Replace("%base%", BaseName);
-            cd = cd.Replace("%name%", Name);
+                Larvae.GetElement(ElementType.ConstructorWithBaseDefinition);
+            TextHelper.ReplaceExpressions(ref d, this);
 
             string body = GetConstructorBody();
 
-            Larvae.ReplaceField(ref cd, "%body%", body);
+            TextHelper.ReplaceField(ref d, "%body%", body);
 
-            return cd;
+            return d;
         }
 
         public string GetConstructorDeclaration()
         {
-            string cd = BaseName == null ?
+            string d = BaseName == null ?
                 Larvae.GetElement(ElementType.ConstructorDeclaration) :
-                Larvae.GetElement(ElementType.ConstructorWithBaseDeclaration).Replace("%base%", BaseName);
-            cd = cd.Replace("%name%", Name);
+                Larvae.GetElement(ElementType.ConstructorWithBaseDeclaration);
+            TextHelper.ReplaceExpressions(ref d, this);
 
             string body = GetConstructorBody();
 
-            Larvae.ReplaceField(ref cd, "%body%", body);
+            TextHelper.ReplaceField(ref d, "%body%", body);
 
-            return cd;
+            return d;
         }
 
         public string GetStructBody()
@@ -261,7 +294,7 @@ namespace Metamorphosis
             // add fields
             foreach (Part p in Parts)
             {
-                string pd = p.Larva.GetStructFieldDeclaration(p.Name);
+                string pd = p.GetStructFieldDeclaration();
                 body += pd + Environment.NewLine;
             }
 
@@ -286,7 +319,7 @@ namespace Metamorphosis
             // add fields
             foreach (Part p in Parts)
             {
-                string pd = p.Larva.GetStaticFieldDeclaration(p.Name, p.InitialValue);
+                string pd = p.GetStaticFieldDeclaration();
                 body += pd + Environment.NewLine;
             }
 
@@ -300,31 +333,17 @@ namespace Metamorphosis
             return body;
         }
 
-        public string GetEnumFieldDefinition(string fieldName, string value)
-        {
-            string tfd = value == null ?
-                Larvae.GetElement(ElementType.EnumFieldDeclaration) :
-                Larvae.GetElement(ElementType.EnumFieldWithValueDeclaration);
-            string d = tfd.Replace("%value%", value).Replace("%field%", fieldName);
-            return d;
-        }
-
         public string GetEnumBody()
         {
             string body = "";
 
             foreach (Part p in Parts)
             {
-                string pd = GetEnumFieldDefinition(p.Name, p.InitialValue);
+                string pd = p.GetEnumFieldDefinition();
                 body += pd + Environment.NewLine;
             }
 
             return body;
-        }
-
-        public string GetEnumValue(string value)
-        {
-            return Larvae.GetElement(ElementType.EnumValueDeclaration).Replace("%name%", Name).Replace("%value%", value);
         }
     }
 }

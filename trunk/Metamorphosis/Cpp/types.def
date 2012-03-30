@@ -1,0 +1,10 @@
+type 1 default bool = bool
+type 1 default int32 = int32_t
+type 1 default uint32 = uint32_t
+type 1 string String = std::string
+type 2 array Array = std::vector<%!SubLarvae[0].TypeDefinition%>
+type 1 struct struct = !{struct %!NamespaceDefinition%::%!Name%!}
+type 1 static static = !{%!NamespaceDefinition%::%!Name%!}
+type 1 enum enum = !{%!NamespaceDefinition%::%!Name%!}
+type 3 map Map = !{std::map<%!SubLarvae[0].TypeDefinition%, %!SubLarvae[1].TypeDefinition%>!}
+

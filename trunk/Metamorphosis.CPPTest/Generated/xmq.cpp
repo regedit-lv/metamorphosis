@@ -8,9 +8,9 @@ namespace xmq
 {
 namespace configuration
 {
-bool xmq::configuration::MetaTypeHelper::initDone = false ;
-std::map<xmq::configuration::MetaType, std::string> xmq::configuration::MetaTypeHelper::valueToName ;
-std::map<std::string, xmq::configuration::MetaType> xmq::configuration::MetaTypeHelper::nameToValue ;
+ bool MetaTypeHelper::initDone = false; 
+ std::map<xmq::configuration::MetaType, std::string> MetaTypeHelper::valueToName; 
+ std::map<std::string, xmq::configuration::MetaType> MetaTypeHelper::nameToValue; 
  
 std::string MetaTypeHelper::getEnumName(xmq::configuration::MetaType value)
 {
@@ -40,24 +40,24 @@ void MetaTypeHelper::initEnum(void)
 {
     
         
-        valueToName[MetaType::None] = "none";
-        nameToValue["none"] = MetaType::None;
+        valueToName[ MetaType::None ] = "none";
+        nameToValue["none"] =  MetaType::None ;
         
         
-        valueToName[MetaType::Int] = "int";
-        nameToValue["int"] = MetaType::Int;
+        valueToName[ MetaType::Int ] = "int";
+        nameToValue["int"] =  MetaType::Int ;
         
         
-        valueToName[MetaType::String] = "string";
-        nameToValue["string"] = MetaType::String;
+        valueToName[ MetaType::String ] = "string";
+        nameToValue["string"] =  MetaType::String ;
         
         
-        valueToName[MetaType::Array] = "array";
-        nameToValue["array"] = MetaType::Array;
+        valueToName[ MetaType::Array ] = "array";
+        nameToValue["array"] =  MetaType::Array ;
         
         
-        valueToName[MetaType::Object] = "object";
-        nameToValue["object"] = MetaType::Object;
+        valueToName[ MetaType::Object ] = "object";
+        nameToValue["object"] =  MetaType::Object ;
         
         
         initDone = true;
@@ -67,7 +67,7 @@ void MetaTypeHelper::initEnum(void)
  
 MetaData::MetaData()
 {
-    type = MetaType::None ;
+     type =  MetaType::None ; 
     
 }
 
@@ -216,6 +216,12 @@ void MetaData::fromXml(const std::string &xml, TiXmlElement *parentNode)
     
      
     
+    
+}
+
+ 
+MetaData2::MetaData2() : MetaData()
+{
     
 }
 

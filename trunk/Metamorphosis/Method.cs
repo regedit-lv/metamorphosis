@@ -35,7 +35,7 @@ namespace Metamorphosis
         public string ReplacePart(Part part)
         {
             Larva l = part.Larva;
-            TypeDefinition td = part.Larva.TypeDefinition;
+            TypeInfo td = part.Larva.TypeInfo;
             Variable v = Items.Find(x => x.Name == td.Group);
             if (v != null)
             {
@@ -45,7 +45,7 @@ namespace Metamorphosis
                     for (int i = 0; i < l.SubLarvae.Count; i++)
                     {
                         Larva sl = l.SubLarvae[i];
-                        Variable sv = v.Variables.GetVariable(sl.TypeDefinition.Group, true);
+                        Variable sv = v.Variables.GetVariable(sl.TypeInfo.Group, true);
                         if (sv == null)
                         {
                             break;
@@ -54,26 +54,9 @@ namespace Metamorphosis
                     }
                 }
 
-                string value = v.Value.Replace("%type%", l.GetTypeDefinition()).Replace("%field%", part.Name);
+                string value = v.Value;
 
-                if (l.Type == LarvaType.Enum)
-                {
-                    string description = part.Description == null ? part.Name : part.Description;
-                    value = value.Replace("%value%", l.GetEnumValue(part.Name)).Replace("%description%", description);                    
-                }
-
-                value = Larvae.ReplaceSystemFields(value, part);
-
-                // replace sub types
-                if (l.SubLarvae != null)
-                {
-                    for (int i = 0; i < l.SubLarvae.Count; i++)
-                    {
-                        Larva sl = l.SubLarvae[i];
-                        string t = "%type" + i.ToString() + "%";
-                        value = value.Replace(t, sl.GetTypeDefinition());
-                    }
-                }
+                TextHelper.ReplaceSystemFields(ref value, part);
 
                 return value;
             }
@@ -119,7 +102,7 @@ namespace Metamorphosis
                         foreach (Part p in bl.Parts)
                         {
                             // skip part if part from different group or with skip mode
-                            if ((group != null && group != p.Larva.TypeDefinition.Group) || 
+                            if ((group != null && group != p.Larva.TypeInfo.Group) || 
                                 p.Mode == PartMode.Skip)
                             {
                                 continue;
@@ -137,7 +120,7 @@ namespace Metamorphosis
                     foreach (Part p in larva.Parts)
                     {
                         // skip part if part from different group or with skip mode
-                        if ((group != null && group != p.Larva.TypeDefinition.Group) ||
+                        if ((group != null && group != p.Larva.TypeInfo.Group) ||
                             p.Mode == PartMode.Skip)
                         {
                             continue;
@@ -150,7 +133,7 @@ namespace Metamorphosis
                         }
                     }
 
-                    text = Larvae.ReplaceField(ref text, v, fields);
+                    text = TextHelper.ReplaceField(ref text, v, fields);
                 }
                 else
                 {
@@ -164,8 +147,8 @@ namespace Metamorphosis
                 string name = "%" + v.Name + "%";
                 string value = v.Value;
                 value = v.Variables.ReplaceAll(value, larva);
-                Larvae.ReplaceExpression(ref value, larva);
-                Larvae.ReplaceField(ref text, name, value);
+                TextHelper.ReplaceExpressions(ref value, larva);
+                TextHelper.ReplaceField(ref text, name, value);
             }
             return text;
         }

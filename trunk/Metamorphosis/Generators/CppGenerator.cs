@@ -69,7 +69,7 @@ namespace Metamorphosis
         {
             if (text != null)
             {
-                declaraion.Add(text.Replace("%n%", Environment.NewLine).Replace("%t%", Larvae.GetIndent(1)));
+                declaraion.Add(text);
             }
         }
 
@@ -77,7 +77,7 @@ namespace Metamorphosis
         {
             if (text != null)
             {
-                definition.Add(text.Replace("%n%", Environment.NewLine).Replace("%t%", Larvae.GetIndent(1)));
+                definition.Add(text);
             }
         }
 

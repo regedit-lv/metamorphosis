@@ -55,12 +55,25 @@ namespace Metamorphosis
                 // check for field
                 FieldInfo field = obj.GetType().GetField(f);
 
-                if (field == null)
+                if (field != null)
+                {                    
+                    fo = field.GetValue(obj);
+                }
+
+                // check for property
+                PropertyInfo property = obj.GetType().GetProperty(f);
+                if (property != null)
+                {
+                    if (property.CanRead)
+                    {
+                        fo = property.GetValue(obj, null);
+                    }
+                }
+
+                if (fo == null)
                 {
                     return null;
                 }
-
-                fo = field.GetValue(obj);
 
                 if (expression.Length != 0)
                 {
