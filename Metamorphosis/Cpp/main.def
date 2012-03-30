@@ -1,5 +1,4 @@
-﻿IncludeDeclarationTop 
-!{ 
+﻿IncludeDeclarationTop = !{ 
 #include <vector>
 #include <string>
 #include <map>
@@ -7,108 +6,87 @@
 #include "tinyXML\tinyxml.h"
 !}
 
-IncludeDefinitionTop !{
+IncludeDefinitionTop = !{
 #include "stdafx.h"
 
 #include <sstream>
 #include "%output_name%.h"
 !}
 
-ImportInclude %{ #include "%name%.h" %}
+ImportInclude = !{ #include "%name%.h" !}
 
-StructDeclaration %{ extern struct %name%; %}
-
-StructDefinition 
-!{
-struct %name% 
+StructDefinition = !{
+struct %!Name% 
 {
     %body% 
 };
 !}
 
-StructDefinitionWithBase
-!{
-struct %name% : public %base%
+StructDefinitionWithBase = !{
+struct  %!Name%  : public  %!BaseName% 
 {
     %body% 
 };
 !}
 
-StructFieldDeclaration %{ %type% %field%; %}
+StructFieldDeclaration = !{ %!TypeDefinition% %!Name%; !}
 
-MethodDeclaration %{ 
-    %returnType% %method%(%param%);
-%}
+MethodDeclaration = !{ %returnType% %method%(%param%); !}
 
-MethodDefinition !{ 
+MethodDefinition = !{ 
 %returnType% %larva%::%method%(%param%)
 {
     %body%
 }
 !}
 
-StaticDeclaration %{ extern struct %name%; %}
-
-StaticDefinition 
+StaticDefinition =
 !{
-class %name% 
+class %!Name% 
 {
 public:
     %body% 
 };
 !}
 
-StaticFieldDeclaration %{ static %type% %field%; %}
-StaticFieldDefinition %{ %type% %larva%::%field%; %}
-StaticFieldDefinitionWithValue %{ %type% %larva%::%field% = %value%; %}
+StaticFieldDeclaration = !{ static %!TypeDefinition% %!Name%; !}
+StaticFieldDefinition = !{ %!TypeDefinition% %!Parent.Name%::%!Name%; !}
+StaticFieldDefinitionWithValue = !{ %!TypeDefinition% %!Parent.Name%::%!Name% = %!InitialValue%; !}
 
-StaticMethodDeclaration %{ 
-    static %returnType% %method%(%param%);
-%}
+StaticMethodDeclaration = !{ static %returnType% %method%(%param%); !}
 
-StaticMethodDefinition !{ 
+StaticMethodDefinition = !{ 
 %returnType% %larva%::%method%(%param%)
 {
     %body%
 }
 !}
 
-ConstructorDeclaration %{ %name%(); %}
-ConstructorDefinition !{ 
-%name%::%name%()
+ConstructorDeclaration = !{ %!Name%(); !}
+ConstructorDefinition = !{ 
+%!Name%::%!Name%()
 {
     %body%
 }
 !}
 
-ConstructorWithBaseDeclaration %{ %name%(); %}
-ConstructorWithBaseDefinition !{ 
-%name%::%name%() : %base%()
+ConstructorWithBaseDeclaration = !{ %!Name%(); !}
+ConstructorWithBaseDefinition = !{ 
+%!Name%::%!Name%() : %!BaseName%()
 {
     %body%
 }
 !}
 
-FieldInitialisation %{ %field% = %value%; %}
+FieldInitialisation = !{ %!Name% = %!InitialValueDefinition%; !}
 
-EnumFieldDeclaration %{ %field% , %}
-EnumFieldWithValueDeclaration %{ %field% = %value% , %}
-EnumValueDeclaration %{ %name%::%value% %}
+EnumFieldDeclaration = !{ %!Name% , !}
+EnumFieldWithValueDeclaration = !{ %!Name% = %!InitialValueDefinition% , !}
+EnumValueDeclaration = !{ %!Parent.Name%::%!Name% !}
 
-EnumDeclaration !{
-enum class %name% : int
+EnumDefinition = !{
+enum class %!Name% : int
 {
     %body%
 };
 !}
-
-type 1 default bool = bool
-type 1 default int32 = int32_t
-type 1 default uint32 = uint32_t
-type 1 string String = std::string
-type 2 array Array = std::vector<%type0%>
-type 1 struct struct = !{struct %namespace%::%name%!}
-type 1 static static = !{%namespace%::%name%!}
-type 1 enum enum = !{%namespace%::%name%!}
-type 3 map Map = !{std::map<%type0%, %type1%>!}
-

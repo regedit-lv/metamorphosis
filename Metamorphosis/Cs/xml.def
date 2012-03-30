@@ -54,7 +54,7 @@ XmlWrapper.WriteAttribute(writer, "%field%", %field%);
 
 method toXml body direct enum = !{
 // %type% %field%
-XmlWrapper.WriteAttribute(writer, "%field%", %!Larva.GetTypeDefinition()%Helper.getEnumName(%field%));
+XmlWrapper.WriteAttribute(writer, "%field%", %!Larva.TypeDefinition%Helper.getEnumName(%field%));
 !}
 
 method toXml body direct string = !{
@@ -155,7 +155,7 @@ method fromXml body readDirect enum = !{
 {
     string i_%field%;
     XmlWrapper.ReadAttribute(reader, "%field%", out i_%field%);
-    %field% = %!Larva.GetTypeDefinition()%Helper.getEnumValue(i_%field%);
+    %field% = %!Larva.TypeDefinition%Helper.getEnumValue(i_%field%);
 }
 !}
 
@@ -166,7 +166,7 @@ XmlWrapper.ReadAttribute(reader, "%field%", out %field%);
 
 method fromXml body readDirect struct = !{
 // %type% %field%
-%field% = new %!Larva.GetTypeDefinition()%();
+%field% = new %!Larva.TypeDefinition%();
 %field%.fromXml("", reader);
 !}
 
@@ -174,7 +174,7 @@ method fromXml body struct = !{
 // struct %field%
 if (reader.Name.ToLower() == "%field%".ToLower())
 {
-    %field% = new %!Larva.GetTypeDefinition()%();
+    %field% = new %!Larva.TypeDefinition%();
     %field%.fromXml("", reader);
 }
 !}
@@ -183,7 +183,7 @@ method fromXml body array = !{
 // read array %field%
 if (reader.Name.ToLower() == "%field%".ToLower())
 {
-    %field% = new %!Larva.GetTypeDefinition()%();
+    %field% = new %!Larva.TypeDefinition%();
     if (!reader.IsEmptyElement)
     {
         while (reader.Read())
@@ -192,7 +192,7 @@ if (reader.Name.ToLower() == "%field%".ToLower())
             {
                 if ("%!Larva.SubLarvae[0].Name%".ToLower() == reader.Name.ToLower())
                 {
-                    %!Larva.SubLarvae[0].GetTypeDefinition()% sub;
+                    %!Larva.SubLarvae[0].TypeDefinition% sub;
 
                     %#method fromXml body readDirect#sub#%!Larva.SubLarvae[0].FullName%#%
 

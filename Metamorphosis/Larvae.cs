@@ -102,194 +102,17 @@ namespace Metamorphosis
             Parse(lines);
         }
 
-        public static string AddIndent(string text, int n)
-        {
-            string si = GetIndent(n);
-            return AddIndent(text, si);
-        }
-
-        public static string AddIndent(string text, string indent)
-        {
-            text = indent + text.Replace(Environment.NewLine, Environment.NewLine + indent);
-            return text;
-        }
-
-        public static string ReplaceExpression(ref string text, object obj)
-        {
-            while (true)
-            {
-                // check for expression
-                Match match = Regex.Match(text, @"%![^%]+%", RegexOptions.IgnoreCase);
-
-                // Here we check the Match instance.
-                if (match.Success)
-                {
-                    string v = match.Captures[0].Value;
-                    string n = v.Substring(2, v.Length - 3);
-                    n = ObjectHelper.GetValue(obj, n);
-                    text = text.Replace(v, n);
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return text;
-        }
-
-        public static string ReplaceSystemFields(string text, Part part)
-        {
-            while (true)
-            {
-                // check for auto_id names
-                Match match = Regex.Match(text, @"%_[_0-9a-zA-Z]+%", RegexOptions.IgnoreCase);
-
-                // Here we check the Match instance.
-                if (match.Success)
-                {
-                    string v = match.Captures[0].Value;
-                    string n = part.GetVariable(v);
-                    text = text.Replace(v, n);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            ReplaceExpression(ref text, part);
-
-            while (true)
-            {
-                // check method variable
-                Match match = Regex.Match(text, @"%#[^%]+%", RegexOptions.IgnoreCase);
-
-                // Here we check the Match instance.
-                if (match.Success)
-                {
-                    string v = match.Captures[0].Value;
-                    string n = v.Substring(2, v.Length - 3);
-                    n = CommandProcessor.Process(n);
-                    Larvae.ReplaceField(ref text, v, n);
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            return text;
-        }
-
-        public static string ReplaceField(ref string text, string field, string value)
-        {
-            // replace indention symbols inside value
-            value = value.Replace("%n%", Environment.NewLine).Replace("%t%", GetIndent(1));
-            bool emptyIndention;
-            string indent = GetIndentForField(text, field, out emptyIndention);
-            if (emptyIndention)
-            {
-                text = RemoveIndentForField(text, field);
-                value = AddIndent(value, indent);
-            }
-            text = text.Replace(field, value);
-            return text;
-        }
-
-        public static string GetIndentForField(string text, string field, out bool emptyIndention)
-        {
-            emptyIndention = true;
-            int i = 0;
-
-            i = text.IndexOf(field, i);
-            if (i == -1)
-            {
-                return null;
-            }
-
-            int e = i > 0 ? i - 1 : i;
-
-            // search for new line
-            while (e > 0 && text.IndexOf(Environment.NewLine, e) != e)
-            {
-                if (text[e] != ' ' && !Environment.NewLine.Contains(text[e]))
-                {
-                    emptyIndention = false;
-                }
-                e--;
-            }
-
-            // check for first symbol
-            if (e == 0 && text[e] != ' ' && !Environment.NewLine.Contains(text[e]))
-            {
-                emptyIndention = false;
-            }
-
-            if (text.IndexOf(Environment.NewLine, e) == e)
-            {
-                e += Environment.NewLine.Length;
-            }
-
-            text = new String(' ', i - e);
-
-            return text;
-        }
-
-        public static string RemoveIndentForField(string text, string field)
-        {
-            int i = 0;
-            while (true)
-            {
-                i = text.IndexOf(field, i);
-                if (i == -1)
-                {
-                    break;
-                }
-                
-                int e = i;
-
-                // search for new line
-                while (e > 0 && text.IndexOf(Environment.NewLine, e) != e)
-                {                    
-                    e--;
-                }
-
-                if (text.IndexOf(Environment.NewLine, e) == e)
-                {
-                    e += Environment.NewLine.Length;
-                }
-
-                text = text.Remove(e, i - e);
-                i = e + 1;
-            }
-
-            return text;
-        }
-
-        public static string GetIndent(int index)
-        {
-            string r = "";
-
-            while (index > 0)
-            {
-                r += "    ";
-                index--;
-            }
-
-            return r;
-        }
-
         static void GenerateStruct(Larva larva)
         {
             // generate struct
-            string templateLarvaDeclaration = larva.BaseName == null ? GetElement(ElementType.StructDefinition) : GetElement(ElementType.StructDefinitionWithBase);
+            string structDefinition = larva.BaseName == null ? GetElement(ElementType.StructDefinition) : GetElement(ElementType.StructDefinitionWithBase);
 
-            string larvaDeclaration = templateLarvaDeclaration.Replace("%name%", larva.Name).Replace("%base%", larva.BaseName);
+            TextHelper.ReplaceExpressions(ref structDefinition, larva);
 
             string body = larva.GetStructBody();
-            Larvae.ReplaceField(ref larvaDeclaration, "%body%", body);
+            TextHelper.ReplaceField(ref structDefinition, "%body%", body);
 
-            larva.Declaration.Add(larvaDeclaration);
+            larva.Declaration.Add(structDefinition);
             larva.Definitions.Add(larva.GetConstructorDefinition());
 
             // generate method definition
@@ -303,19 +126,20 @@ namespace Metamorphosis
         static void GenerateStatic(Larva larva)
         {
             // generate struct
-            string templateLarvaDeclaration = GetElement(ElementType.StaticDefinition);
+            string staticDefinition = GetElement(ElementType.StaticDefinition);
 
-            string larvaDeclaration = templateLarvaDeclaration.Replace("%name%", larva.Name).Replace("%base%", larva.BaseName);
+            TextHelper.ReplaceExpressions(ref staticDefinition, larva);
 
             string body = larva.GetStaticBody();
-            Larvae.ReplaceField(ref larvaDeclaration, "%body%", body);
 
-            larva.Declaration.Add(larvaDeclaration);
+            TextHelper.ReplaceField(ref staticDefinition, "%body%", body);
+
+            larva.Declaration.Add(staticDefinition);
 
             // generate field definition
             foreach (Part p in larva.Parts)
             {
-                larva.Definitions.Add(p.Larva.GetStaticFieldDefinition(larva, p.Name, p.InitialValue));
+                larva.Definitions.Add(p.GetStaticFieldDefinition());
             }
 
             // generate method definition
@@ -328,13 +152,13 @@ namespace Metamorphosis
 
         static void GenerateEnum(Larva larva)
         {
-            string enumBody = larva.GetEnumBody();
-            string enumDeclaration = GetElement(ElementType.EnumDeclaration);
-            
-            enumDeclaration = enumDeclaration.Replace("%name%", larva.Name);
-            Larvae.ReplaceField(ref enumDeclaration, "%body%", enumBody);
+            string enumDefinition = GetElement(ElementType.EnumDefinition);           
+            TextHelper.ReplaceExpressions(ref enumDefinition, larva);
 
-            larva.Declaration.Add(enumDeclaration);
+            string enumBody = larva.GetEnumBody();
+            TextHelper.ReplaceField(ref enumDefinition, "%body%", enumBody);
+
+            larva.Declaration.Add(enumDefinition);
         }
 
         public static void Generate(string outputFile)

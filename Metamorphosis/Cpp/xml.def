@@ -34,74 +34,74 @@ else
 !}
 
 method toXml body default = !{
-{ // %field%
+{ // %!Name%
     std::stringstream oss;
-    oss << %field%;
-    parent->SetAttribute("%field%", oss.str().c_str());
+    oss << %!Name%;
+    parent->SetAttribute("%!Name%", oss.str().c_str());
 }
 !}
 
 method toXml body enum = !{
-{ // %field%
+{ // %!Name%
     std::stringstream oss;
-    oss << %!Larva.GetTypeDefinition()%Helper::getEnumName(%field%);
-    parent->SetAttribute("%field%", oss.str().c_str());
+    oss << %!Larva.TypeDefinition%Helper::getEnumName(%!Name%);
+    parent->SetAttribute("%!Name%", oss.str().c_str());
 }
 !}
 
 method toXml body string = !{
-{ // %field%
+{ // %!Name%
     std::stringstream oss;
-    oss << %field%;
-    parent->SetAttribute("%field%", oss.str().c_str());
+    oss << %!Name%;
+    parent->SetAttribute("%!Name%", oss.str().c_str());
 }
 !}
 
 method toXml body struct = !{ 
-{ // %field%
-    TiXmlElement * element = new TiXmlElement("%field%");
-    std::string xml = %field%.toXml(element);
+{ // %!Name%
+    TiXmlElement * element = new TiXmlElement("%!Name%");
+    std::string xml = %!Name%.toXml(element);
     parent->LinkEndChild(element);
 }
 !}
 
 method toXml body array = !{ 
-{ // %field%
-    TiXmlElement * element = new TiXmlElement("%field%");
-    std::string xml = %field%.toXml(element);
+{ // %!Name%
+    TiXmlElement * element = new TiXmlElement("%!Name%");
+    std::string xml = %!Name%.toXml(element);
     parent->LinkEndChild(element);
 }
 
 !}
 
 method toXml body array = !{ 
-// write array %field%
-TiXmlElement * %field%_element = new TiXmlElement("%field%");
-parent->LinkEndChild(%field%_element);
-%field%_element->SetAttribute("size", %field%.size());
+// write array %!Name%
+TiXmlElement * %!Name%_element = new TiXmlElement("%!Name%");
+parent->LinkEndChild(%!Name%_element);
+%!Name%_element->SetAttribute("size", %!Name%.size());
 
-TiXmlElement * parent_%field% = parent;
-parent = %field%_element;
+TiXmlElement * parent_%!Name% = parent;
+parent = %!Name%_element;
 
-for (size_t i = 0; i < %field%.size(); i++)
+for (size_t i = 0; i < %!Name%.size(); i++)
 {
-    %!Larva.SubLarvae[0].GetTypeDefinition()% &%!Larva.SubLarvae[0].Name% = %field%[i];
+    %!Larva.SubLarvae[0].TypeDefinition% &%!Larva.SubLarvae[0].Name% = %!Name%[i];
 
     %#method toXml body#%!Larva.SubLarvae[0].Name%#%!Larva.SubLarvae[0].FullName%#%
 }
 
-parent = parent_%field%;
+parent = parent_%!Name%;
 !}
 
 method toXml body array string = !{ 
-// write array %field%
-TiXmlElement * %field%_element = new TiXmlElement("%field%");
-parent->LinkEndChild(%field%_element);
-%field%_element->SetAttribute("size", %field%.size());
+// write array %!Name%
+TiXmlElement * %!Name%_element = new TiXmlElement("%!Name%");
+parent->LinkEndChild(%!Name%_element);
+%!Name%_element->SetAttribute("size", %!Name%.size());
 
-for (size_t i = 0; i < %field%.size(); i++)
+for (size_t i = 0; i < %!Name%.size(); i++)
 {
-    %!Larva.SubLarvae[0].GetTypeDefinition()% &%_value% = %field%[i];
+    %!Larva.SubLarvae[0].TypeDefinition% &%_value% = %!Name%[i];
 
     TiXmlElement * %_element% = new TiXmlElement("%!Larva.SubLarvae[0].Name%");
     
@@ -109,7 +109,7 @@ for (size_t i = 0; i < %field%.size(); i++)
     oss << %_value%;
     %_element%->SetAttribute("value", oss.str().c_str());
 
-    %field%_element->LinkEndChild(%_element%);
+    %!Name%_element->LinkEndChild(%_element%);
 }
 !}
 
@@ -147,40 +147,40 @@ method fromXml body readDirect = !{
 !}
 
 method fromXml body readDirect default = !{
-// %field%
-root->Attribute("%field%", &%field%);
+// %!Name%
+root->Attribute("%!Name%", &%!Name%);
 !}
 
 method fromXml body readDirect enum = !{
-// %field%
-std::string %_s% = root->Attribute("%field%");
-%field% = %!Larva.GetTypeDefinition()%Helper::getEnumValue(%_s%);
+// %!Name%
+std::string %_s% = root->Attribute("%!Name%");
+%!Name% = %!Larva.TypeDefinition%Helper::getEnumValue(%_s%);
 !}
 
 method fromXml body readDirect string = !{
-// %field%
+// %!Name%
 {
-    const char *s = root->Attribute("%field%");
+    const char *s = root->Attribute("%!Name%");
     if (s != nullptr)
     {
-        %field% = s;
+        %!Name% = s;
     }
 }
 !}
 
 method fromXml body readDirect struct = !{
-// %field%
-%field%.fromXml("", root);
+// %!Name%
+%!Name%.fromXml("", root);
 !}
 
 method fromXml body struct = !{ 
-// %field%
+// %!Name%
 for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
 {
-    if (_stricmp(child->Value(), "%field%") == 0)
+    if (_stricmp(child->Value(), "%!Name%") == 0)
     {
         TiXmlElement *element = child->ToElement();
-        %field%.fromXml("", element);
+        %!Name%.fromXml("", element);
         break;
     }
 }
@@ -188,10 +188,10 @@ for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibli
 !}
 
 method fromXml body array = !{ 
-// read array %field%
+// read array %!Name%
 for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibling()) 
 {
-    if (_stricmp(child->Value(), "%field%") == 0)
+    if (_stricmp(child->Value(), "%!Name%") == 0)
     {
         TiXmlElement *element = child->ToElement();
 
@@ -201,13 +201,13 @@ for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibli
         {
             root = arrayChild->ToElement();
             
-            %!Larva.SubLarvae[0].GetTypeDefinition()% sub;
+            %!Larva.SubLarvae[0].TypeDefinition% sub;
 
             if (_stricmp("%!Larva.SubLarvae[0].Name%", root->Value()) == 0)
             {
                 %#method fromXml body readDirect#sub#%!Larva.SubLarvae[0].FullName%#%
 
-                %field%.push_back(sub);
+                %!Name%.push_back(sub);
             }
         }
 

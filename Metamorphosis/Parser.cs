@@ -19,13 +19,11 @@ namespace Metamorphosis
         ImportInclude,
 
         Struct,
-        StructDeclaration,
         StructDefinition,
         StructDefinitionWithBase,
         StructFieldDeclaration,
 
         Static,
-        StaticDeclaration,
         StaticDefinition,
         StaticFieldDeclaration,
         StaticFieldDeclarationWithValue,
@@ -33,7 +31,7 @@ namespace Metamorphosis
         StaticFieldDefinitionWithValue,
 
         Enum,
-        EnumDeclaration,
+        EnumDefinition,
         EnumFieldDeclaration,
         EnumFieldWithValueDeclaration,
         EnumValueDeclaration,
@@ -81,7 +79,7 @@ namespace Metamorphosis
         static string[] enumNames = Enum.GetNames(typeof(ElementType));
         List<string> tokens = new List<string>();
         char[] seperators = new char[] { ' ', '\n', '\r', '\t' };
-        string[] seperatorTokens = new string[] { "%{", "%}", "+=", "==", "!{", "!}", "=", ";", "," };
+        string[] seperatorTokens = new string[] { "+=", "==", "!{", "!}", "=", ";", "," };
         int currentToken;
         ParserMode Mode;
         object element;
@@ -245,30 +243,7 @@ namespace Metamorphosis
             }
             else
             {
-                string t = tokens[currentToken++];
-
-                if (t == "%[")
-                {
-                    t = "";
-                    while (true)
-                    {
-                        string nt = GetNextToken();
-
-                        if (nt == null || nt == "%]")
-                        {
-                            break;
-                        }
-
-                        if (t != "")
-                        {
-                            t += " ";
-                        }
-
-                        t += nt;
-                    }
-                }
-
-                return t;
+                return tokens[currentToken++];
             }
         }
 
@@ -296,41 +271,33 @@ namespace Metamorphosis
                 return ElementType.EOF;
             }
 
+            // check is it global variable
             if (enumNames.Contains(token))
             {
                 ElementType t = (ElementType)Enum.Parse(typeof(ElementType), token as string, true);
 
-                token = GetNextToken();
-                if (token != "%{")
-                {
-                    element = token;
-                    return t;
-                }
+                string operation = GetNextToken();
+                string value = GetNextToken();
 
-                int ie = GetNextTokenIndex("%}");
-
-                if (ie == -1)
+                if (Mode == ParserMode.Normal || Mode == ParserMode.ImportRules)
                 {
-                    Console.WriteLine("Error: struct closing symbol '%}' not found");
-                    return ElementType.Error;
-                }
-
-                string value = "";
-                while (currentToken < ie)
-                {
-                    string lt = GetNextToken();
-                    value += lt;
-                    if (currentToken < ie)
+                    switch (operation)
                     {
-                        if (lt != "%n%" && lt != "%t%") // don't add space after new line or tab
-                        {
-                            value += " ";
-                        }
+                        case "=":
+                            Larvae.SetElement(t, value);
+                            break;
+
+                        case "+=":
+                            value = Larvae.GetElement(t) + value;
+                            Larvae.SetElement(t, value);
+                            break;
+
+                        default:
+                            Log.Error(operation, Error.UnexpectedToken, " expected for \"=\" or \"+=\"");
+                            break;
                     }
                 }
-
-                GetNextToken(); // read %}
-
+                
                 element = value;
                 return t;
             }
@@ -348,7 +315,7 @@ namespace Metamorphosis
 
                     larva.Name = larvaName;
                     larva.Namespace = Larvae.GetElement(ElementType.Namespace);
-                    larva.TypeDefinition = larvaType == LarvaType.Struct ? TypeDefinitions.Get("struct", true) : TypeDefinitions.Get("static", true);
+                    larva.TypeInfo = larvaType == LarvaType.Struct ? TypeFactory.Get("struct", true) : TypeFactory.Get("static", true);
 
                     switch (Mode)
                     {
@@ -377,14 +344,14 @@ namespace Metamorphosis
                             // read base field initialisation
                             if (token != "{")
                             {
-                                Console.WriteLine("Error: Expected symbol '{' after base " + larva.Name + " defenition");
+                                Log.Error(token, Error.UnexpectedToken, "Expected symbol '{' after base " + larva.Name + " defenition");
                                 return ElementType.Error;
                             }
 
                             token = GetNextToken();
                             while (token != "}")
-                            {                                
-                                Part p = new Part();
+                            {
+                                Part p = new Part(larva);
                                 larva.BaseParts.Add(p);
 
                                 p.Name = token;
@@ -419,23 +386,23 @@ namespace Metamorphosis
                         }
                     }
 
-                    if (token != "%{")
+                    if (token != "{")
                     {
-                        Console.WriteLine("Error: Expected symbol '%{' after struct " + larva.Name + " defenition");
+                        Log.Error(token, Error.UnexpectedToken, "Expected symbol '{' after struct " + larva.Name + " defenition");
                         return ElementType.Error;
                     }
 
-                    int ie = GetNextTokenIndex("%}");
+                    int ie = GetNextTokenIndex("}");
 
                     if (ie == -1)
                     {
-                        Console.WriteLine("Error: struct closing symbol '%}' not found");
+                        Log.Error("}", Error.NotFound, "struct closing symbol '}' not found");
                         return ElementType.Error;
                     }
 
                     while (currentToken < ie)
                     {
-                        Part p = new Part();
+                        Part p = new Part(larva);
 
                         Larva l = GetLarva();
                         string t = GetNextToken();
@@ -463,14 +430,14 @@ namespace Metamorphosis
 
                         if (t != ";")
                         {
-                            Console.WriteLine("Error: Unexpected token '" + token +"' field name not found");
+                            Log.Error(token, Error.UnexpectedToken, "Unexpected token '" + token +"' field name not found");
                             return ElementType.Error;
                         }
 
                         larva.Parts.Add(p);
                     }
 
-                    GetNextToken(); // read %}
+                    GetNextToken(); // read !}
 
                     // check for methods name that we will need to generate
                     if (IsNextToken(":"))
@@ -500,7 +467,7 @@ namespace Metamorphosis
 
                     larva.Name = larvaName;
                     larva.Namespace = Larvae.GetElement(ElementType.Namespace);
-                    larva.TypeDefinition = TypeDefinitions.Get("enum", true);
+                    larva.TypeInfo = TypeFactory.Get("enum", true);
 
                     switch (Mode)
                     {
@@ -517,9 +484,9 @@ namespace Metamorphosis
                     larva.Type = LarvaType.Enum;
                     token = GetNextToken();
 
-                    if (token != "%{")
+                    if (token != "{")
                     {
-                        Console.WriteLine("Error: Expected symbol '%{' after enum " + larva.Name + " defenition");
+                        Log.Error(token, Error.UnexpectedToken, "Expected symbol '{' after enum " + larva.Name + " defenition");
                         return ElementType.Error;
                     }
 
@@ -527,12 +494,12 @@ namespace Metamorphosis
                     {
                         string t = GetNextToken();
 
-                        if (t == "%}")
+                        if (t == "}")
                         {
                             break;
                         }
 
-                        Part p = new Part();
+                        Part p = new Part(larva);
                         p.Name = t;
                         p.Larva = larva;
                         larva.Parts.Add(p);
@@ -551,7 +518,7 @@ namespace Metamorphosis
                             t = GetNextToken();
                         }
 
-                        if (t == "%}")
+                        if (t == "!}")
                         {
                             break;
                         }
@@ -632,7 +599,7 @@ namespace Metamorphosis
 
                     string definition = GetNextToken();
 
-                    TypeDefinition td = TypeDefinitions.Get(name);
+                    TypeInfo td = TypeFactory.Get(name);
                     td.Length = length;
                     td.Group = group;
                     td.Definition = definition;
@@ -675,7 +642,7 @@ namespace Metamorphosis
             Larva l;
             string type = GetNextToken();
 
-            TypeDefinition td = TypeDefinitions.Get(type, true);
+            TypeInfo td = TypeFactory.Get(type, true);
 
             if (td == null)
             {
@@ -712,7 +679,7 @@ namespace Metamorphosis
 
                 l = Larvae.GetLarva(fullType);
                 l.Type = LarvaType.Custom;
-                l.TypeDefinition = td;
+                l.TypeInfo = td;
                 l.SubLarvae = subLarvae;
             }
 
@@ -724,7 +691,7 @@ namespace Metamorphosis
             return element;
         }
 
-        public void Parse()
+        public bool Parse()
         {
             while (true)
             {
@@ -738,9 +705,11 @@ namespace Metamorphosis
                         break;
 
                     case ElementType.EOF:
-                    case ElementType.Error:
                     case ElementType.None:
-                        return;
+                        return true;
+
+                    case ElementType.Error:
+                        return false;
 
                     case ElementType.Import:
                         break;
@@ -750,10 +719,6 @@ namespace Metamorphosis
                         break;
 
                     default:
-                        if (Mode == ParserMode.Normal || Mode == ParserMode.ImportRules)
-                        {
-                            Larvae.SetElement(t, GetElement() as string);
-                        }
                         break;
                 }
             }

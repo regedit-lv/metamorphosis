@@ -37,11 +37,10 @@ namespace Metamorphosis
                     return "<error:larva not found with name " + p[2] + ">";
                 }
                 
-                Part part = new Part();
+                Part part = new Part(null);
                 part.Name = p[1];
                 part.Larva = l;
                 string value = vl.ReplacePart(part);    
-                //value = Larvae.ReplaceSystemFields(value, part).Replace("%type%", part.Larva.GetTypeDefinition()).Replace("%field%", part.Name);
                 return value;
             }
 
