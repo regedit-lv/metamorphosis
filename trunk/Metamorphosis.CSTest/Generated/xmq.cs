@@ -12,19 +12,20 @@ namespace xmq.configuration
 
 public enum MetaType : int
 {
-    Int ,
-    String ,
-    Array ,
-    Object ,
+     None , 
+     Int , 
+     String , 
+     Array , 
+     Object , 
     
 }
 
 
 static class MetaTypeHelper 
 {
-    public static bool initDone = false ;
-    public static Dictionary<MetaType, string> valueToName ;
-    public static Dictionary<string, MetaType> nameToValue ;
+     public static bool initDone = false; 
+     public static Dictionary<MetaType, string> valueToName; 
+     public static Dictionary<string, MetaType> nameToValue; 
     
      
     public static string getEnumName(MetaType value)
@@ -57,20 +58,24 @@ static class MetaTypeHelper
             valueToName = new Dictionary<MetaType, string>();
             nameToValue = new Dictionary<string, MetaType>();
             
-            valueToName[MetaType.Int] = "int";
-            nameToValue["int"] = MetaType.Int;
+            valueToName[ MetaType.None ] = "none";
+            nameToValue["none"] =  MetaType.None ;
             
             
-            valueToName[MetaType.String] = "string";
-            nameToValue["string"] = MetaType.String;
+            valueToName[ MetaType.Int ] = "int";
+            nameToValue["int"] =  MetaType.Int ;
             
             
-            valueToName[MetaType.Array] = "array";
-            nameToValue["array"] = MetaType.Array;
+            valueToName[ MetaType.String ] = "string";
+            nameToValue["string"] =  MetaType.String ;
             
             
-            valueToName[MetaType.Object] = "object";
-            nameToValue["object"] = MetaType.Object;
+            valueToName[ MetaType.Array ] = "array";
+            nameToValue["array"] =  MetaType.Array ;
+            
+            
+            valueToName[ MetaType.Object ] = "object";
+            nameToValue["object"] =  MetaType.Object ;
             
             
             initDone = true;
@@ -82,13 +87,14 @@ static class MetaTypeHelper
 
 public class MetaData 
 {
-    public MetaType type ;
-    public string name ;
-    public List<xmq.configuration.MetaData> elements ;
+     public MetaType type; 
+     public string name; 
+     public List<xmq.configuration.MetaData> elements; 
     
      
     public MetaData()
     {
+         type = MetaType.None; 
         
     }
     
@@ -260,10 +266,22 @@ public class MetaData
 }
 
 
+public class MetaData2 : MetaData
+{
+    
+     
+    public MetaData2() :base()
+    {
+        
+    }
+     
+};
+
+
 public class Module 
 {
-    public string name ;
-    public string id ;
+     public string name; 
+     public string id; 
     
      
     public Module()
@@ -384,8 +402,8 @@ public class Module
 
 public class IpRange 
 {
-    public string from ;
-    public string to ;
+     public string from; 
+     public string to; 
     
      
     public IpRange()
@@ -506,10 +524,10 @@ public class IpRange
 
 public class Instance 
 {
-    public string name ;
-    public int id ;
-    public string host ;
-    public int port ;
+     public string name; 
+     public int id; 
+     public string host; 
+     public int port; 
     
      
     public Instance()
@@ -646,8 +664,8 @@ public class Instance
 
 public class Path 
 {
-    public string modules ;
-    public string modulesData ;
+     public string modules; 
+     public string modulesData; 
     
      
     public Path()
@@ -768,8 +786,8 @@ public class Path
 
 public class Connection 
 {
-    public string host ;
-    public int port ;
+     public string host; 
+     public int port; 
     
      
     public Connection()
@@ -890,13 +908,13 @@ public class Connection
 
 public class Configuration 
 {
-    public xmq.configuration.MetaData metaData ;
-    public xmq.configuration.Instance instance ;
-    public xmq.configuration.Path path ;
-    public List<xmq.configuration.Connection> busses ;
-    public List<xmq.configuration.IpRange> whiteIp ;
-    public List<xmq.configuration.IpRange> blackIp ;
-    public List<xmq.configuration.Module> modules ;
+     public xmq.configuration.MetaData metaData; 
+     public xmq.configuration.Instance instance; 
+     public xmq.configuration.Path path; 
+     public List<xmq.configuration.Connection> busses; 
+     public List<xmq.configuration.IpRange> whiteIp; 
+     public List<xmq.configuration.IpRange> blackIp; 
+     public List<xmq.configuration.Module> modules; 
     
      
     public Configuration()

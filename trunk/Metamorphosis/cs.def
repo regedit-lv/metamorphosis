@@ -1,3 +1,4 @@
 ﻿import rules Cs\main.def
+import rules Cs\types.def
 import rules Cs\enum.def
 import rules Cs\xml.def

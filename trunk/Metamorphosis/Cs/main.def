@@ -1,4 +1,4 @@
-﻿IncludeDeclarationTop 
+﻿IncludeDeclarationTop =
 !{ 
 using System;
 using System.Collections.Generic;
@@ -8,85 +8,74 @@ using System.IO;
 using System.Xml.Linq;
 !}
 
-ImportInclude !{ !}
+ImportInclude = !{ !}
 
-StructDeclaration !{!}
-
-StructDefinition 
+StructDefinition =
 !{
-public class %name% 
+public class %!Name% 
 {
     %body% 
 }
 !}
 
-StructDefinitionWithBase
+StructDefinitionWithBase =
 !{
-public class %name% : %base%
+public class %!Name% : %!BaseName%
 {
     %body% 
 };
 !}
 
-StructFieldDeclaration !{ public %type% %field%; !}
+StructFieldDeclaration = !{ public %!TypeDefinition% %!Name%; !}
 
-MethodDeclaration !{ 
+MethodDeclaration = !{ 
 public %returnType% %method%(%param%)
 {
     %body%
 }
 !}
 
-ConstructorDeclaration !{ 
-public %name%()
+ConstructorDeclaration = !{ 
+public %!Name%()
 {
     %body%
 }
 !}
 
-ConstructorWithBaseDeclaration !{ 
-public %name%() :base()
+ConstructorWithBaseDeclaration = !{ 
+public %!Name%() :base()
 {
     %body%
 }
 !}
 
-StaticDefinition 
+StaticDefinition =
 !{
-static class %name% 
+static class %!Name% 
 {
     %body% 
 }
 !}
 
-StaticFieldDeclaration !{ public static %type% %field%; !}
-StaticFieldDeclarationWithValue !{ public static %type% %field% = %value%; !}
+StaticFieldDeclaration = !{ public static %!TypeDefinition% %!Name%; !}
+StaticFieldDeclarationWithValue = !{ public static %!TypeDefinition% %!Name% = %!InitialValue%; !}
 
-StaticMethodDeclaration !{ 
+StaticMethodDeclaration = !{ 
 public static %returnType% %method%(%param%)
 {
     %body%
 }
 !}
 
-FieldInitialisation !{ %field% = %value%; !}
+FieldInitialisation = !{ %!Name% = %!InitialValue%; !}
 
-EnumFieldDeclaration !{ %field% , !}
-EnumFieldWithValueDeclaration !{ %field% = %value% , !}
-EnumValueDeclaration !{ %name%.%value% !}
+EnumFieldDeclaration = !{ %!Name% , !}
+EnumFieldWithValueDeclaration = !{ %!Name% = %!InitialValue% , !}
+EnumValueDeclaration = !{ %!Parent.Name%.%!Name% !}
 
-EnumDeclaration !{
-public enum %name% : int
+EnumDefinition = !{
+public enum %!Name% : int
 {
     %body%
 }
 !}
-
-type 1 default bool = bool
-type 1 default int32 = int
-type 1 default uint32 = uint
-type 1 string String = string
-type 2 array Array = List<%type0%>
-type 1 struct struct = %namespace%.%name%
-type 1 enum enum = %name%
-type 3 map Map = !{Dictionary<%type0%, %type1%>!}

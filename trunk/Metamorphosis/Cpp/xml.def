@@ -1,4 +1,7 @@
-﻿## toXml
+﻿IncludeDeclarationTop += !{ 
+#include "tinyXML\tinyxml.h"
+!}
+## toXml
 
 method toXml param = !{TiXmlElement *parentNode!}
 method toXml returnType = std::string

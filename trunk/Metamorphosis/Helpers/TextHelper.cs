@@ -105,17 +105,44 @@ namespace Metamorphosis
 
         public static string ReplaceExpressions(ref string text, object obj)
         {
+            if (obj != null)
+            {
+                while (true)
+                {
+                    // check for owner expression
+                    Match match = Regex.Match(text, @"%![^%]+%", RegexOptions.IgnoreCase);
+
+                    // Here we check the Match instance.
+                    if (match.Success)
+                    {
+                        string v = match.Captures[0].Value;
+                        string n = v.Substring(2, v.Length - 3);
+                        string r = ObjectHelper.GetValue(obj, n);
+                        if (r == null)
+                        {
+                            Log.Error(n, Error.WrongFormat, "Can't parse expression");
+                        }
+                        text = text.Replace(v, r);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
             while (true)
             {
-                // check for expression
-                Match match = Regex.Match(text, @"%![^%]+%", RegexOptions.IgnoreCase);
+                // check for variable expression
+                Match match = Regex.Match(text, @"%@[^%]+%", RegexOptions.IgnoreCase);
 
                 // Here we check the Match instance.
                 if (match.Success)
                 {
                     string v = match.Captures[0].Value;
                     string n = v.Substring(2, v.Length - 3);
-                    n = ObjectHelper.GetValue(obj, n);
+                    ElementType t = Parser.ConvertToElementType(n);
+                    n = Larvae.GetElement(t);
                     text = text.Replace(v, n);
                 }
                 else
@@ -123,6 +150,7 @@ namespace Metamorphosis
                     break;
                 }
             }
+
             return text;
         }
 

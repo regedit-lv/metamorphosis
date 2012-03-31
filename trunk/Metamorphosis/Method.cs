@@ -93,7 +93,7 @@ namespace Metamorphosis
                             break;
                         }
 
-                        bl = larva.GetBaseLarva();
+                        bl = larva.BaseLarva;
                         if (bl == null)
                         {
                             break;
@@ -145,10 +145,13 @@ namespace Metamorphosis
             foreach (Variable v in Items)
             {
                 string name = "%" + v.Name + "%";
-                string value = v.Value;
-                value = v.Variables.ReplaceAll(value, larva);
-                TextHelper.ReplaceExpressions(ref value, larva);
-                TextHelper.ReplaceField(ref text, name, value);
+                if (text.Contains(name))
+                {
+                    string value = v.Value;
+                    value = v.Variables.ReplaceAll(value, larva);
+                    TextHelper.ReplaceExpressions(ref value, larva);
+                    TextHelper.ReplaceField(ref text, name, value);
+                }
             }
             return text;
         }

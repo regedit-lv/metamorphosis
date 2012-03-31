@@ -51,6 +51,7 @@ namespace Metamorphosis
         {
             if (text != null)
             {
+                TextHelper.ReplaceExpressions(ref text, null);
                 declaraion.Add(text);
             }
         }
@@ -64,7 +65,7 @@ namespace Metamorphosis
             foreach (string importName in Larvae.Imports)
             {
                 string n = Program.RemoveExtension(importName);
-                AddDeclarationText(Larvae.GetElement(ElementType.ImportInclude).Replace("%name%", n));
+                AddDeclarationText(Larvae.GetElement(ElementType.ImportInclude));
             }
 
             AddDeclarationText(Larvae.GetElement(ElementType.UserIncludeDeclarationTop));
