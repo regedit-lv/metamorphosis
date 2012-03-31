@@ -11,27 +11,27 @@ return %return%;
 
 method size body return = !{0 %%!}
 
-method size body return enum = !{ + sizeof(%type%)!}
-method size body return default = !{ + sizeof(%type%)!}
-method size body return string = !{ + (2 + %field%.size())!}
-method size body return struct = !{ + %field%.size()!}
-method size body return array = !{ + s_%field%!}
-method size body return array default = !{ + (sizeof(size_t) + sizeof(%type0%) * %field%.size())!}
+method size body return enum = !{ + sizeof(%!TypeDefinition%)!}
+method size body return default = !{ + sizeof(%!TypeDefinition%)!}
+method size body return string = !{ + (2 + %!Name%.size())!}
+method size body return struct = !{ + %!Name%.size()!}
+method size body return array = !{ + s_%!Name%!}
+method size body return array default = !{ + (sizeof(size_t) + sizeof(%type0%) * %!Name%.size())!}
 method size body body array default = !{ !}
-method size body return map = !{ + s_%field%!}
+method size body return map = !{ + s_%!Name%!}
 
 method size body body = !{%%!}
 
 method size body body array = !{
-size_t s_%field% = sizeof(size_t);
+size_t s_%!Name% = sizeof(size_t);
 {
-    for (size_t i = 0; i < %field%.size(); i++)
+    for (size_t i = 0; i < %!Name%.size(); i++)
     {
-        %!Larva.SubLarvae[0].TypeDefinition% &%_e_name% = %field%[i];
+        %!Larva.SubLarvae[0].TypeDefinition% &%_e_name% = %!Name%[i];
         
         %#method size body body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
         
-        s_%field% += 0 %#method size body return#%_e_name%#%!Larva.SubLarvae[0].FullName%#%;
+        s_%!Name% += 0 %#method size body return#%_e_name%#%!Larva.SubLarvae[0].FullName%#%;
     }
 }
 !}
@@ -39,9 +39,9 @@ size_t s_%field% = sizeof(size_t);
 method size body return arrayMethod = !{totalSize_%field_id%!}
 
 method size body body map = !{
-size_t s_%field% = sizeof(size_t);
+size_t s_%!Name% = sizeof(size_t);
 {
-    for (%!Larva.TypeDefinition%::iterator it = %field%.begin(); it != %field%.end(); ++it)        
+    for (%!Larva.TypeDefinition%::iterator it = %!Name%.begin(); it != %!Name%.end(); ++it)        
     {
         const %!Larva.SubLarvae[0].TypeDefinition% &%_e_key% = it->first;
         const %!Larva.SubLarvae[0].TypeDefinition% &%_e_value% = it->second;
@@ -49,7 +49,7 @@ size_t s_%field% = sizeof(size_t);
         %#method size body body#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
         %#method size body body#%_e_value%#%!Larva.SubLarvae[1].FullName%#%
         
-        s_%field% += 0 %#method size body return#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
+        s_%!Name% += 0 %#method size body return#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
                        %#method size body return#%_e_value%#%!Larva.SubLarvae[1].FullName%#%;
     }
 }
@@ -75,45 +75,45 @@ if (*data == NULL)
 return writer.getDataSize();
 !}
 
-method write body enum = !{writer.write<%type%>(%field%);!}
-method write body default = !{writer.write<%type%>(%field%);!}
-method write body string = !{writer.writeString(%field%);!}
+method write body enum = !{writer.write<%!TypeDefinition%>(%!Name%);!}
+method write body default = !{writer.write<%!TypeDefinition%>(%!Name%);!}
+method write body string = !{writer.writeString(%!Name%);!}
 
 method write body struct = !{ 
-void *p_%field% = writer.getPosition();
-%field%.write(&p_%field%);
-writer.skipBytes(%field%.size()); 
+void *p_%!Name% = writer.getPosition();
+%!Name%.write(&p_%!Name%);
+writer.skipBytes(%!Name%.size()); 
 !}
 
 method write body array default = !{
-// write array %field%
-writer.write<size_t>(%field%.size());
-writer.writeBytes(%field%.data(), sizeof(%type0%) * %field%.size() );
+// write array %!Name%
+writer.write<size_t>(%!Name%.size());
+writer.writeBytes(%!Name%.data(), sizeof(%type0%) * %!Name%.size() );
 !}
 
 method write body array = !{ 
-// write array %field%
-writer.write<size_t>(%field%.size());
+// write array %!Name%
+writer.write<size_t>(%!Name%.size());
 
-for (size_t i = 0; i < %field%.size(); i++)
+for (size_t i = 0; i < %!Name%.size(); i++)
 {
-    %!Larva.SubLarvae[0].TypeDefinition% &%_e_name% = %field%[i];
+    %!Larva.SubLarvae[0].TypeDefinition% &%_e_name% = %!Name%[i];
         
     %#method write body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
 }
 !}
 
 method write body array default = !{
-// write array %field%
-writer.write<size_t>(%field%.size());
-writer.writeBytes(%field%.data(), sizeof(%type0%) * %field%.size() );
+// write array %!Name%
+writer.write<size_t>(%!Name%.size());
+writer.writeBytes(%!Name%.data(), sizeof(%type0%) * %!Name%.size() );
 !}
 
 method write body map = !{ 
-// write map %field%
-writer.write<size_t>(%field%.size());
+// write map %!Name%
+writer.write<size_t>(%!Name%.size());
 {
-    for (%!Larva.TypeDefinition%::iterator it = %field%.begin(); it != %field%.end(); ++it)        
+    for (%!Larva.TypeDefinition%::iterator it = %!Name%.begin(); it != %!Name%.end(); ++it)        
     {
         const %!Larva.SubLarvae[0].TypeDefinition% &%_e_key% = it->first;
         const %!Larva.SubLarvae[0].TypeDefinition% &%_e_value% = it->second;
@@ -136,40 +136,40 @@ ByteReader reader(data);
 %%
 !}
 
-method read body enum = !{%field% = reader.read<%type%>();!}
-method read body default = !{%field% = reader.read<%type%>();!}
-method read body string = !{%field% = reader.readString();!}
+method read body enum = !{%!Name% = reader.read<%!TypeDefinition%>();!}
+method read body default = !{%!Name% = reader.read<%!TypeDefinition%>();!}
+method read body string = !{%!Name% = reader.readString();!}
 
 method read body struct = !{ 
-%field%.read(reader.getPosition());
-reader.skipBytes(%field%.size()); 
+%!Name%.read(reader.getPosition());
+reader.skipBytes(%!Name%.size()); 
 !}
 
 method read body array default = !{ 
-// read array %field%
-size_t s_%field% = reader.read<size_t>();
-%field%.resize(s_%field%);
-reader.readBytes((char*)%field%.data(), sizeof(%type0%) * s_%field%);
+// read array %!Name%
+size_t s_%!Name% = reader.read<size_t>();
+%!Name%.resize(s_%!Name%);
+reader.readBytes((char*)%!Name%.data(), sizeof(%type0%) * s_%!Name%);
 !}
 
 method read body array = !{ 
-// read array %field%
-size_t s_%field% = reader.read<size_t>();
-%field%.resize(s_%field%);
+// read array %!Name%
+size_t s_%!Name% = reader.read<size_t>();
+%!Name%.resize(s_%!Name%);
 
-for (size_t i = 0; i < s_%field%; i++)
+for (size_t i = 0; i < s_%!Name%; i++)
 {
-    %!Larva.SubLarvae[0].TypeDefinition% &%_e_name% = %field%[i];
+    %!Larva.SubLarvae[0].TypeDefinition% &%_e_name% = %!Name%[i];
         
     %#method read body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
 }
 !}
 
 method read body map = !{ 
-// read array %field%
-size_t s_%field% = reader.read<size_t>();
+// read array %!Name%
+size_t s_%!Name% = reader.read<size_t>();
 
-for (size_t i = 0; i < s_%field%; i++)
+for (size_t i = 0; i < s_%!Name%; i++)
 {
     %!Larva.SubLarvae[0].TypeDefinition% %_e_key%;
     %!Larva.SubLarvae[0].TypeDefinition% %_e_value%;
@@ -177,6 +177,6 @@ for (size_t i = 0; i < s_%field%; i++)
     %#method read body#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
     %#method read body#%_e_value%#%!Larva.SubLarvae[1].FullName%#%
     
-    %field%[%_e_key%] = %_e_value%;
+    %!Name%[%_e_key%] = %_e_value%;
 }
 !}

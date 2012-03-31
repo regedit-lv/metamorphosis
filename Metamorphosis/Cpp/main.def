@@ -3,14 +3,13 @@
 #include <string>
 #include <map>
 #include <cstdint>
-#include "tinyXML\tinyxml.h"
 !}
 
 IncludeDefinitionTop = !{
 #include "stdafx.h"
 
 #include <sstream>
-#include "%output_name%.h"
+#include "%@OutputName%.h"
 !}
 
 ImportInclude = !{ #include "%name%.h" !}

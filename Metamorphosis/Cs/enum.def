@@ -1,6 +1,6 @@
 ## getName
 
-method getEnumName param = !{%!GetBaseLarva().TypeDefinition% value!}
+method getEnumName param = !{%!BaseLarva.TypeDefinition% value!}
 method getEnumName returnType = string
           
 method getEnumName body =
@@ -15,7 +15,7 @@ return valueToName[value];
 ## getValue
 
 method getEnumValue param = !{string name!}
-method getEnumValue returnType = %!GetBaseLarva().TypeDefinition%
+method getEnumValue returnType = %!BaseLarva.TypeDefinition%
           
 method getEnumValue body =
 !{
@@ -34,8 +34,8 @@ method initEnum returnType = void
 
 method initEnum body enum = 
 !{
-valueToName[%value%] = "%description%";
-nameToValue["%description%"] = %value%;
+valueToName[%!EnumValue%] = "%!Alias%";
+nameToValue["%!Alias%"] = %!EnumValue%;
 !}
 
 method initEnum body =

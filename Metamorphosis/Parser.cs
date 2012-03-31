@@ -84,6 +84,18 @@ namespace Metamorphosis
         ParserMode Mode;
         object element;
 
+        public static ElementType ConvertToElementType(string text)
+        {
+            ElementType t = ElementType.None;
+            // check is it global variable
+            if (enumNames.Contains(text))
+            {
+                t = (ElementType)Enum.Parse(typeof(ElementType), text, true);                
+            }
+
+            return t;
+        }
+
         public void AddToken(string text, int from, int to, bool seperate)
         {
             if (seperate)
@@ -272,10 +284,9 @@ namespace Metamorphosis
             }
 
             // check is it global variable
-            if (enumNames.Contains(token))
-            {
-                ElementType t = (ElementType)Enum.Parse(typeof(ElementType), token as string, true);
-
+            ElementType et = ConvertToElementType(token);
+            if (et != ElementType.None)
+            {                 
                 string operation = GetNextToken();
                 string value = GetNextToken();
 
@@ -284,12 +295,12 @@ namespace Metamorphosis
                     switch (operation)
                     {
                         case "=":
-                            Larvae.SetElement(t, value);
+                            Larvae.SetElement(et, value);
                             break;
 
                         case "+=":
-                            value = Larvae.GetElement(t) + value;
-                            Larvae.SetElement(t, value);
+                            value = Larvae.GetElement(et) + value;
+                            Larvae.SetElement(et, value);
                             break;
 
                         default:
@@ -299,7 +310,7 @@ namespace Metamorphosis
                 }
                 
                 element = value;
-                return t;
+                return et;
             }
 
             switch (token)
@@ -634,6 +645,7 @@ namespace Metamorphosis
                 }
             }
 
+            element = token;
             return ElementType.None;
         }
 
@@ -705,8 +717,11 @@ namespace Metamorphosis
                         break;
 
                     case ElementType.EOF:
-                    case ElementType.None:
                         return true;
+
+                    case ElementType.None:
+                        Log.Error(GetElement().ToString(), Error.UnknownToken, "Unknown input");
+                        return false;
 
                     case ElementType.Error:
                         return false;

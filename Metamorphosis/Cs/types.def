@@ -1,0 +1,8 @@
+﻿type 1 default bool = bool
+type 1 default int32 = int
+type 1 default uint32 = uint
+type 1 string String = string
+type 2 array Array = List<%!SubLarvae[0].TypeDefinition%>
+type 1 struct struct = %!NamespaceDefinition%.%!Name%
+type 1 enum enum = %!Name%
+type 3 map Map = !{Dictionary<%!SubLarvae[0].TypeDefinition%, %!SubLarvae[1].TypeDefinition%>!}

@@ -8,7 +8,9 @@ namespace Metamorphosis
     enum Error
     {
         UnexpectedToken,
-        NotFound
+        NotFound,
+        UnknownToken,
+        WrongFormat
     }
 
     class Log

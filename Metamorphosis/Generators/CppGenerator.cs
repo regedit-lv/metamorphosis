@@ -69,6 +69,7 @@ namespace Metamorphosis
         {
             if (text != null)
             {
+                TextHelper.ReplaceExpressions(ref text, null);
                 declaraion.Add(text);
             }
         }
@@ -77,6 +78,7 @@ namespace Metamorphosis
         {
             if (text != null)
             {
+                TextHelper.ReplaceExpressions(ref text, null);
                 definition.Add(text);
             }
         }
@@ -95,7 +97,7 @@ namespace Metamorphosis
 
             AddDeclarationText(Larvae.GetElement(ElementType.UserIncludeDeclarationTop));
 
-            AddDefinitionText(Larvae.GetElement(ElementType.IncludeDefinitionTop).Replace("%output_name%", Larvae.GetElement(ElementType.OutputName)));
+            AddDefinitionText(Larvae.GetElement(ElementType.IncludeDefinitionTop));
 
             foreach (string ns in namespaces)
             {

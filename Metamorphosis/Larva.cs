@@ -232,9 +232,12 @@ namespace Metamorphosis
             }
         }
 
-        public Larva GetBaseLarva()
+        public Larva BaseLarva
         {
-            return Larvae.GetLarva(BaseName, true);
+            get
+            {
+                return Larvae.GetLarva(BaseName, true);
+            }
         }
 
         public string GetConstructorBody()

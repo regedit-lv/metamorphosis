@@ -93,6 +93,9 @@
     <Content Include="Cs\main.def">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Cs\types.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Cs\xml.def">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

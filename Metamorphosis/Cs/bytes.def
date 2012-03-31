@@ -9,34 +9,34 @@ return %return%;
 
 method size body return = !{0 %%!}
 
-method size body return default = !{ + sizeof(%type%)!}
-method size body return string = !{ + (2 + %field%.Length)!}
-method size body return struct = !{ + %field%.size()!}
-method size body return array = !{ + s_%field%!}
-method size body return array default = !{ + (sizeof(int) + sizeof(%type0%) * %field%.Count)!}
+method size body return default = !{ + sizeof(%!TypeDefinition%)!}
+method size body return string = !{ + (2 + %!Name%.Length)!}
+method size body return struct = !{ + %!Name%.size()!}
+method size body return array = !{ + s_%!Name%!}
+method size body return array default = !{ + (sizeof(int) + sizeof(%type0%) * %!Name%.Count)!}
 method size body body array default = !{ !}
-method size body return map = !{ + s_%field%!}
+method size body return map = !{ + s_%!Name%!}
 
 method size body body = !{%%!}
 
 method size body body array = !{
-int s_%field% = sizeof(int);
+int s_%!Name% = sizeof(int);
 {
-    for (int %_i% = 0; %_i% < %field%.Count; %_i%++)
+    for (int %_i% = 0; %_i% < %!Name%.Count; %_i%++)
     {
-        %!Larva.SubLarvae[0].TypeDefinition% %_e_name% = %field%[%_i%];
+        %!Larva.SubLarvae[0].TypeDefinition% %_e_name% = %!Name%[%_i%];
         
         %#method size body body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
         
-        s_%field% += 0 %#method size body return#%_e_name%#%!Larva.SubLarvae[0].FullName%#%;
+        s_%!Name% += 0 %#method size body return#%_e_name%#%!Larva.SubLarvae[0].FullName%#%;
     }
 }
 !}
 
 method size body body map = !{
-int s_%field% = sizeof(int);
+int s_%!Name% = sizeof(int);
 {
-    foreach (var p in %field%)
+    foreach (var p in %!Name%)
     {
         %!Larva.SubLarvae[0].TypeDefinition% %_e_key% = p.Key;
         %!Larva.SubLarvae[0].TypeDefinition% %_e_value% = p.Value;
@@ -44,7 +44,7 @@ int s_%field% = sizeof(int);
         %#method size body body#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
         %#method size body body#%_e_value%#%!Larva.SubLarvae[1].FullName%#%
         
-        s_%field% += 0 %#method size body return#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
+        s_%!Name% += 0 %#method size body return#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
                        %#method size body return#%_e_value%#%!Larva.SubLarvae[1].FullName%#%;
     }
 }
@@ -62,28 +62,28 @@ ByteWriter writer = byteWriter == null ? new ByteWriter() : byteWriter;
 return writer.GetBuffer();
 !}
 
-method write body default = !{writer.Write(%field%);!}
-method write body string = !{writer.WriteString(%field%);!}
+method write body default = !{writer.Write(%!Name%);!}
+method write body string = !{writer.WriteString(%!Name%);!}
 
 method write body struct = !{ 
-%field%.write(writer);
+%!Name%.write(writer);
 !}
 
 method write body array = !{ 
-// write array %field%
-writer.Write(%field%.Count);
+// write array %!Name%
+writer.Write(%!Name%.Count);
 
-for (int %_i% = 0; %_i% < %field%.Count; %_i%++)
+for (int %_i% = 0; %_i% < %!Name%.Count; %_i%++)
 {
-    %#method write body#%field%[%_i%]#%!Larva.SubLarvae[0].FullName%#%
+    %#method write body#%!Name%[%_i%]#%!Larva.SubLarvae[0].FullName%#%
 }
 !}
 
 method write body map = !{ 
-// write array %field%
-writer.Write(%field%.Count);
+// write array %!Name%
+writer.Write(%!Name%.Count);
 
-foreach (var p in %field%)
+foreach (var p in %!Name%)
 {
     %!Larva.SubLarvae[0].TypeDefinition% %_e_key% = p.Key;
     %!Larva.SubLarvae[0].TypeDefinition% %_e_value% = p.Value;
@@ -105,35 +105,35 @@ ByteReader reader = byteReader == null ? new ByteReader(bytes) : byteReader;
 %%
 !}
 
-method read body default = !{reader.Read(out %field%);!}
-method read body string = !{%field% = reader.ReadString();!}
+method read body default = !{reader.Read(out %!Name%);!}
+method read body string = !{%!Name% = reader.ReadString();!}
 
 method read body struct = !{ 
-%field% = new %!Larva.TypeDefinition%();
-%field%.read(null, reader);
+%!Name% = new %!Larva.TypeDefinition%();
+%!Name%.read(null, reader);
 !}
 
 method read body array = !{ 
-// read array %field%
-int s_%field%;
-reader.Read(out s_%field%);
-%field% = new %!Larva.TypeDefinition%(s_%field%);
+// read array %!Name%
+int s_%!Name%;
+reader.Read(out s_%!Name%);
+%!Name% = new %!Larva.TypeDefinition%(s_%!Name%);
 
-for (int %_i% = 0; %_i% < s_%field%; %_i%++)
+for (int %_i% = 0; %_i% < s_%!Name%; %_i%++)
 {
     %!Larva.SubLarvae[0].TypeDefinition% %_e_name%;        
     %#method read body#%_e_name%#%!Larva.SubLarvae[0].FullName%#%
-    %field%.Add(%_e_name%);
+    %!Name%.Add(%_e_name%);
 }
 !}
 
 method read body map = !{ 
-// read array %field%
-int s_%field%;
-reader.Read(out s_%field%);
-%field% = new %!Larva.TypeDefinition%();
+// read array %!Name%
+int s_%!Name%;
+reader.Read(out s_%!Name%);
+%!Name% = new %!Larva.TypeDefinition%();
 
-for (int %_i% = 0; %_i% < s_%field%; %_i%++)
+for (int %_i% = 0; %_i% < s_%!Name%; %_i%++)
 {
     %!Larva.SubLarvae[0].TypeDefinition% %_e_key%;        
     %!Larva.SubLarvae[1].TypeDefinition% %_e_value%;       
@@ -141,7 +141,7 @@ for (int %_i% = 0; %_i% < s_%field%; %_i%++)
     %#method read body#%_e_key%#%!Larva.SubLarvae[0].FullName%#%
     %#method read body#%_e_value%#%!Larva.SubLarvae[1].FullName%#%
 
-    %field%[%_e_key%] = %_e_value%;
+    %!Name%[%_e_key%] = %_e_value%;
 }
 
 !}
