@@ -1,0 +1,4 @@
+﻿import rules Java\main.def
+import rules Java\types.def
+import rules Java\enum.def
+import rules Java\xml.def

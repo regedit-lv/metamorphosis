@@ -12,7 +12,7 @@ namespace Helpers
         MemoryStream stream;
         BinaryReader br;
 
-        public ByteReader(byte []data)
+        public ByteReader(byte[] data)
         {
             stream = new MemoryStream(data);
             br = new BinaryReader(stream);
@@ -51,6 +51,17 @@ namespace Helpers
         public void Read(out ulong value)
         {
             value = br.ReadUInt64();
+        }
+
+        public void Read(out bool value)
+        {
+            value = br.ReadBoolean();
+        }
+
+        public void Read<T>(out T value)
+        {
+            int i = br.ReadInt32();
+            value = (T)(object)i;
         }
 
         public string ReadString()

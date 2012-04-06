@@ -12,4 +12,8 @@
 
 #pragma comment(lib, "Ws2_32.lib")
 
+#include "ByteReader.h"
+#include "ByteWriter.h"
+#include "tinyXML\tinystr.h"
+
 // TODO: reference additional headers your program requires here

@@ -1,75 +1,96 @@
-﻿Namespace = xmq.configuration
+﻿Namespace = generated
 
-enum MetaType
+struct SubStruct
 {
-    None : none,
-    Int : int,
-    String : string,
-    Array : array,
-    Object : object,
-}
-
-static MetaTypeHelper : MetaType
-{
-    bool initDone = false;
-    Map MetaType String valueToName;
-    Map String MetaType nameToValue;
-} : getEnumName getEnumValue initEnum;
-
-struct MetaData
-{
-    MetaType type = MetaType.None;
-    String name;
-    Array MetaData elements;
+    String ss = "ssValue";
+    int32 si = 123;
 } : toXml fromXml;
 
-struct MetaData2 : MetaData
+struct BTest
 {
-}
-
-struct Module
-{
-    String name;
-    String id;
+    String bs = "bsValue";
+    int32 bi = 3;
+    Array String bas;
 } : toXml fromXml;
 
-struct IpRange
+struct ATest : BTest
 {
-    String from;
-    String to;
+    SubStruct ss;
+    String s = "sValue";
+    int32 i = 2;
+    Array String as;
 } : toXml fromXml;
 
-struct Instance
-{
-    String name;
-    int32 id;
-    String host;
-    int32 port;
-} : toXml fromXml;
-
-struct Path
-{
-    String modules;
-    String modulesData;
-} : toXml fromXml;
-
-struct Connection
-{
-    String host;
-    int32 port;
-} : toXml fromXml;
-
-struct Configuration
-{
-    MetaData metaData;
-    Instance instance;
-    Path path;
-    Array Connection busses;
-    Array IpRange whiteIp;
-    Array IpRange blackIp;
-    Array Module modules;
-} : toXml fromXml;
-
+## enum MetaType
+## {
+##     None : none,
+##     Int : int,
+##     String : string,
+##     Array : array,
+##     Object : object,
+## }
+## 
+## static MetaTypeHelper : MetaType
+## {
+##     bool initDone = false;
+##     Map MetaType String valueToName;
+##     Map String MetaType nameToValue;
+## } : getEnumName getEnumValue initEnum;
+## 
+## struct MetaData
+## {
+##     MetaType type = MetaType.None;
+##     String name;
+##     Array MetaData elements;
+## } : toXml fromXml;
+## 
+## struct MetaData2 : MetaData
+## {
+## }
+## 
+## struct Module
+## {
+##     String name;
+##     String id;
+## } : toXml fromXml;
+## 
+## struct IpRange
+## {
+##     String from;
+##     String to;
+## } : toXml fromXml;
+## 
+## struct Instance
+## {
+##     String name;
+##     int32 id;
+##     String host;
+##     int32 port;
+## } : toXml fromXml;
+## 
+## struct Path
+## {
+##     String modules;
+##     String modulesData;
+## } : toXml fromXml;
+## 
+## struct Connection
+## {
+##     String host;
+##     int32 port;
+## } : toXml fromXml;
+## 
+## struct Configuration
+## {
+##     MetaData metaData;
+##     Instance instance;
+##     Path path;
+##     Array Connection busses;
+##     Array IpRange whiteIp;
+##     Array IpRange blackIp;
+##     Array Module modules;
+## } : toXml fromXml;
+## 
 ## Namespace xmq
 ## 
 ## import def.met

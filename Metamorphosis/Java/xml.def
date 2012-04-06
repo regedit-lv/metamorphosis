@@ -1,0 +1,261 @@
+﻿IncludeDeclarationTop += !{ 
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.dom.DOMSource;
+
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+import metamorphosis.helpers.*;
+!}
+
+## create instancle
+
+method helper new string = !{ 
+%!Name% = new %!Larva.TypeDefinition%();
+!}
+
+method helper new array = !{ 
+%!Name% = new Array%!Larva.TypeDefinition%();
+!}
+
+method helper new struct = !{ 
+%!Name% = new %!Larva.TypeDefinition%();
+!}
+
+
+## toXml
+
+method toXml param = !{Element parentRoot, Document parentDoc!}
+method toXml returnType = String
+
+method toXml body direct =
+!{
+%~default%
+%~enum%  
+%~string% 
+!}
+
+method toXml body =
+!{
+
+Element parent = null;
+Document doc = null;
+try {
+    if (parentRoot == null)
+    {  
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        doc = docBuilder.newDocument();;
+  	    // root elements
+  	    parent = doc.createElement("%!Name%");
+  	    doc.appendChild(parent);
+    }
+    else
+    {
+        doc = parentDoc;
+        parent = parentRoot;
+    }
+
+    // write primitive types
+    %direct%
+
+    // write complex types
+    %~struct% 
+    %~array% 
+
+    if (parentRoot == null)
+    {
+  	    DOMSource source = new DOMSource(doc);
+  	    String xml = XmlHelper.getStringFromDoc(doc);
+        return xml;
+    }
+    else
+    {
+        return "";
+    }
+} catch (ParserConfigurationException pce) {
+    pce.printStackTrace();
+}
+
+return "";
+!}
+
+method toXml body direct default = !{
+// %!TypeDefinition% %!Name%
+XmlHelper.writeAttribute(parent, doc, "%!Name%", %!Name%);
+!}
+
+method toXml body direct enum = !{
+// %!TypeDefinition% %!Name%
+XmlHelper.writeAttribute(parent, doc, "%!Name%", %!Larva.TypeDefinition%Helper.getEnumName(%!Name%));
+!}
+
+method toXml body direct string = !{
+// %!TypeDefinition% %!Name%
+XmlHelper.writeAttribute(parent, doc, "%!Name%", %!Name%);
+!}
+
+method toXml body direct struct = !{
+// %!Name%
+%!Name%.toXml(parent, doc);
+!}
+
+method toXml body struct = !{
+// %!Name%
+if (%!Name% != null)
+{
+    Element subElement = doc.createElement("%!Name%");
+    %!Name%.toXml(subElement, doc);
+    parent.appendChild(subElement);
+}
+!}
+
+method toXml body array = !{
+// %!Name%
+if (%!Name% != null)
+{
+    Element arrayElement = doc.createElement("%!Name%");
+    Element parentOriginal = parent; // save parent
+
+    for(Iterator<%!Larva.SubLarvae[0].TypeDefinition%> %_i% = %!Name%.iterator(); %_i%.hasNext(); ) {
+        %!Larva.SubLarvae[0].TypeDefinition% value = %_i%.next();
+
+        Element subElement = doc.createElement("%!Larva.SubLarvae[0].Name%");
+        parent = subElement;
+
+        %#method toXml body direct#value#%!Larva.SubLarvae[0].FullName%#%
+    
+        arrayElement.appendChild(parent);
+    }
+
+    parent = parentOriginal; // restore parent
+    parent.appendChild(arrayElement);
+}
+!}
+
+## fromXml
+
+method fromXml param = !{String xml, Element parentRoot!}
+method fromXml returnType = void
+
+method fromXml body =
+!{
+try {
+
+    Element parent = null;
+
+    if (parentRoot == null)
+    {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource is = new InputSource(new StringReader(xml));
+        Document doc = builder.parse(is);
+        parent = doc.getDocumentElement();    
+    }
+    else
+    {
+        parent = parentRoot;
+    }
+
+    %direct%
+
+    %~struct% 
+    %~array% 
+
+} catch (Exception e) {
+    e.printStackTrace();
+}  
+
+!}
+
+method fromXml body direct = !{
+%~default%
+%~enum%  
+%~string% 
+!}
+
+method fromXml body direct default = !{
+// %!TypeDefinition% %!Name%
+%!Name% = XmlHelper.readAttribute(parent, "%!Name%", %!Name%);
+!}
+
+method fromXml body direct enum = !{
+// %!TypeDefinition% %!Name%
+{
+    string i_%!Name%;
+    XmlWrapper.ReadAttribute(reader, "%!Name%", out i_%!Name%);
+    %!Name% = %!Larva.TypeDefinition%Helper.getEnumValue(i_%!Name%);
+}
+!}
+
+method fromXml body direct string = !{
+// %!TypeDefinition% %!Name%
+%!Name% = XmlHelper.readAttribute(parent, "%!Name%", %!Name%);
+!}
+
+method fromXml body direct struct = !{
+// %!TypeDefinition% %!Name%
+%!Name% = new %!Larva.TypeDefinition%();
+%!Name%.fromXml("", parent);
+!}
+
+method fromXml body struct = !{ 
+{ // struct %!Name%
+    NodeList nList = parent.getElementsByTagName("%!Name%");
+    for (int temp = 0; temp < nList.getLength(); temp++) {
+        Node nNode = nList.item(temp);
+        if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+            Element eElement = (Element) nNode;
+            %!Name% = new %!Larva.TypeDefinition%();
+            %!Name%.fromXml("", eElement);
+       }
+    }
+}
+!}
+    
+method fromXml body array = !{ 
+{ // array %!Name%
+    Element originalParent = parent;
+    NodeList %_pList% = parent.getElementsByTagName("%!Name%");
+    for (int %_i% = 0; %_i% < %_pList%.getLength(); %_i%++) {
+        Node %_pNode% = %_pList%.item(%_i%);
+        if (%_pNode%.getNodeType() == %_pNode%.ELEMENT_NODE) {
+            Element %_pElement% = (Element) %_pNode%;
+
+            // create new instance if needed               
+            %#method helper new#%!Name%#%!Larva.FullName%#%
+
+            NodeList %_sList% = %_pElement%.getElementsByTagName("%!Larva.SubLarvae[0].Name%");
+
+            for (int %_i2% = 0; %_i2% < %_sList%.getLength(); %_i2%++) {
+                Node %_sNode% = %_sList%.item(%_i2%);
+                if (%_sNode%.getNodeType() == %_sNode%.ELEMENT_NODE) {
+                    Element %_sElement% = (Element) %_sNode%;
+                    %!Larva.SubLarvae[0].TypeDefinition% value;
+
+                    // create new instance if needed               
+                    %#method helper new#value#%!Larva.SubLarvae[0].FullName%#%
+                    
+                    parent = %_sElement%;
+
+                    %#method fromXml body direct#value#%!Larva.SubLarvae[0].FullName%#%
+                    
+                    %!Name%.add(value);
+                }                               
+            }   
+        }
+    }
+    parent = originalParent;
+}
+
+!}

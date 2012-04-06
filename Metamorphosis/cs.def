@@ -2,3 +2,4 @@
 import rules Cs\types.def
 import rules Cs\enum.def
 import rules Cs\xml.def
+import rules Cs\bytes.def

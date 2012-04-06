@@ -76,7 +76,7 @@ namespace Metamorphosis
                     if (l != null && l.Type == LarvaType.Enum)
                     {
                         value = value.Remove(0, i + 1);
-                        Part p = Larva.Parts.Find(x => x.Name == value);
+                        Part p = l.Parts.Find(x => x.Name == value);
                         if (p != null)
                         {
                             InitialValue = p.EnumValue;

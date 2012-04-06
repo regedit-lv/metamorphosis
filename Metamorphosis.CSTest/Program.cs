@@ -11,6 +11,7 @@ namespace Metamorphosis.CSTest
         static void Main(string[] args)
         {
             string xml = File.ReadAllText("test.xml");
+            /*
             xmq.configuration.MetaData md = new xmq.configuration.MetaData();
             md.fromXml(xml);
             string xml2 = md.toXml();
@@ -25,6 +26,7 @@ namespace Metamorphosis.CSTest
             Console.WriteLine(xml);
             Console.WriteLine("----");
             Console.WriteLine(xml2);
+             * */
         }
     }
 }
