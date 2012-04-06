@@ -7,11 +7,13 @@
 #include <sstream>
 #include "xmq.h"
 
+#include <queue>
+
 #include "tinyXML\tinyxml.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    
+/*
     xmq::configuration::Configuration conf;
     xmq::configuration::IpRange ir;
     xmq::configuration::Module m;
@@ -67,7 +69,7 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 
     conf2.fromXml(allText, nullptr);
-
+*/
     return 0;
     /*
     xmq::SM sm, sm2;

@@ -161,7 +161,7 @@ method fromXml body readDirect enum = !{
 
 method fromXml body readDirect string = !{
 // %!TypeDefinition% %!Name%
-XmlWrapper.ReadAttribute(reader, "%!Name%", out %!Name%);
+XmlWrapper.ReadAttribute(reader, "%!Larva.Name%", out %!Name%);
 !}
 
 method fromXml body readDirect struct = !{

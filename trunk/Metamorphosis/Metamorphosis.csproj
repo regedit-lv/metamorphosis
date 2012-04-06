@@ -47,6 +47,7 @@
     <Compile Include="Generators\CppGenerator.cs" />
     <Compile Include="Generators\CsGenerator.cs" />
     <Compile Include="Generators\Generator.cs" />
+    <Compile Include="Generators\JavaGenerator.cs" />
     <Compile Include="Helpers\TextHelper.cs" />
     <Compile Include="Larva.cs" />
     <Compile Include="Larvae.cs" />
@@ -100,6 +101,27 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Cs\xmlOnly.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="java.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Java\bytes.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Java\enum.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Java\main.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Java\types.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Java\xml.def">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Java\xmlOnly.def">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

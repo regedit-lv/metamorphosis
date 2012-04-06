@@ -86,8 +86,10 @@ namespace Metamorphosis
             Generator.SetGenerator(Larvae.GetElement(ElementType.OutputLanguage));
 
             Directory.CreateDirectory(path);
-            
+           
             path += @"\";
+
+            Generator.Current.SetOutputPath(path);
 
             path += name;
 

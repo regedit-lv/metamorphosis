@@ -11,7 +11,7 @@ namespace Helpers
     {
         MemoryStream stream;
         BinaryWriter bw;
-        
+
         public ByteWriter()
         {
             stream = new MemoryStream();
@@ -59,12 +59,22 @@ namespace Helpers
             bw.Write(value);
         }
 
+        public void Write(bool value)
+        {
+            bw.Write(value);
+        }
+
+        public void Write<T>(T value)
+        {
+            bw.Write((int)(object)value);
+        }
+
         public void WriteString(string s)
         {
             WriteBytes(Encoding.ASCII.GetBytes(s));
         }
 
-        public void WriteBytes(byte []bytes)
+        public void WriteBytes(byte[] bytes)
         {
             bw.Write((ushort)bytes.Length);
             bw.Write(bytes);

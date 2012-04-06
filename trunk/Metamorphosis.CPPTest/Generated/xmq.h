@@ -9,122 +9,91 @@
 
 namespace xmq
 {
-namespace configuration
+namespace settings
 {
 
-enum class MetaType : int
+enum class Error : int
 {
-     None , 
-     Int , 
-     String , 
-     Array , 
-     Object , 
+     Ok , 
+     Failed , 
     
 };
 
 
-class MetaTypeHelper 
+enum class MessageType : int
 {
-public:
-     static bool initDone; 
-     static std::map<xmq::configuration::MetaType, std::string> valueToName; 
-     static std::map<std::string, xmq::configuration::MetaType> nameToValue; 
+     GetAll , 
+     GetAllReply , 
+     Set , 
+     SetReply , 
     
-     static std::string getEnumName(xmq::configuration::MetaType value); 
-     static xmq::configuration::MetaType getEnumValue(std::string name); 
-     static void initEnum(void);  
 };
 
 
-struct MetaData 
+struct Property 
 {
-     xmq::configuration::MetaType type; 
-     std::string name; 
-     std::vector<struct xmq::configuration::MetaData> elements; 
+     std::string key; 
+     std::string value; 
     
-     MetaData(); 
-     std::string toXml(TiXmlElement *parentNode); 
-     void fromXml(const std::string &xml, TiXmlElement *parentNode);  
+     Property(); 
+     void read(const void *data); 
+     size_t write(void **data); 
+     size_t size(void);  
 };
 
 
-struct  MetaData2  : public  MetaData 
+struct BaseMessage 
 {
+     xmq::settings::MessageType messageType; 
     
-     MetaData2();  
+     BaseMessage(); 
+    virtual  void read(const void *data); 
+    virtual  size_t write(void **data); 
+    virtual  size_t size(void);  
 };
 
 
-struct Module 
+struct  GetAllMessage  : public  BaseMessage 
 {
-     std::string name; 
-     std::string id; 
     
-     Module(); 
-     std::string toXml(TiXmlElement *parentNode); 
-     void fromXml(const std::string &xml, TiXmlElement *parentNode);  
+     GetAllMessage(); 
+     void read(const void *data); 
+     size_t write(void **data); 
+     size_t size(void);  
 };
 
 
-struct IpRange 
+struct  GetAllReplyMessage  : public  BaseMessage 
 {
-     std::string from; 
-     std::string to; 
+     std::vector<struct xmq::settings::Property> settings; 
     
-     IpRange(); 
-     std::string toXml(TiXmlElement *parentNode); 
-     void fromXml(const std::string &xml, TiXmlElement *parentNode);  
+     GetAllReplyMessage(); 
+     void read(const void *data); 
+     size_t write(void **data); 
+     size_t size(void);  
 };
 
 
-struct Instance 
+struct  SetMessage  : public  BaseMessage 
 {
-     std::string name; 
-     int32_t id; 
-     std::string host; 
-     int32_t port; 
+     std::string key; 
+     std::string value; 
     
-     Instance(); 
-     std::string toXml(TiXmlElement *parentNode); 
-     void fromXml(const std::string &xml, TiXmlElement *parentNode);  
+     SetMessage(); 
+     void read(const void *data); 
+     size_t write(void **data); 
+     size_t size(void);  
 };
 
 
-struct Path 
+struct  SetReplyMessage  : public  BaseMessage 
 {
-     std::string modules; 
-     std::string modulesData; 
+     xmq::settings::Error error; 
     
-     Path(); 
-     std::string toXml(TiXmlElement *parentNode); 
-     void fromXml(const std::string &xml, TiXmlElement *parentNode);  
-};
-
-
-struct Connection 
-{
-     std::string host; 
-     int32_t port; 
-    
-     Connection(); 
-     std::string toXml(TiXmlElement *parentNode); 
-     void fromXml(const std::string &xml, TiXmlElement *parentNode);  
-};
-
-
-struct Configuration 
-{
-     struct xmq::configuration::MetaData metaData; 
-     struct xmq::configuration::Instance instance; 
-     struct xmq::configuration::Path path; 
-     std::vector<struct xmq::configuration::Connection> busses; 
-     std::vector<struct xmq::configuration::IpRange> whiteIp; 
-     std::vector<struct xmq::configuration::IpRange> blackIp; 
-     std::vector<struct xmq::configuration::Module> modules; 
-    
-     Configuration(); 
-     std::string toXml(TiXmlElement *parentNode); 
-     void fromXml(const std::string &xml, TiXmlElement *parentNode);  
+     SetReplyMessage(); 
+     void read(const void *data); 
+     size_t write(void **data); 
+     size_t size(void);  
 };
 
 

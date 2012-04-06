@@ -9,7 +9,6 @@ return %return%;
 
 method size body return = !{0 %%!}
 
-method size body return enum = !{ + sizeof(%!TypeDefinition%)!}
 method size body return default = !{ + sizeof(%!TypeDefinition%)!}
 method size body return string = !{ + (2 + %!Name%.Length)!}
 method size body return struct = !{ + %!Name%.size()!}
@@ -63,7 +62,6 @@ ByteWriter writer = byteWriter == null ? new ByteWriter() : byteWriter;
 return writer.GetBuffer();
 !}
 
-method write body enum = !{writer.Write(%!Name%);!}
 method write body default = !{writer.Write(%!Name%);!}
 method write body string = !{writer.WriteString(%!Name%);!}
 
@@ -107,7 +105,6 @@ ByteReader reader = byteReader == null ? new ByteReader(bytes) : byteReader;
 %%
 !}
 
-method read body enum = !{reader.Read(out %!Name%);!}
 method read body default = !{reader.Read(out %!Name%);!}
 method read body string = !{%!Name% = reader.ReadString();!}
 

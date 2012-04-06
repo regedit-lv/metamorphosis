@@ -2,3 +2,4 @@
 import rules Cpp\types.def
 import rules Cpp\enum.def
 import rules Cpp\xml.def
+import rules Cpp\bytes.def

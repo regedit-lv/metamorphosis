@@ -1,0 +1,47 @@
+## getName
+
+method getEnumName param = !{%!BaseLarva.TypeDefinition% value!}
+method getEnumName returnType = string
+          
+method getEnumName body =
+!{
+if (!initDone)
+{
+    initEnum();
+}
+return valueToName[value];
+!}
+
+## getValue
+
+method getEnumValue param = !{string name!}
+method getEnumValue returnType = %!BaseLarva.TypeDefinition%
+          
+method getEnumValue body =
+!{
+if (!initDone)
+{
+    initEnum();
+}
+return nameToValue[name];
+!}
+
+## initEnum
+
+method initEnum param = !{!}
+method initEnum returnType = void
+       
+
+method initEnum body enum = 
+!{
+valueToName[%!EnumValue%] = "%!Alias%";
+nameToValue["%!Alias%"] = %!EnumValue%;
+!}
+
+method initEnum body =
+!{
+    valueToName = new %!Parts[1].Larva.TypeDefinition%();
+    nameToValue = new %!Parts[2].Larva.TypeDefinition%();
+    %%
+    initDone = true;
+!}

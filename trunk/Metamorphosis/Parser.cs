@@ -529,14 +529,14 @@ namespace Metamorphosis
                             t = GetNextToken();
                         }
 
-                        if (t == "!}")
+                        if (t == "}")
                         {
                             break;
                         }
 
                         if (t != ",")
                         {
-                            Console.WriteLine("Error: Unexpected token '" + token + "' field name not found");
+                            Log.Error(token, Error.UnexpectedToken, "Unexpected token '" + token + "' field name not found");
                             return ElementType.Error;
                         }
 

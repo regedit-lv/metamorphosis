@@ -1,0 +1,77 @@
+﻿IncludeDeclarationTop =
+!{ 
+import java.util.List;
+!}
+
+ImportInclude = !{ !}
+
+StructDefinition =
+!{
+public class %!Name% 
+{
+    %body% 
+}
+!}
+
+StructDefinitionWithBase =
+!{
+public class %!Name% extends %!BaseName%
+{
+    %body% 
+};
+!}
+
+StructFieldDeclaration = !{ public %!TypeDefinition% %!Name%; !}
+
+MethodDeclaration = !{ 
+public %returnType% %method%(%param%)
+{
+    %body%
+}
+!}
+
+ConstructorDeclaration = !{ 
+public %!Name%()
+{
+    %body%
+}
+!}
+
+ConstructorWithBaseDeclaration = !{ 
+public %!Name%()
+{
+    super();
+    %body%
+}
+!}
+
+StaticDefinition =
+!{
+static class %!Name% 
+{
+    %body% 
+}
+!}
+
+StaticFieldDeclaration = !{ public static %!TypeDefinition% %!Name%; !}
+StaticFieldDeclarationWithValue = !{ public static %!TypeDefinition% %!Name% = %!InitialValue%; !}
+
+StaticMethodDeclaration = !{ 
+public static %returnType% %method%(%param%)
+{
+    %body%
+}
+!}
+
+FieldInitialisation = !{ %!Name% = %!InitialValue%; !}
+
+EnumFieldDeclaration = !{ %!Name% , !}
+EnumFieldWithValueDeclaration = !{ %!Name%(%!InitialValue%) , !}
+EnumValueDeclaration = !{ %!Parent.Name%.%!Name% !}
+
+EnumDefinition = !{
+public enum %!Name%
+{
+    %body%
+}
+!}

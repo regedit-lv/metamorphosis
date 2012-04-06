@@ -24,6 +24,12 @@ namespace Metamorphosis
                         Current = new CsGenerator();
                         break;
                     }
+
+                case "JAVA":
+                    {
+                        Current = new JavaGenerator();
+                        break;
+                    }
             }
         }
 
@@ -32,6 +38,10 @@ namespace Metamorphosis
         }
 
         public virtual void SetOutputFile(string outputFile)
+        {
+        }
+
+        public virtual void SetOutputPath(string outputPath)
         {
         }
 
