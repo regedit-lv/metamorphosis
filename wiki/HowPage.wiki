@@ -8,10 +8,6 @@ If you want to serialize you data structure to some format. You can describe you
 Image we need to store information about human (name, address). Let's define human structure and some extra additional stuff
 
 {{{
-int a = 3;
-}}}
-
-{{{
 Namespace = test.namespace
 
 ## generate enum for gender
