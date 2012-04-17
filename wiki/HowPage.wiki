@@ -2,12 +2,59 @@
 
 = Introduction =
 
-Add your content here.
+If you want to serialize you data structure to some format. You can describe your structures in metamorphosis format and then generated methods that will serialize your data to anywhere.
 
+= Example =
+Image we need to store information about human (name, address). Let's define human structure and some extra additional stuff
 
-= Details =
+Namespace = test.namespace
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+## generate enum for gender
+enum Genre
+{
+    None = 0 : none, ## specify int value after '=' and  description after ':'
+    Male : male,
+    Female : female,
+}
+
+## generate static method that will be use during xml serialization
+## important: the name must be <EnumName>Helper. According to xml serialization rules. If you want different name you will be needed to change the rules
+static GenreHelper : Genre
+{
+    bool initDone = false;
+    Map Genre String valueToName;
+    Map String Genre nameToValue;
+} : getEnumName getEnumValue initEnum;
+
+## structure to save address
+struct Address
+{
+    String city;
+    String country = "Latvia"; ## you can specify default value
+    String street;
+} : read write size toXml fromXml;
+
+## main structure for human
+struct Human
+{
+    Genre genre = Genre.None; ## default value for enum
+    String name;
+    Array String phones; ## assume that people can have more that one phone number
+    Address address;
+    Array Human childs; ## to save information about childs
+} : read write size toXml fromXml;
+
+after that you can generate code with one command line like this:
+metamorphosis.exe human.met -ol c++ -df Cpp\all.def -op Generated -on Human
+It will create cpp and h files inside "Generated" folder.
+After that you can write something like:
+Human h;
+h.name = "John";
+h.phones.push_back("+371 2222222");
+h.address.city = "Riga";
+....
+and serialize it to somewhere. For example to xml:
+std::string xml = h.toXml();
+
+*Attention!*
+You will need some extra files. For example for xml serialization you will need tinyXml. But all files are include to project. So you can easily find them inside.
