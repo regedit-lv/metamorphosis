@@ -7,10 +7,11 @@ If you want to serialize you data structure to some format. You can describe you
 = Example =
 Image we need to store information about human (name, address). Let's define human structure and some extra additional stuff
 
-'
+{{{
 int a = 3;
-'
+}}}
 
+{{{
 Namespace = test.namespace
 
 ## generate enum for gender
@@ -47,11 +48,12 @@ struct Human
     Address address;
     Array Human childs; ## to save information about childs
 } : read write size toXml fromXml;
-
+}}}
 after that you can generate code with one command line like this:
 metamorphosis.exe human.met -ol c++ -df Cpp\all.def -op Generated -on Human
 It will create cpp and h files inside "Generated" folder.
 After that you can write something like:
+{{{
 Human h;
 h.name = "John";
 h.phones.push_back("+371 2222222");
@@ -59,6 +61,6 @@ h.address.city = "Riga";
 ....
 and serialize it to somewhere. For example to xml:
 std::string xml = h.toXml();
-
+}}}
 *Attention!*
 You will need some extra files. For example for xml serialization you will need tinyXml. But all files are include to project. So you can easily find them inside.
