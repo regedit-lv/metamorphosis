@@ -13,6 +13,23 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    generated::ATest a, b;
+    a.ai.push_back(1);
+    a.ai.push_back(2);
+
+    a.as.push_back("a1");
+    a.as.push_back("a2");
+
+    std::string xml = a.toXml(nullptr);
+
+    std::cout << xml << std::endl;
+
+    std::cout << "----" << std::endl;
+
+    b.fromXml(xml, nullptr);
+    xml = b.toXml(nullptr);
+    std::cout << xml << std::endl;
+
 /*
     xmq::configuration::Configuration conf;
     xmq::configuration::IpRange ir;
