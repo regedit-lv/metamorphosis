@@ -69,15 +69,6 @@ method toXml body struct = !{
 !}
 
 method toXml body array = !{ 
-{ // %!Name%
-    TiXmlElement * element = new TiXmlElement("%!Name%");
-    std::string xml = %!Name%.toXml(element);
-    parent->LinkEndChild(element);
-}
-
-!}
-
-method toXml body array = !{ 
 // write array %!Name%
 TiXmlElement * %!Name%_element = new TiXmlElement("%!Name%");
 parent->LinkEndChild(%!Name%_element);
@@ -100,7 +91,25 @@ method toXml body array string = !{
 // write array %!Name%
 TiXmlElement * %!Name%_element = new TiXmlElement("%!Name%");
 parent->LinkEndChild(%!Name%_element);
-%!Name%_element->SetAttribute("size", %!Name%.size());
+
+for (size_t i = 0; i < %!Name%.size(); i++)
+{
+    %!Larva.SubLarvae[0].TypeDefinition% &%_value% = %!Name%[i];
+
+    TiXmlElement * %_element% = new TiXmlElement("%!Larva.SubLarvae[0].Name%");
+    
+    std::stringstream oss;
+    oss << %_value%;
+    %_element%->SetAttribute("value", oss.str().c_str());
+
+    %!Name%_element->LinkEndChild(%_element%);
+}
+!}
+
+method toXml body array default = !{ 
+// write array %!Name%
+TiXmlElement * %!Name%_element = new TiXmlElement("%!Name%");
+parent->LinkEndChild(%!Name%_element);
 
 for (size_t i = 0; i < %!Name%.size(); i++)
 {
@@ -204,13 +213,13 @@ for (TiXmlNode *child = root->FirstChild(); child != 0; child = child->NextSibli
         {
             root = arrayChild->ToElement();
             
-            %!Larva.SubLarvae[0].TypeDefinition% sub;
+            %!Larva.SubLarvae[0].TypeDefinition% value;
 
             if (_stricmp("%!Larva.SubLarvae[0].Name%", root->Value()) == 0)
             {
-                %#method fromXml body readDirect#sub#%!Larva.SubLarvae[0].FullName%#%
+                %#method fromXml body readDirect#value#%!Larva.SubLarvae[0].FullName%#%
 
-                %!Name%.push_back(sub);
+                %!Name%.push_back(value);
             }
         }
 

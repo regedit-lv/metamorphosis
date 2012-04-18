@@ -15,6 +15,7 @@ struct BTest
 
 struct ATest : BTest
 {
+    Array int32 ai;
     SubStruct ss;
     String s = "sValue";
     int32 i = 2;
