@@ -2,14 +2,16 @@
 
 = Introduction =
 
-If you want to serialize you data structure to some format. You can describe your structures in metamorphosis format and then generated methods that will serialize your data to anywhere.
+If you want to serialize you data structure to some format. You can describe your structures in metamorphosis format and then generate methods that will serialize your data to anywhere.
 
 = Where to use? =
-If you need to create communication protocol between A and B. A and B can be both C++, C#, Java or mixed.
-You will have only one file with definitions and *metamorphosis* will generate code how to serialize your data to byte array, xml or somewhere else if you will need it.
+* If you need to create communication protocol between A and B. A and B can be both C++, C#, Java or mixed.
+You will have only one file with definition and *metamorphosis* will generate code that will serialize your structures to byte array, xml or somewhere else if you will need it.
+* To store your application settings in xml. Read and write with one line of code.
+* Import/Export data between applications.
 
 = Example =
-Image we need to store information about human (name, address). Let's define human structure and some extra additional stuff
+For exmple we need to store information about human (name, address). Let's define human structure and some extra additional stuff
 
 {{{
 Namespace = test.namespace
@@ -17,7 +19,7 @@ Namespace = test.namespace
 ## generate enum for gender
 enum Genre
 {
-    None = 0 : none, ## specify int value after '=' and  description after ':'
+    None = 0 : none, ## specify int value after '=' and description after ':'
     Male : male,
     Female : female,
 }
@@ -63,4 +65,4 @@ and serialize it to somewhere. For example to xml:
 std::string xml = h.toXml();
 }}}
 *Attention!*
-You will need some extra files. For example for xml serialization you will need tinyXml. But all files are include to project. So you can easily find them inside.
+You will need some extra files (some wrapper classes). For example for xml serialization you will need tinyXml. But all files are include into project. So you can easily find them inside.
