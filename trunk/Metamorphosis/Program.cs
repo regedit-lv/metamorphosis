@@ -87,11 +87,10 @@ namespace Metamorphosis
 
             Directory.CreateDirectory(path);
            
-            path += @"\";
-
             Generator.Current.SetOutputPath(path);
 
-            path += name;
+            Path.Combine(path, name);
+           
 
             Generator.Current.SetOutputFile(path);
             Larvae.SetElement(ElementType.OutputName, name);
