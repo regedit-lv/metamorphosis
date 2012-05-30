@@ -84,13 +84,12 @@ namespace Metamorphosis
             Larvae.ParseLanguageDefinition();
 
             Generator.SetGenerator(Larvae.GetElement(ElementType.OutputLanguage));
-
+            
             Directory.CreateDirectory(path);
            
             Generator.Current.SetOutputPath(path);
 
-            Path.Combine(path, name);
-           
+            path = Path.Combine(path, name);           
 
             Generator.Current.SetOutputFile(path);
             Larvae.SetElement(ElementType.OutputName, name);

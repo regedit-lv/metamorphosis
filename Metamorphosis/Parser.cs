@@ -139,7 +139,6 @@ namespace Metamorphosis
 
         }
 
-
         string RemoveComment(string text)
         {
             while (true)
