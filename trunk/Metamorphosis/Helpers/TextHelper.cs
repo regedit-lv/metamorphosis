@@ -213,7 +213,5 @@ namespace Metamorphosis
             return text;
         }
 
-
-
     }
 }
